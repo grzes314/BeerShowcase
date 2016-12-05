@@ -1,8 +1,6 @@
 
 package beershowcase.beerdata;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import javax.json.Json;
 import javax.json.JsonObject;
 
@@ -10,7 +8,7 @@ import javax.json.JsonObject;
  *
  * @author grzes
  */
-public class BeerFactory implements JsonRepresentable, ByteEntity {
+public class BeerFactory implements JsonRepresentable {
     private long nextBeerId = 1;
 
     @Override
@@ -32,18 +30,5 @@ public class BeerFactory implements JsonRepresentable, ByteEntity {
     
     Beer makeBeerForRead() {
         return new Beer();
-    }
-
-    @Override
-    public void addToByteStream(ByteArrayOutputStream out) {
-        ByteUtils.addLongToByteStream(nextBeerId, out);
-    }
-
-    @Override
-    public void readFromByteStream(ByteArrayInputStream in) {
-        if (nextBeerId != 1)
-            throw new RuntimeException("Initialization of a factory that has already been used");
-        
-        nextBeerId = ByteUtils.readLongFromByteStream(in);
-    }    
+    } 
 }

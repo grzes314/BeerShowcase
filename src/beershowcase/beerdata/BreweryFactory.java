@@ -10,7 +10,7 @@ import javax.json.JsonObject;
  *
  * @author grzes
  */
-public class BreweryFactory  implements JsonRepresentable, ByteEntity {
+public class BreweryFactory  implements JsonRepresentable {
     private long nextBreweryId = 1;
     
     @Override
@@ -32,18 +32,5 @@ public class BreweryFactory  implements JsonRepresentable, ByteEntity {
     
     public Brewery makeBreweryForRead() {
         return new Brewery();
-    }
-
-    @Override
-    public void addToByteStream(ByteArrayOutputStream out) {
-        ByteUtils.addLongToByteStream(nextBreweryId, out);
-    }
-
-    @Override
-    public void readFromByteStream(ByteArrayInputStream in) {
-        if (nextBreweryId != 1)
-            throw new RuntimeException("Initialization of a factory that has already been used");
-        
-        nextBreweryId = ByteUtils.readLongFromByteStream(in);
-    }    
+    }  
 }

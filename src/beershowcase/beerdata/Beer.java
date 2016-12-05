@@ -3,8 +3,6 @@ package beershowcase.beerdata;
 
 import beershowcase.beerdata.properties.BeerPropertyChangeListener;
 import java.awt.image.RenderedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -13,7 +11,7 @@ import javax.json.JsonObject;
  *
  * @author grzes
  */
-public class Beer implements JsonRepresentable, ByteEntity {
+public class Beer implements JsonRepresentable {
     private long id;
     private String name;
     private Brewery brewery;
@@ -106,21 +104,6 @@ public class Beer implements JsonRepresentable, ByteEntity {
 
     public void setBottleImage(RenderedImage bottleImage) {
         this.bottleImage = bottleImage;
-    }
-
-    @Override
-    public void addToByteStream(ByteArrayOutputStream out) {
-        ByteUtils.addLongToByteStream(id, out);
-        ByteUtils.addStringToByteStream(name, out);
-        ByteUtils.addLongToByteStream(brewery.getId(), out);
-    }
-
-    @Override
-    public void readFromByteStream(ByteArrayInputStream in) {
-        id = ByteUtils.readLongFromByteStream(in);
-        name = ByteUtils.readStringFromByteStream(in);
-        long breweryId = ByteUtils.readLongFromByteStream(in);
-        // ???????????? how to read brewery
     }
     
     public void addPropertyChangeListener(BeerPropertyChangeListener bpcl) {

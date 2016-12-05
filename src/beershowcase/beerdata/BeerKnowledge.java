@@ -1,8 +1,6 @@
 
 package beershowcase.beerdata;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -15,7 +13,7 @@ import javax.json.JsonObject;
  * It's also a proxy in creation of new beers and breweries.
  * @author Grzegorz Łoś
  */
-public class BeerKnowledge implements JsonRepresentable, ByteEntity {
+public class BeerKnowledge implements JsonRepresentable {
     private final BreweryFactory breweryFactory = new BreweryFactory();
     private final ArrayList<Brewery> breweries = new ArrayList<>();
     private final BeerFactory beerFactory = new BeerFactory();
@@ -51,22 +49,6 @@ public class BeerKnowledge implements JsonRepresentable, ByteEntity {
         while (beersCount-- > 0)
             beers.add(beerFactory.makeBeerForRead());
         JsonUtils.fillJsonArray(json.getJsonArray("beers"), beers);
-    }
-    
-    @Override
-    public void addToByteStream(ByteArrayOutputStream out) {
-        breweryFactory.addToByteStream(out);
-        ByteUtils.addCollectionToByteStream(breweries, out);
-        beerFactory.addToByteStream(out);
-        ByteUtils.addCollectionToByteStream(beers, out);
-    }
-
-    @Override
-    public void readFromByteStream(ByteArrayInputStream in) {
-        breweryFactory.readFromByteStream(in);
-        ByteUtils.readCollectionFromByteStream(in, breweries, Brewery.class);
-        beerFactory.readFromByteStream(in);
-        ByteUtils.readCollectionFromByteStream(in, beers, Beer.class);
     }
 
     public ArrayList<Brewery> getBreweries() {

@@ -2,8 +2,6 @@
 package beershowcase.beerdata;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import javax.json.Json;
 import javax.json.JsonObject;
 
@@ -11,7 +9,7 @@ import javax.json.JsonObject;
  *
  * @author grzes
  */
-public class Brewery implements JsonRepresentable, ByteEntity {
+public class Brewery implements JsonRepresentable {
     private long id;
     private String name;
     private BufferedImage logo;
@@ -58,30 +56,5 @@ public class Brewery implements JsonRepresentable, ByteEntity {
 
     public void setLogo(BufferedImage logo) {
         this.logo = logo;
-    }
-
-    @Override
-    public void addToByteStream(ByteArrayOutputStream out) {
-        ByteUtils.addLongToByteStream(id, out);
-        ByteUtils.addStringToByteStream(name, out);
-        if (logo != null) {
-            ByteUtils.addIntToByteStream(1, out);
-            ByteUtils.addImageToByteStream(logo, out);
-        } else {
-            ByteUtils.addIntToByteStream(0, out);
-        }
-        ByteUtils.addIntToByteStream(112358, out);
-    }
-
-    @Override
-    public void readFromByteStream(ByteArrayInputStream in) {
-        id = ByteUtils.readLongFromByteStream(in);
-        name = ByteUtils.readStringFromByteStream(in);
-        int hasLogo = ByteUtils.readIntFromByteStream(in);
-        if (hasLogo == 1)
-            logo = ByteUtils.readImageFromByteStream(in);
-        int control = ByteUtils.readIntFromByteStream(in);
-    }
-    
-    
+    }    
 }

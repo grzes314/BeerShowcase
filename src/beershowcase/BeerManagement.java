@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonStructure;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -139,44 +138,6 @@ public class BeerManagement extends JFrame {
         return json;
     }
     
-    /*
-    private void openClicked() {
-        File file = chooseFileToOpen();
-        if (file == null)
-            return;
-        ByteArrayInputStream bais = readFileToByteStream(file);
-        if (bais != null)
-            readBeerKnowledlgeFromByteStream(bais);        
-    }
-
-    private ByteArrayInputStream readFileToByteStream(File file) {
-        try {
-            byte[] bytes = Files.readAllBytes(file.toPath());
-            return new ByteArrayInputStream(bytes);
-        } catch (IOException ex) {
-            Logger.getLogger(BeerManagement.class.getName()).log(Level.INFO,
-                    "Failed to open beer knowledge file", ex);
-            JOptionPane.showMessageDialog(this, "Failed to read from selected file",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-    }
-
-    private void readBeerKnowledlgeFromByteStream(ByteArrayInputStream bais) {
-        try {
-            BeerKnowledge beerKnowledge = new BeerKnowledge();
-            beerKnowledge.readFromByteStream(bais);
-            managementPane.setBeerKnowledge(beerKnowledge);
-            JOptionPane.showMessageDialog(this, "File succesfully read!",
-                    "Finished reading", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Throwable t) {
-            LOGGER.log(Level.INFO, "Failed to read from file", t);
-            JOptionPane.showMessageDialog(this, "Error while reading from selected file",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    */
-
     private void saveClicked() {
         File file = chooseFileToSave();
         if (file == null)
@@ -218,43 +179,6 @@ public class BeerManagement extends JFrame {
         }
     }
     
-    /*
-
-    private void saveClicked() {
-        File file = chooseFileToSave();
-        if (file == null)
-            return;
-        ByteArrayOutputStream baos = saveToByteStream();
-        if (baos != null)
-            saveByteStreamToFile(baos, file);        
-    }
-    
-    private ByteArrayOutputStream saveToByteStream() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            managementPane.getBeerKnowledge().addToByteStream(baos);
-        } catch (Throwable t) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
-                    "Failed to write beer knowledge to byte stream", t);
-            JOptionPane.showMessageDialog(this, "Error while creating byte representation of the beer knowledge",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-        return baos;
-    }
-    
-    private void saveByteStreamToFile(ByteArrayOutputStream baos, File file) {
-        try(OutputStream outputStream = new FileOutputStream(file)) {
-            baos.writeTo(outputStream);
-            
-            JOptionPane.showMessageDialog(this, "Data succesfully written!",
-                    "Finished saving", JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error while writing to file",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }*/
-
     private void exitClicked() {
         int confirm = JOptionPane.showOptionDialog(
              this, "Are You Sure to Close Application?", 
