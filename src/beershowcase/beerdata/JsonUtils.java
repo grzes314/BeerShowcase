@@ -21,7 +21,7 @@ class JsonUtils {
     }
 
     public static <T extends JsonRepresentable>
-    void fillJsonArray(JsonArray jsonArray, ArrayList<T> breweries) {
+    void fillJsonArray(JsonArray jsonArray, ArrayList<T> breweries) throws BeerKnowledgeParserException {
         for (int i = 0; i < breweries.size(); ++i) {
             breweries.get(i).fromJson(jsonArray.getJsonObject(i));
         }
