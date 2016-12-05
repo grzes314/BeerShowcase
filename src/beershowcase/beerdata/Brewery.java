@@ -4,15 +4,33 @@ package beershowcase.beerdata;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import javax.json.Json;
+import javax.json.JsonObject;
 
 /**
  *
  * @author grzes
  */
-public class Brewery implements ByteEntity {
+public class Brewery implements JsonRepresentable, ByteEntity {
     private long id;
     private String name;
     private BufferedImage logo;
+    
+
+    @Override
+    public JsonObject toJson() {
+        JsonObject value = Json.createObjectBuilder()
+            .add("id", id)
+            .add("name", name)
+            .build();
+        return value;
+    }
+
+    @Override
+    public void fromJson(JsonObject json) {
+        id = json.getInt("id");
+        name = json.getString("name");
+    }
     
     public Brewery() {
         id = -1;

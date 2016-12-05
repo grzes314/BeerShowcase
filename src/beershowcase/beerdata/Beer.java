@@ -6,12 +6,14 @@ import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import javax.json.Json;
+import javax.json.JsonObject;
 
 /**
  *
  * @author grzes
  */
-public class Beer implements ByteEntity {
+public class Beer implements JsonRepresentable, ByteEntity {
     private long id;
     private String name;
     private Brewery brewery;
@@ -23,6 +25,21 @@ public class Beer implements ByteEntity {
     private ArrayList<StyleKeywords> keywords = new ArrayList<>();
     private ArrayList<BeerPropertyChangeListener> changeListeners = new ArrayList<>();
 
+    @Override
+    public JsonObject toJson() {
+        JsonObject value = Json.createObjectBuilder()
+            .add("id", id)
+            .add("name", name)
+            .build();
+        return value;
+    }
+
+    @Override
+    public void fromJson(JsonObject json) {
+        id = json.getInt("id");
+        name = json.getString("name");
+    }
+    
     public boolean isAvailable() {
         return available;
     }
@@ -31,11 +48,11 @@ public class Beer implements ByteEntity {
         this.available = string;
     }
 
-    public Beer() {
+    Beer() {
         this.id = -1;
     }
     
-    public Beer(long id) {
+    Beer(long id) {
         this.id = id;
     }
 

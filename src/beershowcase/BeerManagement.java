@@ -6,15 +6,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonStructure;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -29,6 +32,7 @@ import javax.swing.SwingUtilities;
  */
 public class BeerManagement extends JFrame {
     private final ManagementPane managementPane = new ManagementPane();
+    private static final Logger LOGGER = Logger.getLogger(BeerManagement.class.getName());
     
     JFileChooser fileChooser = new JFileChooser();
     
@@ -94,15 +98,23 @@ public class BeerManagement extends JFrame {
         managementPane.startFromScratch();
     }
 
-    private void openClicked() {
-        File file = chooseFileToOpen();
-        if (file == null)
-            return;
-        ByteArrayInputStream bais = readFileToByteStream(file);
-        if (bais != null)
-            readBeerKnowledlgeFromByteStream(bais);        
-    }
 
+    private void openClicked() {
+            File file = chooseFileToOpen();
+            if (file == null)
+                return;
+        try {
+            JsonObject json = readJsonFromFile(file);
+            BeerKnowledge beerKnowledge = new BeerKnowledge();
+            beerKnowledge.fromJson(json);
+            managementPane.setBeerKnowledge(beerKnowledge);
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, null, ex);
+            JOptionPane.showMessageDialog(this, "Selected file seems to be corrupted.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
     private File chooseFileToOpen() {
         int res = fileChooser.showOpenDialog(this);
         if (res == JFileChooser.APPROVE_OPTION) {
@@ -117,6 +129,24 @@ public class BeerManagement extends JFrame {
         } else {
             return null;
         }
+    }
+
+    private JsonObject readJsonFromFile(File file) throws FileNotFoundException {
+        JsonObject json;
+        try (JsonReader jsonReader = Json.createReader(new FileInputStream(file))) {
+            json = jsonReader.readObject();
+        }
+        return json;
+    }
+    
+    /*
+    private void openClicked() {
+        File file = chooseFileToOpen();
+        if (file == null)
+            return;
+        ByteArrayInputStream bais = readFileToByteStream(file);
+        if (bais != null)
+            readBeerKnowledlgeFromByteStream(bais);        
     }
 
     private ByteArrayInputStream readFileToByteStream(File file) {
@@ -140,20 +170,25 @@ public class BeerManagement extends JFrame {
             JOptionPane.showMessageDialog(this, "File succesfully read!",
                     "Finished reading", JOptionPane.INFORMATION_MESSAGE);
         } catch (Throwable t) {
-            Logger.getLogger(BeerManagement.class.getName()).log(Level.INFO,
-                    "Failed to read from file", t);
+            LOGGER.log(Level.INFO, "Failed to read from file", t);
             JOptionPane.showMessageDialog(this, "Error while reading from selected file",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    */
 
     private void saveClicked() {
         File file = chooseFileToSave();
         if (file == null)
             return;
-        ByteArrayOutputStream baos = saveToByteStream();
-        if (baos != null)
-            saveByteStreamToFile(baos, file);        
+        JsonObject json = managementPane.getBeerKnowledge().toJson();
+        try {
+            saveJsonToFile(json, file);
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO, null, ex);
+            JOptionPane.showMessageDialog(this, "Error while writing to selected file",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private File chooseFileToSave() {
@@ -174,6 +209,24 @@ public class BeerManagement extends JFrame {
         } else {
             return null;
         }
+    }
+
+    private void saveJsonToFile(JsonObject json, File file) throws IOException {
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
+            String jsonString = json.toString();
+            out.write(jsonString, 0, jsonString.length());
+        }
+    }
+    
+    /*
+
+    private void saveClicked() {
+        File file = chooseFileToSave();
+        if (file == null)
+            return;
+        ByteArrayOutputStream baos = saveToByteStream();
+        if (baos != null)
+            saveByteStreamToFile(baos, file);        
     }
     
     private ByteArrayOutputStream saveToByteStream() {
@@ -200,7 +253,7 @@ public class BeerManagement extends JFrame {
             JOptionPane.showMessageDialog(this, "Error while writing to file",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }*/
 
     private void exitClicked() {
         int confirm = JOptionPane.showOptionDialog(
