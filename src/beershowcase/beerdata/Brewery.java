@@ -7,14 +7,13 @@ import javax.json.JsonObject;
 
 /**
  *
- * @author grzes
+ * @author Grzegorz Łoś
  */
 public class Brewery implements JsonRepresentable {
-    private long id;
+    private int id;
     private String name;
-    private BufferedImage logo;
+    private LazyImage logo = new LazyImage();
     
-
     @Override
     public JsonObject toJson() {
         JsonObject value = Json.createObjectBuilder()
@@ -25,20 +24,22 @@ public class Brewery implements JsonRepresentable {
     }
 
     @Override
-    public void fromJson(JsonObject json) {
+    public void fromJson(JsonObject json) throws BeerKnowledgeParserException {
         id = json.getInt("id");
         name = json.getString("name");
+        
+        logo.setImageName(makeLogoImageName());
     }
     
     public Brewery() {
         id = -1;
     }
 
-    public Brewery(long id) {
+    public Brewery(int id) {
         this.id = id;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
@@ -51,10 +52,16 @@ public class Brewery implements JsonRepresentable {
     }
 
     public BufferedImage getLogo() {
-        return logo;
+        return logo.getPicture();
     }
 
     public void setLogo(BufferedImage logo) {
-        this.logo = logo;
+        this.logo.set(logo);
+        this.logo.setImageName(makeLogoImageName());
+        this.logo.save();
     }    
+    
+    private String makeLogoImageName() {
+        return "brewery_" + id + ".jpg";
+    }
 }

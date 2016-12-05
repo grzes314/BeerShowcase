@@ -9,7 +9,7 @@ import javax.json.JsonObject;
  * @author grzes
  */
 public class BeerFactory implements JsonRepresentable {
-    private long nextBeerId = 1;
+    private int nextBeerId = 1;
 
     @Override
     public JsonObject toJson() {

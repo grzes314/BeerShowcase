@@ -1,17 +1,15 @@
 
 package beershowcase.beerdata;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import javax.json.Json;
 import javax.json.JsonObject;
 
 /**
  *
- * @author grzes
+ * @author Grzegorz Łoś
  */
 public class BreweryFactory  implements JsonRepresentable {
-    private long nextBreweryId = 1;
+    private int nextBreweryId = 1;
     
     @Override
     public JsonObject toJson() {

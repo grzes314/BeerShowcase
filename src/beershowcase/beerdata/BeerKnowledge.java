@@ -64,7 +64,7 @@ public class BeerKnowledge implements JsonRepresentable {
     public Collection<Beer> getBeersOf(Brewery brewery) {
         ArrayList<Beer> res = new ArrayList<>();
         for (Beer b: beers)
-            if (b.getBrewery().getId() == brewery.getId())
+            if (b.getBreweryId() == brewery.getId())
                 res.add(b);
         return res;
     }
