@@ -136,7 +136,7 @@ public class BreweriesManagementPane extends javax.swing.JPanel {
 
 
     private void addBreweryClicked() {
-        AddBreweryDialog addBreweryDialog = new AddBreweryDialog(null);
+        AddBreweryDialog addBreweryDialog = new AddBreweryDialog(RunningApplication.MainFrame);
         addBreweryDialog.setVisible(true);
         if (addBreweryDialog.isApproved()) {
             Brewery brewery = beerKnowledge.makeBrewery();
@@ -176,7 +176,7 @@ public class BreweriesManagementPane extends javax.swing.JPanel {
     private void editClicked() {
         Brewery brewery = breweriesTable.getSelectedItem();
         if (brewery != null) {
-            AddBreweryDialog dialog = new AddBreweryDialog(null, brewery);
+            AddBreweryDialog dialog = new AddBreweryDialog(RunningApplication.MainFrame, brewery);
             dialog.setVisible(true);
             if (dialog.isApproved()) {
                 brewery.setName(dialog.getBreweryName());

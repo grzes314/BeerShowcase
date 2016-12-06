@@ -71,6 +71,7 @@ public enum StyleKeywords {
     Grodziskie,
     Sahti,
     Brett,
+    Other,
 
     // Modifiers
     Strong,

@@ -11,7 +11,8 @@ public class BeerPropertyChangeEvent {
     enum Type {
         StyleKeywordAdded,
         StyleKeywordRemoved,
-        NameChanged
+        NameChanged,
+        BreweryChanged
     }
     
     public final Beer source;

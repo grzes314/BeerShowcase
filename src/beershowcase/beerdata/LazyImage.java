@@ -84,4 +84,10 @@ class LazyImage {
         } 
     }
 
+    public void delete() {
+        if (imageFileExists) {
+            File file = new File(getLocalPath());
+            file.delete();
+        }
+    }
 }

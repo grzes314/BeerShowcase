@@ -47,12 +47,16 @@ public class BeerManagement extends JFrame {
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            JFrame mainFrame = new BeerManagement();
-            mainFrame.setVisible(true);
+            RunningApplication.MainFrame = new BeerManagement();
+            RunningApplication.MainFrame.setVisible(true);
         });
     }
     
     public BeerManagement() {
+        init();
+    }
+    
+    private final void init() {
         setSize(800, 600);
         setTitle("Beer Management");
         setContentPane(managementPane);

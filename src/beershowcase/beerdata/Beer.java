@@ -1,7 +1,12 @@
 
 package beershowcase.beerdata;
 
+import beershowcase.beerdata.properties.BeerBreweryChangeEvent;
+import beershowcase.beerdata.properties.BeerNameChangedEvent;
+import beershowcase.beerdata.properties.BeerPropertyChangeEvent;
 import beershowcase.beerdata.properties.BeerPropertyChangeListener;
+import beershowcase.beerdata.properties.BeerStyleKeywordAddedEvent;
+import beershowcase.beerdata.properties.BeerStyleKeywordRemovedEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.json.Json;
@@ -43,7 +48,7 @@ public class Beer implements JsonRepresentable {
         breweryId = json.getInt("breweryId");
         descritpion = json.getString("descritpion");
         available = json.getBoolean("available");
-        addKeywords(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
+        addStyleKeywordsFromStrings(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
         
         bottleImage.setImageName(makeBottleImageName());
         labelImage.setImageName(makeLabelImageName());
@@ -73,16 +78,21 @@ public class Beer implements JsonRepresentable {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String newName) {
+        String oldName = this.name;
+        this.name = newName;
+        firePropertyChangeEvent(new BeerNameChangedEvent(this, oldName, newName));
     }
 
     public int getBreweryId() {
         return breweryId;
     }
 
-    public void setBreweryId(int breweryId) {
-        this.breweryId = breweryId;
+    public void setBreweryId(int newBrewery) {
+        int oldBrewery = this.breweryId;
+        this.breweryId = newBrewery;
+        firePropertyChangeEvent(new BeerBreweryChangeEvent(this, oldBrewery, newBrewery));
+        
     }
 
     public Ingredients getIngredients() {
@@ -106,9 +116,11 @@ public class Beer implements JsonRepresentable {
     }
 
     public void setLabelImage(BufferedImage labelImage) {
-        this.labelImage.set(labelImage);
-        this.labelImage.setImageName(makeLabelImageName());
-        this.labelImage.save();
+        if (labelImage != null) {
+            this.labelImage.set(labelImage);
+            this.labelImage.setImageName(makeLabelImageName());
+            this.labelImage.save();
+        }
     }
 
     public BufferedImage getBottleImage() {
@@ -116,13 +128,25 @@ public class Beer implements JsonRepresentable {
     }
 
     public void setBottleImage(BufferedImage bottleImage) {
-        this.bottleImage.set(bottleImage);
-        this.bottleImage.setImageName(makeBottleImageName());
-        this.bottleImage.save();
+        if (bottleImage != null) {
+            this.bottleImage.set(bottleImage);
+            this.bottleImage.setImageName(makeBottleImageName());
+            this.bottleImage.save();
+        }
     }
     
-    public void addPropertyChangeListener(BeerPropertyChangeListener bpcl) {
-        changeListeners.add(bpcl);
+    public void addStyleKeyword(StyleKeywords keyword) {
+        if (!keywords.contains(keyword)) {
+            keywords.add(keyword);
+            firePropertyChangeEvent(new BeerStyleKeywordAddedEvent(this, keyword));
+        }        
+    }
+    
+    public void removeStyleKeyword(StyleKeywords keyword) {
+        if (keywords.contains(keyword)) {
+            keywords.remove(keyword);
+            firePropertyChangeEvent(new BeerStyleKeywordRemovedEvent(this, keyword));
+        }        
     }
 
     private ArrayList<String> getKeywordsAsStrings() {
@@ -132,7 +156,12 @@ public class Beer implements JsonRepresentable {
         return arr;
     }
 
-    private void addKeywords(ArrayList<String> keywordStrings) throws BeerKnowledgeParserException {
+    public void addStyleKeywords(ArrayList<StyleKeywords> newKeywords) {
+        for (StyleKeywords keyword: newKeywords)
+            addStyleKeyword(keyword);
+    }
+
+    private void addStyleKeywordsFromStrings(ArrayList<String> keywordStrings) throws BeerKnowledgeParserException {
         try {
             for (String keywordStr: keywordStrings)
                 keywords.add(StyleKeywords.valueOf(keywordStr));
@@ -147,5 +176,14 @@ public class Beer implements JsonRepresentable {
     
     private String makeLabelImageName() {
         return "label_" + id + ".jpg";
+    }
+    
+    public void addPropertyChangeListener(BeerPropertyChangeListener bpcl) {
+        changeListeners.add(bpcl);
+    }
+
+    private void firePropertyChangeEvent(BeerPropertyChangeEvent propertyChangedEvent) {
+        for (BeerPropertyChangeListener bpcl: changeListeners)
+            bpcl.propertyChanged(propertyChangedEvent);
     }
 }

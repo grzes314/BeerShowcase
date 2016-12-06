@@ -11,6 +11,7 @@ public class ManagementPane extends javax.swing.JPanel {
 
     BeerKnowledge beerKnowledge = new BeerKnowledge();
     BreweriesManagementPane breweriesManagementPane = new BreweriesManagementPane(beerKnowledge);
+    BeersManagementPane beersManagementPane = new BeersManagementPane(beerKnowledge);
     
     /**
      * Creates new form BeerManagementPane
@@ -18,6 +19,7 @@ public class ManagementPane extends javax.swing.JPanel {
     public ManagementPane() {
         initComponents();
         tabbedPane.setComponentAt(0, breweriesManagementPane);
+        tabbedPane.setComponentAt(1, beersManagementPane);
     }
 
     /**
@@ -81,11 +83,13 @@ public class ManagementPane extends javax.swing.JPanel {
     void startFromScratch() {
         beerKnowledge = new BeerKnowledge();
         breweriesManagementPane.reset(beerKnowledge);
+        beersManagementPane.reset(beerKnowledge);
     }
     
     void setBeerKnowledge(BeerKnowledge beerKnowledge) {
         this.beerKnowledge = beerKnowledge;
         breweriesManagementPane.reset(beerKnowledge);
+        beersManagementPane.reset(beerKnowledge);
     }
 
     BeerKnowledge getBeerKnowledge() {

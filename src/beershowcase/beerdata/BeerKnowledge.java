@@ -1,6 +1,8 @@
 
 package beershowcase.beerdata;
 
+import beershowcase.beerdata.properties.BeerPropertyChangeEvent;
+import beershowcase.beerdata.properties.BeerPropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -13,7 +15,7 @@ import javax.json.JsonObject;
  * It's also a proxy in creation of new beers and breweries.
  * @author Grzegorz Łoś
  */
-public class BeerKnowledge implements JsonRepresentable {
+public class BeerKnowledge implements JsonRepresentable, BeerPropertyChangeListener {
     private final BreweryFactory breweryFactory = new BreweryFactory();
     private final ArrayList<Brewery> breweries = new ArrayList<>();
     private final BeerFactory beerFactory = new BeerFactory();
@@ -49,6 +51,8 @@ public class BeerKnowledge implements JsonRepresentable {
         while (beersCount-- > 0)
             beers.add(beerFactory.makeBeerForRead());
         JsonUtils.fillJsonArray(json.getJsonArray("beers"), beers);
+        
+        rebuildDependencies();
     }
 
     public ArrayList<Brewery> getBreweries() {
@@ -61,6 +65,13 @@ public class BeerKnowledge implements JsonRepresentable {
         return brewery;
     }
 
+    public Beer makeBeer() {
+        Beer beer = beerFactory.makeBeer();
+        beers.add(beer);
+        beer.addPropertyChangeListener(this);
+        return beer;
+    }
+
     public Collection<Beer> getBeersOf(Brewery brewery) {
         ArrayList<Beer> res = new ArrayList<>();
         for (Beer b: beers)
@@ -71,5 +82,14 @@ public class BeerKnowledge implements JsonRepresentable {
 
     public void deleteBrewery(Brewery brewery) {
         breweries.remove(brewery);
+    }
+
+    private void rebuildDependencies() {
+        // TODO
+    }
+
+    @Override
+    public void propertyChanged(BeerPropertyChangeEvent propertyChange) {
+        // TODO
     }
 }
