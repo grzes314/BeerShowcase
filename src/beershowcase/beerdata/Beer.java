@@ -19,6 +19,7 @@ import javax.json.JsonObject;
 public class Beer implements JsonRepresentable {
     private int id;
     private String name;
+    private String declaredStyle;
     private int breweryId;
     private Ingredients ingredients = new Ingredients();
     private String descritpion = "";
@@ -33,6 +34,7 @@ public class Beer implements JsonRepresentable {
         JsonObject value = Json.createObjectBuilder()
             .add("id", id)
             .add("name", name)
+            .add("declaredStyle", declaredStyle)
             .add("breweryId", breweryId)
             .add("descritpion", descritpion)
             .add("available", available)
@@ -45,6 +47,7 @@ public class Beer implements JsonRepresentable {
     public void fromJson(JsonObject json) throws BeerKnowledgeParserException {
         id = json.getInt("id");
         name = json.getString("name");
+        //declaredStyle = json.getString("declaredStyle");
         breweryId = json.getInt("breweryId");
         descritpion = json.getString("descritpion");
         available = json.getBoolean("available");
@@ -82,6 +85,14 @@ public class Beer implements JsonRepresentable {
         String oldName = this.name;
         this.name = newName;
         firePropertyChangeEvent(new BeerNameChangedEvent(this, oldName, newName));
+    }
+
+    public String getDeclaredStyle() {
+        return declaredStyle;
+    }
+
+    public void setDeclaredStyle(String declaredStyle) {
+        this.declaredStyle = declaredStyle;
     }
 
     public int getBreweryId() {
@@ -185,5 +196,9 @@ public class Beer implements JsonRepresentable {
     private void firePropertyChangeEvent(BeerPropertyChangeEvent propertyChangedEvent) {
         for (BeerPropertyChangeListener bpcl: changeListeners)
             bpcl.propertyChanged(propertyChangedEvent);
+    }
+
+    boolean hasStyle(StyleKeywords keyword) {
+        return keywords.contains(keyword);
     }
 }

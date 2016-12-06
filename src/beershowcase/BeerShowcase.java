@@ -1,24 +1,118 @@
 
 package beershowcase;
 
+import beershowcase.beerdata.BeerKnowledge;
+import com.sun.istack.internal.logging.Logger;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import javax.swing.JOptionPane;
 
 /**
  *
- * @author grzes
+ * @author Grzegorz Łoś
  */
 public class BeerShowcase {
 
+    private static final GraphicsDevice grDevice = GraphicsEnvironment
+        .getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    private static boolean fullScreen = false;
+    private static final Logger LOGGER = Logger.getLogger(BeerShowcase.class);
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        JFrame mainFrame = new JFrame();
-        mainFrame.setSize(800, 600);
-        mainFrame.setTitle("Beer Showcase");
-        mainFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        mainFrame.setVisible(true);
+        BeerKnowledge beerKnowledge = askForBeerKnowledgeFile();
+        if (beerKnowledge != null)
+            openTheFrame(beerKnowledge);
+    }
+        
+    private static void toggleFullScreenMode() {
+        if (fullScreen)
+            grDevice.setFullScreenWindow(null);
+        else
+            grDevice.setFullScreenWindow(RunningApplication.MainFrame);
+        fullScreen = !fullScreen;
+    }
+
+    private static void openTheFrame(BeerKnowledge beerKnowledge) {
+        setUpTheFrame(beerKnowledge);  
+        setUpKeyListener();
+        launchApplication();
+    }
+
+    private static void launchApplication() {
+        try {
+            RunningApplication.MainFrame.setVisible(true);
+        } finally {
+            grDevice.setFullScreenWindow(null);
+        }
+    }
+
+    private static void setUpKeyListener() {
+        RunningApplication.MainFrame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if ((e.getKeyCode() == KeyEvent.VK_F) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+                    toggleFullScreenMode();
+            }
+        });
+    }
+
+    private static void setUpTheFrame(BeerKnowledge beerKnowledge) throws HeadlessException {
+        RunningApplication.MainFrame = new JFrame();
+        RunningApplication.MainFrame.setSize(800, 600);
+        RunningApplication.MainFrame.setTitle("Beer Showcase");
+        RunningApplication.MainFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        RunningApplication.MainFrame.setContentPane(new BeerShowcasePane(beerKnowledge));
+    }
+
+    private static BeerKnowledge askForBeerKnowledgeFile() {
+        BeerKnowledge beerKnowledge = null;
+        ShowcaseStartDialog showcaseStartDialog = new ShowcaseStartDialog(null);
+        showcaseStartDialog.setLocationRelativeTo(null);
+        while (beerKnowledge == null) {
+            showcaseStartDialog.setVisible(true);
+            File file = showcaseStartDialog.getSelectedFile();
+            if (file == null)
+                return null;
+            beerKnowledge = readBeerKnowledge(file);
+        }
+        return beerKnowledge;
+    }
+
+    private static BeerKnowledge readBeerKnowledge(File file) {
+        try {
+            JsonObject json = readJsonFromFile(file);
+            BeerKnowledge beerKnowledge = new BeerKnowledge();
+            beerKnowledge.fromJson(json);
+            return beerKnowledge;
+        } catch (Exception ex) {
+            LOGGER.log(Level.INFO, null, ex);
+            JOptionPane.showMessageDialog(null, "Selected file seems to be corrupted.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    }
+
+    private static JsonObject readJsonFromFile(File file) throws FileNotFoundException {
+        JsonObject json;
+        try (JsonReader jsonReader = Json.createReader(new FileInputStream(file))) {
+            json = jsonReader.readObject();
+        }
+        return json;
     }
     
 }

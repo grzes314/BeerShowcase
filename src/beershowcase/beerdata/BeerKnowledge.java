@@ -5,6 +5,7 @@ import beershowcase.beerdata.properties.BeerPropertyChangeEvent;
 import beershowcase.beerdata.properties.BeerPropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.json.Json;
@@ -20,7 +21,7 @@ public class BeerKnowledge implements JsonRepresentable, BeerPropertyChangeListe
     private final ArrayList<Brewery> breweries = new ArrayList<>();
     private final BeerFactory beerFactory = new BeerFactory();
     private final ArrayList<Beer> beers = new ArrayList<>();
-    private Map<StyleKeywords, Collection<Beer>> styleToBeers;
+    private Map<StyleKeywords, ArrayList<Beer>> styleToBeers = new HashMap<>();
     static Logger LOGGER = Logger.getLogger(BeerKnowledge.class.getName());
 
 
@@ -91,5 +92,35 @@ public class BeerKnowledge implements JsonRepresentable, BeerPropertyChangeListe
     @Override
     public void propertyChanged(BeerPropertyChangeEvent propertyChange) {
         // TODO
+    }
+
+    public ArrayList<Beer> getBeersWithKeywords(ArrayList<StyleKeywords> keywords) {
+        if (keywords.isEmpty())
+            return (ArrayList<Beer>) beers.clone();
+        
+        // TODO do it the proper way
+        ArrayList<Beer> result = new ArrayList<>();
+        for (Beer beer: beers) {
+            if (satisfies(beer, keywords))
+                result.add(beer);
+        }
+        return result;
+    }
+
+    private boolean satisfies(Beer beer, ArrayList<StyleKeywords> keywords) {
+        for (StyleKeywords keyword: keywords) {
+            if (!beer.hasStyle(keyword))
+                return false;
+        }
+        return true;
+    }
+
+    public Brewery getBreweryOfBeer(Beer beer) {
+        //TODO do it right
+        for (Brewery b: breweries) {
+            if (beer.getBreweryId() == b.getId())
+                return b;
+        }
+        throw new RuntimeException("Beer with no brewery");
     }
 }

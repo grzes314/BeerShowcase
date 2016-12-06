@@ -21,7 +21,7 @@ public class StylesPanel extends JPanel {
     }
     
     private void init() {
-        setLayout(new GridLayout(10, 5));
+        setLayout(new GridLayout(12, 5));
         StyleKeywords[] possibleValues = StyleKeywords.class.getEnumConstants();
         for (StyleKeywords keyword: possibleValues) {
             JCheckBox checkBox = new JCheckBox(keyword.name());
@@ -37,5 +37,10 @@ public class StylesPanel extends JPanel {
                 arr.add(pair.getKey());
         }
         return arr;
+    }
+
+    public void reset() {
+        for (Map.Entry<StyleKeywords, JCheckBox> pair: checkBoxes.entrySet())
+            pair.getValue().setSelected(false);
     }
 }
