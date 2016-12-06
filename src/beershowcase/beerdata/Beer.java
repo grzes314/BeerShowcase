@@ -47,7 +47,7 @@ public class Beer implements JsonRepresentable {
     public void fromJson(JsonObject json) throws BeerKnowledgeParserException {
         id = json.getInt("id");
         name = json.getString("name");
-        //declaredStyle = json.getString("declaredStyle");
+        declaredStyle = json.getString("declaredStyle");
         breweryId = json.getInt("breweryId");
         descritpion = json.getString("descritpion");
         available = json.getBoolean("available");

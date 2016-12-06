@@ -56,6 +56,7 @@ public class BeerShowcase {
     private static void launchApplication() {
         try {
             RunningApplication.MainFrame.setVisible(true);
+            toggleFullScreenMode();
         } finally {
             grDevice.setFullScreenWindow(null);
         }
@@ -65,6 +66,7 @@ public class BeerShowcase {
         RunningApplication.MainFrame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                System.out.println("toggle full screen");
                 if ((e.getKeyCode() == KeyEvent.VK_F) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
                     toggleFullScreenMode();
             }

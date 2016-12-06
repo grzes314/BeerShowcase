@@ -3,8 +3,10 @@ package beershowcase;
 
 import beershowcase.beerdata.Beer;
 import beershowcase.beerdata.Brewery;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 /**
  *
@@ -28,6 +30,7 @@ public class BeerViewPanel extends javax.swing.JPanel {
         description.setText(beer.getDescritpion());
         setBreweryLogo();
         setBeerImage();
+        description.setLineWrap(true);
     }
 
     /**
@@ -137,6 +140,7 @@ public class BeerViewPanel extends javax.swing.JPanel {
             breweryLogoLabel.setIcon(null);
             breweryLogoLabel.setText("No logo");
         } else {
+            //breweryLogoLabel.setIcon(new ImageIcon(resizeImageToFitLabel(image, breweryLogoLabel)));
             breweryLogoLabel.setIcon(new ImageIcon(image));
             breweryLogoLabel.setText("");
         }
@@ -151,8 +155,16 @@ public class BeerViewPanel extends javax.swing.JPanel {
             beerImageLabel.setIcon(null);
             beerImageLabel.setText("No picture");
         } else {
+            //beerImageLabel.setIcon(new ImageIcon(resizeImageToFitLabel(image, beerImageLabel)));
             beerImageLabel.setIcon(new ImageIcon(image));
             beerImageLabel.setText("");
         }
+    }
+    
+    Image resizeImageToFitLabel(BufferedImage image, JLabel label) {
+        int width = Math.max(beerImageLabel.getWidth(), 1);
+        int height = Math.max(beerImageLabel.getHeight(), 1);
+        Image dimg = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return dimg;
     }
 }
