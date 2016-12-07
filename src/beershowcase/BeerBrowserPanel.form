@@ -18,9 +18,9 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="filler1" alignment="0" max="32767" attributes="0"/>
-                  <Component id="prevButton" alignment="0" pref="107" max="32767" attributes="0"/>
+                  <Component id="filler1" alignment="0" pref="107" max="32767" attributes="0"/>
                   <Component id="filler2" alignment="0" max="32767" attributes="0"/>
+                  <Component id="prevButton" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="beerViewContainer" max="32767" attributes="0"/>
@@ -48,15 +48,12 @@
                       <Component id="filler4" pref="38" max="32767" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="nextButton" min="-2" pref="66" max="-2" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="5" pref="5" max="-2" attributes="0"/>
-                      <Component id="prevButton" max="32767" attributes="0"/>
-                  </Group>
+                  <Component id="nextButton" pref="66" max="32767" attributes="0"/>
+                  <Component id="prevButton" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="filler3" pref="170" max="32767" attributes="0"/>
                   <Component id="filler1" max="32767" attributes="0"/>
@@ -67,14 +64,6 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JToggleButton" name="prevButton">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Previous"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prevButtonActionPerformed"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JButton" name="nextButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Next"/>
@@ -171,5 +160,13 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="prevButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Prev"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prevButtonActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>
