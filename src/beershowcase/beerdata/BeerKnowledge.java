@@ -1,8 +1,6 @@
 
 package beershowcase.beerdata;
 
-import beershowcase.beerdata.properties.BeerPropertyChangeEvent;
-import beershowcase.beerdata.properties.BeerPropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,12 +14,12 @@ import javax.json.JsonObject;
  * It's also a proxy in creation of new beers and breweries.
  * @author Grzegorz Łoś
  */
-public class BeerKnowledge implements JsonRepresentable, BeerPropertyChangeListener {
+public class BeerKnowledge implements JsonRepresentable {
     private final BreweryFactory breweryFactory = new BreweryFactory();
     private final ArrayList<Brewery> breweries = new ArrayList<>();
     private final BeerFactory beerFactory = new BeerFactory();
     private final ArrayList<Beer> beers = new ArrayList<>();
-    private Map<StyleKeywords, ArrayList<Beer>> styleToBeers = new HashMap<>();
+    private final Map<Integer, Brewery> beerIdToBrewery = new HashMap<>();
     static Logger LOGGER = Logger.getLogger(BeerKnowledge.class.getName());
 
 
@@ -49,11 +47,11 @@ public class BeerKnowledge implements JsonRepresentable, BeerPropertyChangeListe
         JsonUtils.fillJsonArray(json.getJsonArray("breweries"), breweries);
 
         int beersCount = json.getInt("beersCount");
-        while (beersCount-- > 0)
-            beers.add(beerFactory.makeBeerForRead());
+        while (beersCount-- > 0) {
+            Beer beer = beerFactory.makeBeerForRead();
+            beers.add(beer);
+        }
         JsonUtils.fillJsonArray(json.getJsonArray("beers"), beers);
-        
-        rebuildDependencies();
     }
 
     public ArrayList<Brewery> getBreweries() {
@@ -69,7 +67,6 @@ public class BeerKnowledge implements JsonRepresentable, BeerPropertyChangeListe
     public Beer makeBeer() {
         Beer beer = beerFactory.makeBeer();
         beers.add(beer);
-        beer.addPropertyChangeListener(this);
         return beer;
     }
 
@@ -83,15 +80,6 @@ public class BeerKnowledge implements JsonRepresentable, BeerPropertyChangeListe
 
     public void deleteBrewery(Brewery brewery) {
         breweries.remove(brewery);
-    }
-
-    private void rebuildDependencies() {
-        // TODO
-    }
-
-    @Override
-    public void propertyChanged(BeerPropertyChangeEvent propertyChange) {
-        // TODO
     }
 
     public ArrayList<Beer> getBeersWithKeywords(ArrayList<StyleKeywords> keywords) {

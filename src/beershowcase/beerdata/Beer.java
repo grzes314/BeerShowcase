@@ -1,12 +1,6 @@
 
 package beershowcase.beerdata;
 
-import beershowcase.beerdata.properties.BeerBreweryChangeEvent;
-import beershowcase.beerdata.properties.BeerNameChangedEvent;
-import beershowcase.beerdata.properties.BeerPropertyChangeEvent;
-import beershowcase.beerdata.properties.BeerPropertyChangeListener;
-import beershowcase.beerdata.properties.BeerStyleKeywordAddedEvent;
-import beershowcase.beerdata.properties.BeerStyleKeywordRemovedEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.json.Json;
@@ -27,7 +21,6 @@ public class Beer implements JsonRepresentable {
     private final LazyImage labelImage = new LazyImage();
     private final LazyImage bottleImage = new LazyImage();
     private final ArrayList<StyleKeywords> keywords = new ArrayList<>();
-    private final ArrayList<BeerPropertyChangeListener> changeListeners = new ArrayList<>();
 
     @Override
     public JsonObject toJson() {
@@ -84,7 +77,6 @@ public class Beer implements JsonRepresentable {
     public void setName(String newName) {
         String oldName = this.name;
         this.name = newName;
-        firePropertyChangeEvent(new BeerNameChangedEvent(this, oldName, newName));
     }
 
     public String getDeclaredStyle() {
@@ -102,7 +94,6 @@ public class Beer implements JsonRepresentable {
     public void setBreweryId(int newBrewery) {
         int oldBrewery = this.breweryId;
         this.breweryId = newBrewery;
-        firePropertyChangeEvent(new BeerBreweryChangeEvent(this, oldBrewery, newBrewery));
         
     }
 
@@ -149,14 +140,12 @@ public class Beer implements JsonRepresentable {
     public void addStyleKeyword(StyleKeywords keyword) {
         if (!keywords.contains(keyword)) {
             keywords.add(keyword);
-            firePropertyChangeEvent(new BeerStyleKeywordAddedEvent(this, keyword));
         }        
     }
     
     public void removeStyleKeyword(StyleKeywords keyword) {
         if (keywords.contains(keyword)) {
             keywords.remove(keyword);
-            firePropertyChangeEvent(new BeerStyleKeywordRemovedEvent(this, keyword));
         }        
     }
 
@@ -189,16 +178,7 @@ public class Beer implements JsonRepresentable {
         return "label_" + id + ".jpg";
     }
     
-    public void addPropertyChangeListener(BeerPropertyChangeListener bpcl) {
-        changeListeners.add(bpcl);
-    }
-
-    private void firePropertyChangeEvent(BeerPropertyChangeEvent propertyChangedEvent) {
-        for (BeerPropertyChangeListener bpcl: changeListeners)
-            bpcl.propertyChanged(propertyChangedEvent);
-    }
-
-    boolean hasStyle(StyleKeywords keyword) {
+    public boolean hasStyle(StyleKeywords keyword) {
         return keywords.contains(keyword);
     }
 }
