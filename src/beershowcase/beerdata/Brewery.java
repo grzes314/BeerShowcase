@@ -79,6 +79,7 @@ public class Brewery implements JsonRepresentable {
 
     public void setName(String name) {
         this.name = name;
+        fireEditionEvent(new EditionEvent(this));
     }
 
     public BufferedImage getLogo() {
@@ -90,6 +91,7 @@ public class Brewery implements JsonRepresentable {
         this.logo.set(logo);
         this.logo.setImageName(makeLogoImageName());
         this.logo.save();
+        fireEditionEvent(new EditionEvent(this));
     }    
     
     private String makeLogoImageName() {

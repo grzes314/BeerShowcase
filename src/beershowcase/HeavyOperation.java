@@ -25,13 +25,13 @@ public abstract class HeavyOperation {
     }
     
     
-    protected abstract void abcd();
+    protected abstract void timeConsumingTask();
     
     public void execute() {
         SwingWorker<Void, Void> sWorker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
-                abcd();
+                timeConsumingTask();
                 return null;
             }
             

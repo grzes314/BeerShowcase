@@ -4,12 +4,8 @@ package beershowcase;
 import beershowcase.beerdata.BeerKnowledge;
 import beershowcase.beerdata.Brewery;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.Collection;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -19,15 +15,12 @@ import javax.swing.table.TableCellRenderer;
  * @author grzes
  */
 public class BreweriesTable extends javax.swing.JPanel {
-
-    BeerKnowledge beerKnowledge;
     BreweriesTableModel tableModel;
     
     final int MIN_ROW_HEIGHT = 30;
 
-    public BreweriesTable(BeerKnowledge beerKnowledge) {
-        this.beerKnowledge = beerKnowledge;
-        tableModel = new BreweriesTableModel(beerKnowledge);
+    public BreweriesTable() {
+        tableModel = new BreweriesTableModel();
         initComponents();
         table.setAutoCreateRowSorter(true);
         table.setDefaultRenderer(Image.class, new ImageCellRenderer());
@@ -53,6 +46,12 @@ public class BreweriesTable extends javax.swing.JPanel {
         table.setRequestFocusEnabled(false);
         table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(table);
+
+        searchField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchFieldActionPerformed(evt);
+            }
+        });
 
         searchButton.setText("Search");
         searchButton.addActionListener(new java.awt.event.ActionListener() {
@@ -85,8 +84,12 @@ public class BreweriesTable extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-        searchClicked();
+        searchTriggered();
     }//GEN-LAST:event_searchButtonActionPerformed
+
+    private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
+        searchTriggered();
+    }//GEN-LAST:event_searchFieldActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -96,11 +99,12 @@ public class BreweriesTable extends javax.swing.JPanel {
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 
-
-    public final void reset(BeerKnowledge beerKnowledge) {
-        this.beerKnowledge = beerKnowledge;
+    /**
+     * Notify BreweriesTable that BeerKnowledge object has been changed.
+     */
+    public void reset() {
         searchField.setText("");
-        tableModel.setBeerKnowledge(beerKnowledge);
+        tableModel.reset();
         repaint();
         revalidate();
     }
@@ -114,12 +118,11 @@ public class BreweriesTable extends javax.swing.JPanel {
         return model.getBreweryAt(r);
     }
 
-    private void searchClicked() {
+    private void searchTriggered() {
         String namePart = searchField.getText();
-        Collection<Brewery> all = beerKnowledge.getBreweries();
         new HeavyOperation("Selecting breweries") {
             @Override
-            protected void abcd() {
+            protected void timeConsumingTask() {
                 tableModel.setRequieredNamePart(namePart);
             }
         }.execute();        
@@ -129,23 +132,19 @@ public class BreweriesTable extends javax.swing.JPanel {
 class BreweriesTableModel extends AbstractTableModel
         implements BeerKnowledge.ChangeListener, Brewery.ChangeListener {
 
-    BeerKnowledge beerKnowledge;
     ArrayList<Brewery> displayed = new ArrayList<>();
     String namePart = "";
 
-    BreweriesTableModel(BeerKnowledge beerKnowledge) {
-        this.beerKnowledge = beerKnowledge;
-        beerKnowledge.addChangeListener(this);
-        displayed.addAll(beerKnowledge.getBreweries());
+    BreweriesTableModel() {
+        RunningApplication.beerKnowledge.addChangeListener(this);
+        displayed.addAll(RunningApplication.beerKnowledge.getBreweries());
     }
     
-    public void setBeerKnowledge(BeerKnowledge beerKnowledge) {
-        this.beerKnowledge.removeChangeListener(this);
+    public void reset() {
         displayed.clear();
         
-        this.beerKnowledge = beerKnowledge;
-        beerKnowledge.addChangeListener(this);
-        displayed.addAll(beerKnowledge.getBreweries());
+        RunningApplication.beerKnowledge.addChangeListener(this);
+        displayed.addAll(RunningApplication.beerKnowledge.getBreweries());
         fireTableDataChanged();
     }
     
@@ -157,7 +156,7 @@ class BreweriesTableModel extends AbstractTableModel
     }
     
     private void rebuildDisplayed() {
-        for (Brewery br: beerKnowledge.getBreweries()) {
+        for (Brewery br: RunningApplication.beerKnowledge.getBreweries()) {
             if (isDisplayed(br))
                 displayed.add(br);
         }
@@ -231,8 +230,10 @@ class BreweriesTableModel extends AbstractTableModel
             displayed.add(br);
             br.addChangeListener(this);
         }
-        if (event.changeType == BeerKnowledge.ChangeType.Removal)
+        if (event.changeType == BeerKnowledge.ChangeType.Removal) {
             displayed.remove(br);
+            br.removeChangeListener(this);
+        }
         fireTableDataChanged();
     }
 

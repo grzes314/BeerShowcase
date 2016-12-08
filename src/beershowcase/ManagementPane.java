@@ -8,18 +8,16 @@ import beershowcase.beerdata.BeerKnowledge;
  * @author grzes
  */
 public class ManagementPane extends javax.swing.JPanel {
-
-    BeerKnowledge beerKnowledge = new BeerKnowledge();
-    BreweriesManagementPane breweriesManagementPane = new BreweriesManagementPane(beerKnowledge);
-    BeersManagementPane beersManagementPane = new BeersManagementPane(beerKnowledge);
+    BreweriesManagementPane breweriesManagementPane = new BreweriesManagementPane();
+    BeersManagementPane beersManagementPane = new BeersManagementPane();
     
     /**
      * Creates new form BeerManagementPane
      */
     public ManagementPane() {
         initComponents();
-        tabbedPane.setComponentAt(0, breweriesManagementPane);
-        tabbedPane.setComponentAt(1, beersManagementPane);
+        tabbedPane.setComponentAt(0, beersManagementPane);
+        tabbedPane.setComponentAt(1, breweriesManagementPane);
     }
 
     /**
@@ -46,7 +44,7 @@ public class ManagementPane extends javax.swing.JPanel {
             .addGap(0, 272, Short.MAX_VALUE)
         );
 
-        tabbedPane.addTab("Breweries", breweriesContainer);
+        tabbedPane.addTab("Beers", breweriesContainer);
 
         javax.swing.GroupLayout beersContainerLayout = new javax.swing.GroupLayout(beersContainer);
         beersContainer.setLayout(beersContainerLayout);
@@ -59,7 +57,7 @@ public class ManagementPane extends javax.swing.JPanel {
             .addGap(0, 272, Short.MAX_VALUE)
         );
 
-        tabbedPane.addTab("Beers", beersContainer);
+        tabbedPane.addTab("Breweries", beersContainer);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -80,19 +78,12 @@ public class ManagementPane extends javax.swing.JPanel {
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
 
-    void startFromScratch() {
-        beerKnowledge = new BeerKnowledge();
-        breweriesManagementPane.reset(beerKnowledge);
-        beersManagementPane.reset(beerKnowledge);
-    }
-    
-    void setBeerKnowledge(BeerKnowledge beerKnowledge) {
-        this.beerKnowledge = beerKnowledge;
-        breweriesManagementPane.reset(beerKnowledge);
-        beersManagementPane.reset(beerKnowledge);
-    }
-
-    BeerKnowledge getBeerKnowledge() {
-        return beerKnowledge;
+   
+    /**
+     * Notify ManagementPane that BeerKnowledge object has been changed.
+     */
+    public void reset() {
+        breweriesManagementPane.reset();
+        beersManagementPane.reset();
     }
 }

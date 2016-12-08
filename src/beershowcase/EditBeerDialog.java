@@ -13,8 +13,6 @@ import javax.swing.JScrollPane;
  * @author Grzegorz Łoś
  */
 public class EditBeerDialog extends javax.swing.JDialog {
-
-    BeerKnowledge beerKnowledge;
     StylesPanel stylesPanel = new StylesPanel();
     SelectImagePanel bottleImageSelector = new SelectImagePanel();
     SelectImagePanel labelImageSelector = new SelectImagePanel();
@@ -23,9 +21,8 @@ public class EditBeerDialog extends javax.swing.JDialog {
     /**
      * Creates new form EditBeerDialog
      */
-    public EditBeerDialog(java.awt.Frame parent, BeerKnowledge beerKnowledge) {
+    public EditBeerDialog(java.awt.Frame parent) {
         super(parent, true);
-        this.beerKnowledge = beerKnowledge;
         initComponents();
         
         setTitle("Add new beer");
@@ -405,7 +402,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
 
     private void selectBrewerClicked() {
         SelectBreweryDialog selectBreweryDialog = new SelectBreweryDialog(
-                RunningApplication.MainFrame, beerKnowledge);
+                RunningApplication.MainFrame);
         selectBreweryDialog.setVisible(true);
         selectedBrewery = selectBreweryDialog.getSelectedBrewery();
         if (selectedBrewery != null)

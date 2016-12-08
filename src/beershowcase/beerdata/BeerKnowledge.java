@@ -45,12 +45,13 @@ public class BeerKnowledge implements JsonRepresentable {
         void knowledgeChanged(ChangeEvent event);
     }
 
-    public boolean addChangeListener(ChangeListener cl) {
-        return changeListeners.add(cl);
+    public void addChangeListener(ChangeListener cl) {
+        if (!changeListeners.contains(cl))
+            changeListeners.add(cl);
     }
 
-    public boolean removeChangeListener(ChangeListener cl) {
-        return changeListeners.remove(cl);
+    public void removeChangeListener(ChangeListener cl) {
+        changeListeners.remove(cl);
     }
     
     public void fireChangeEvent(ChangeEvent event) {
@@ -134,6 +135,13 @@ public class BeerKnowledge implements JsonRepresentable {
         for (Beer beer: beers) {
             if (filter.filter(beer))
                 result.add(beer);
+        }
+        return result;
+    }
+    public ArrayList<Beer> getBeers() {
+        ArrayList<Beer> result = new ArrayList<>();
+        for (Beer beer: beers) {
+            result.add(beer);
         }
         return result;
     }

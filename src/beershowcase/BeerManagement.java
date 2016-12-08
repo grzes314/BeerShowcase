@@ -98,19 +98,20 @@ public class BeerManagement extends JFrame {
     }
 
     private void tabularasaClicked() {
-        managementPane.startFromScratch();
+        BeerKnowledge beerKnowledge = new BeerKnowledge();
+        switchKnowledge(beerKnowledge);
     }
 
 
     private void openClicked() {
-            File file = chooseFileToOpen();
-            if (file == null)
-                return;
+        File file = chooseFileToOpen();
+        if (file == null)
+            return;
         try {
             JsonObject json = readJsonFromFile(file);
             BeerKnowledge beerKnowledge = new BeerKnowledge();
             beerKnowledge.fromJson(json);
-            managementPane.setBeerKnowledge(beerKnowledge);
+            switchKnowledge(beerKnowledge);
         } catch (Exception ex) {
             LOGGER.log(Level.INFO, null, ex);
             JOptionPane.showMessageDialog(this, "Selected file seems to be corrupted.",
@@ -146,7 +147,7 @@ public class BeerManagement extends JFrame {
         File file = chooseFileToSave();
         if (file == null)
             return;
-        JsonObject json = managementPane.getBeerKnowledge().toJson();
+        JsonObject json = RunningApplication.beerKnowledge.toJson();
         try {
             saveJsonToFile(json, file);
         } catch (IOException ex) {
@@ -191,5 +192,10 @@ public class BeerManagement extends JFrame {
         if (confirm == JOptionPane.YES_OPTION) {
            dispose();
         }
+    }
+
+    private void switchKnowledge(BeerKnowledge beerKnowledge) {
+        RunningApplication.beerKnowledge = beerKnowledge;
+        managementPane.reset();
     }
 }

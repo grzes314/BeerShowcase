@@ -78,7 +78,7 @@ public class BeerShowcase {
         RunningApplication.MainFrame.setSize(800, 600);
         RunningApplication.MainFrame.setTitle("Beer Showcase");
         RunningApplication.MainFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        RunningApplication.MainFrame.setContentPane(new BeerShowcasePane(beerKnowledge));
+        RunningApplication.MainFrame.setContentPane(new BeerShowcasePane());
     }
 
     private static BeerKnowledge askForBeerKnowledgeFile() {

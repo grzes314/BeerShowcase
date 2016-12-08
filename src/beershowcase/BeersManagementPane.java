@@ -1,21 +1,23 @@
 
 package beershowcase;
 
-import beershowcase.beerdata.BeerKnowledge;
+import java.awt.BorderLayout;
 
 /**
  *
  * @author Grzegorz Łoś
  */
 public class BeersManagementPane extends javax.swing.JPanel {
-
-    BeerKnowledge beerKnowledge;
+    BeerBrowserPanel beerBrowserPanel;
+    
     /**
      * Creates new form BeersManagementPane
      */
-    public BeersManagementPane(BeerKnowledge beerKnowledge) {
-        this.beerKnowledge = beerKnowledge;
+    public BeersManagementPane() {
+        beerBrowserPanel = new BeerBrowserPanel();
         initComponents();
+        beersViewContainer.setLayout(new BorderLayout());
+        beersViewContainer.add(beerBrowserPanel);
     }
 
     /**
@@ -27,30 +29,94 @@ public class BeersManagementPane extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         addBeerButton = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
+        removeButton = new javax.swing.JButton();
+        modeButton = new javax.swing.JButton();
+        beersViewContainer = new javax.swing.JPanel();
 
-        addBeerButton.setText("Add beer");
+        jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        addBeerButton.setText("Add");
         addBeerButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addBeerButtonActionPerformed(evt);
             }
         });
 
+        editButton.setText("Edit");
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
+
+        removeButton.setText("Remove");
+        removeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeButtonActionPerformed(evt);
+            }
+        });
+
+        modeButton.setText("<html>Go to table mode");
+        modeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modeButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(addBeerButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(editButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(removeButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)
+                .addComponent(modeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addBeerButton)
+                    .addComponent(editButton)
+                    .addComponent(removeButton))
+                .addContainerGap())
+            .addComponent(modeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+        );
+
+        beersViewContainer.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        javax.swing.GroupLayout beersViewContainerLayout = new javax.swing.GroupLayout(beersViewContainer);
+        beersViewContainer.setLayout(beersViewContainerLayout);
+        beersViewContainerLayout.setHorizontalGroup(
+            beersViewContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        beersViewContainerLayout.setVerticalGroup(
+            beersViewContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 237, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(addBeerButton)
-                .addContainerGap(290, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(beersViewContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(addBeerButton)
-                .addContainerGap(263, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(beersViewContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -58,22 +124,38 @@ public class BeersManagementPane extends javax.swing.JPanel {
         addBeerClicked();
     }//GEN-LAST:event_addBeerButtonActionPerformed
 
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_editButtonActionPerformed
+
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_removeButtonActionPerformed
+
+    private void modeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modeButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_modeButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBeerButton;
+    private javax.swing.JPanel beersViewContainer;
+    private javax.swing.JButton editButton;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton modeButton;
+    private javax.swing.JButton removeButton;
     // End of variables declaration//GEN-END:variables
 
     private void addBeerClicked() {
-        EditBeerDialog editBeerDialog = new EditBeerDialog(RunningApplication.MainFrame, beerKnowledge);
+        EditBeerDialog editBeerDialog = new EditBeerDialog(RunningApplication.MainFrame);
         editBeerDialog.setVisible(true);
         if (editBeerDialog.isConfirmed()) {
-            editBeerDialog.fill(beerKnowledge.makeBeer());
+            editBeerDialog.fill(RunningApplication.beerKnowledge.makeBeer());
         }
     }
     
-    void reset(BeerKnowledge beerKnowledge) {
-        this.beerKnowledge = beerKnowledge;
-        //breweriesTable.reset(beerKnowledge);
+    void reset() {
+        beerBrowserPanel.setBeers(RunningApplication.beerKnowledge.getBeers());
         repaint();
         revalidate();
     }

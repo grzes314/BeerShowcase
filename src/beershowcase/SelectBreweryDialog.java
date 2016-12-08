@@ -17,12 +17,12 @@ public class SelectBreweryDialog extends javax.swing.JDialog {
     /**
      * Creates new form SelectBreweryDialog
      */
-    public SelectBreweryDialog(java.awt.Frame parent, BeerKnowledge beerKnowledge) {
+    public SelectBreweryDialog(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
         setTitle("Select brewery");
         breweriesContainer.setLayout(new BorderLayout());
-        breweriesTable = new BreweriesTable(beerKnowledge);
+        breweriesTable = new BreweriesTable();
         breweriesContainer.add(breweriesTable);
     }
 
