@@ -1,9 +1,12 @@
 
 package beershowcase;
 
-import beershowcase.beerdata.StyleKeywords;
+import beershowcase.beerdata.StyleKeyword;
+import beershowcase.beerdata.filters.Conjunction;
+import beershowcase.beerdata.filters.Filter;
+import beershowcase.beerdata.filters.StyleFilter;
 import java.awt.BorderLayout;
-import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
@@ -118,7 +121,11 @@ public class ParamSelectionPanel extends javax.swing.JPanel {
         beerShowcasePane.goToBrowsingMode();
     }
 
-    ArrayList<StyleKeywords> getSelectedKeywords() {
-        return stylesPanel.getSelectedKeywords();
+    Filter buildFilter() {
+        Conjunction f = new Conjunction();
+        Collection<StyleKeyword> keywords = stylesPanel.getSelectedKeywords();
+        for (StyleKeyword keyword: keywords)
+            f.add(new StyleFilter(keyword));
+        return f;        
     }
 }

@@ -3,7 +3,7 @@ package beershowcase;
 
 import beershowcase.beerdata.Beer;
 import beershowcase.beerdata.BeerKnowledge;
-import beershowcase.beerdata.StyleKeywords;
+import beershowcase.beerdata.filters.Filter;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 
@@ -55,8 +55,8 @@ public class BeerShowcasePane extends javax.swing.JPanel {
     void goToBrowsingMode() {
         removeAll();
         
-        ArrayList<StyleKeywords> keywords = paramSelectionPanel.getSelectedKeywords();
-        ArrayList<Beer> beers = beerKnowledge.getBeersWithKeywords(keywords);
+        Filter filter = paramSelectionPanel.buildFilter();
+        ArrayList<Beer> beers = beerKnowledge.getBeers(filter);
         beerBrowserPanel.setBeers(beers);
         
         add(beerBrowserPanel);

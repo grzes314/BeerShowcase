@@ -1,7 +1,7 @@
 
 package beershowcase;
 
-import beershowcase.beerdata.StyleKeywords;
+import beershowcase.beerdata.StyleKeyword;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import javax.swing.JPanel;
  * @author Grzegorz Łoś
  */
 public class StylesPanel extends JPanel {
-    private Map<StyleKeywords, JCheckBox> checkBoxes = new HashMap<>();
+    private Map<StyleKeyword, JCheckBox> checkBoxes = new HashMap<>();
     
     public StylesPanel() {
         init();
@@ -22,17 +22,17 @@ public class StylesPanel extends JPanel {
     
     private void init() {
         setLayout(new GridLayout(12, 5));
-        StyleKeywords[] possibleValues = StyleKeywords.class.getEnumConstants();
-        for (StyleKeywords keyword: possibleValues) {
+        StyleKeyword[] possibleValues = StyleKeyword.class.getEnumConstants();
+        for (StyleKeyword keyword: possibleValues) {
             JCheckBox checkBox = new JCheckBox(keyword.name());
             checkBoxes.put(keyword, checkBox);
             add(checkBox);
         }
     }
     
-    public ArrayList<StyleKeywords> getSelectedKeywords() {
-        ArrayList<StyleKeywords> arr = new ArrayList<>();
-        for (Map.Entry<StyleKeywords, JCheckBox> pair: checkBoxes.entrySet()) {
+    public ArrayList<StyleKeyword> getSelectedKeywords() {
+        ArrayList<StyleKeyword> arr = new ArrayList<>();
+        for (Map.Entry<StyleKeyword, JCheckBox> pair: checkBoxes.entrySet()) {
             if (pair.getValue().isSelected())
                 arr.add(pair.getKey());
         }
@@ -40,7 +40,7 @@ public class StylesPanel extends JPanel {
     }
 
     public void reset() {
-        for (Map.Entry<StyleKeywords, JCheckBox> pair: checkBoxes.entrySet())
+        for (Map.Entry<StyleKeyword, JCheckBox> pair: checkBoxes.entrySet())
             pair.getValue().setSelected(false);
     }
 }

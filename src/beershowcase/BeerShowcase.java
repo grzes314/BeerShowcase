@@ -2,7 +2,6 @@
 package beershowcase;
 
 import beershowcase.beerdata.BeerKnowledge;
-import com.sun.istack.internal.logging.Logger;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
@@ -12,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
@@ -28,7 +28,7 @@ public class BeerShowcase {
     private static final GraphicsDevice grDevice = GraphicsEnvironment
         .getLocalGraphicsEnvironment().getDefaultScreenDevice();
     private static boolean fullScreen = false;
-    private static final Logger LOGGER = Logger.getLogger(BeerShowcase.class);
+    private static final Logger LOGGER = Logger.getLogger(BeerShowcase.class.getName());
     
     /**
      * @param args the command line arguments

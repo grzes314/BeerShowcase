@@ -3,10 +3,16 @@ package beershowcase;
 
 import beershowcase.beerdata.BeerKnowledge;
 import beershowcase.beerdata.Brewery;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Image;
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -15,14 +21,17 @@ import javax.swing.table.AbstractTableModel;
 public class BreweriesTable extends javax.swing.JPanel {
 
     BeerKnowledge beerKnowledge;
+    BreweriesTableModel tableModel;
     
     final int MIN_ROW_HEIGHT = 30;
 
     public BreweriesTable(BeerKnowledge beerKnowledge) {
         this.beerKnowledge = beerKnowledge;
+        tableModel = new BreweriesTableModel(beerKnowledge);
         initComponents();
-        setRowHeights();
         table.setAutoCreateRowSorter(true);
+        table.setDefaultRenderer(Image.class, new ImageCellRenderer());
+        table.setRowHeight(100);
     }
 
     /**
@@ -36,65 +45,64 @@ public class BreweriesTable extends javax.swing.JPanel {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+        searchField = new javax.swing.JTextField();
+        searchButton = new javax.swing.JButton();
 
-        table.setModel(new BreweriesTableModel(beerKnowledge));
+        table.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        table.setModel(tableModel);
         table.setRequestFocusEnabled(false);
         table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(table);
+
+        searchButton.setText("Search");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(searchButton)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        searchClicked();
+    }//GEN-LAST:event_searchButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JTextField searchField;
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 
 
     public final void reset(BeerKnowledge beerKnowledge) {
         this.beerKnowledge = beerKnowledge;
-        ((BreweriesTableModel) table.getModel()).setBeerKnowledge(beerKnowledge);
-        setRowHeights();
+        searchField.setText("");
+        tableModel.setBeerKnowledge(beerKnowledge);
         repaint();
         revalidate();
-    }
-    
-    public void breweryAdded() {
-        ((AbstractTableModel) table.getModel()).fireTableDataChanged();
-        //setRowHeight( table.getModel().getRowCount() - 1);
-        setRowHeights();
-    }
-    
-    public void notifyDataChanged() {
-        ((AbstractTableModel) table.getModel()).fireTableDataChanged();
-        setRowHeights();
-    }
-    
-    public void setRowHeight(int row) {
-        BreweriesTableModel model = (BreweriesTableModel) table.getModel();
-        int height = MIN_ROW_HEIGHT;
-        Object ob = model.getValueAt(row, 1);
-        if (ob != null) {
-            height = Math.max(height, ((Icon) ob).getIconHeight());
-        }
-        table.setRowHeight(row, height);
-    }
-    
-    private void setRowHeights() {
-        BreweriesTableModel model = (BreweriesTableModel) table.getModel();
-        int rowCount = model.getRowCount();
-        for (int row = 0; row < rowCount; ++row) 
-            setRowHeight(row);
     }
 
     public Brewery getSelectedItem() {
@@ -105,27 +113,63 @@ public class BreweriesTable extends javax.swing.JPanel {
         BreweriesTableModel model = (BreweriesTableModel) table.getModel();
         return model.getBreweryAt(r);
     }
+
+    private void searchClicked() {
+        String namePart = searchField.getText();
+        Collection<Brewery> all = beerKnowledge.getBreweries();
+        new HeavyOperation("Selecting breweries") {
+            @Override
+            protected void abcd() {
+                tableModel.setRequieredNamePart(namePart);
+            }
+        }.execute();        
+    }
 }
 
-class BreweriesTableModel extends AbstractTableModel {
+class BreweriesTableModel extends AbstractTableModel
+        implements BeerKnowledge.ChangeListener, Brewery.ChangeListener {
 
     BeerKnowledge beerKnowledge;
+    ArrayList<Brewery> displayed = new ArrayList<>();
+    String namePart = "";
 
-    public BreweriesTableModel(BeerKnowledge beerKnowledge) {
+    BreweriesTableModel(BeerKnowledge beerKnowledge) {
         this.beerKnowledge = beerKnowledge;
+        beerKnowledge.addChangeListener(this);
+        displayed.addAll(beerKnowledge.getBreweries());
     }
-
-    public BeerKnowledge getBeerKnowledge() {
-        return beerKnowledge;
-    }
-
+    
     public void setBeerKnowledge(BeerKnowledge beerKnowledge) {
+        this.beerKnowledge.removeChangeListener(this);
+        displayed.clear();
+        
         this.beerKnowledge = beerKnowledge;
+        beerKnowledge.addChangeListener(this);
+        displayed.addAll(beerKnowledge.getBreweries());
+        fireTableDataChanged();
+    }
+    
+    public void setRequieredNamePart(String namePart) {
+        displayed.clear();
+        this.namePart = namePart.toLowerCase();
+        rebuildDisplayed();
+        fireTableDataChanged();
+    }
+    
+    private void rebuildDisplayed() {
+        for (Brewery br: beerKnowledge.getBreweries()) {
+            if (isDisplayed(br))
+                displayed.add(br);
+        }
+    }
+    
+    private boolean isDisplayed(Brewery br) {
+        return br.getName().toLowerCase().contains(namePart);
     }
     
     @Override
     public int getRowCount() {
-        return beerKnowledge.getBreweries().size();
+        return displayed.size();
     }
 
     @Override
@@ -151,7 +195,7 @@ class BreweriesTableModel extends AbstractTableModel {
             case 0:
                 return String.class;
             case 1:
-                return Icon.class;
+                return Image.class;
             default:
                 throw new RuntimeException("Internal error");
         }
@@ -159,20 +203,54 @@ class BreweriesTableModel extends AbstractTableModel {
     
     @Override
     public Object getValueAt(int row, int col) {
-        Brewery b = beerKnowledge.getBreweries().get(row);
+        Brewery b = displayed.get(row);
         Image logo = b.getLogo();
         switch(col) {
             case 0:
                 return b.getName();
             case 1:
-                return logo == null ? null : new ImageIcon(b.getLogo());
+                return logo;
             default:
                 throw new RuntimeException("Internal error");
         }
     }
     
     public Brewery getBreweryAt(int row) {
-        return beerKnowledge.getBreweries().get(row);
+        return displayed.get(row);
+    }
+
+    @Override
+    public void knowledgeChanged(BeerKnowledge.ChangeEvent event) {
+        if (event.objectsClass != Brewery.class)
+            return ;
+        Brewery br = (Brewery) event.affectedObject;
+        if (!isDisplayed(br))
+            return;
+        
+        if (event.changeType == BeerKnowledge.ChangeType.Addition) {
+            displayed.add(br);
+            br.addChangeListener(this);
+        }
+        if (event.changeType == BeerKnowledge.ChangeType.Removal)
+            displayed.remove(br);
+        fireTableDataChanged();
+    }
+
+    @Override
+    public void breweryEdited(Brewery.EditionEvent event) {
+        if (isDisplayed(event.source))
+            fireTableDataChanged();
+    }
+    
+}
+
+final class ImageCellRenderer extends ImagePanel implements TableCellRenderer {    
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value,
+            boolean isSelected, boolean hasFocus, int row, int column) {
+        Image img = (Image) value;
+        setImage(img);
+        return this;
     }
     
 }

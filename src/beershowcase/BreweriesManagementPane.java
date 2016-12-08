@@ -2,8 +2,11 @@
 package beershowcase;
 
 import beershowcase.beerdata.BeerKnowledge;
+import beershowcase.beerdata.BeerKnowledgeException;
 import beershowcase.beerdata.Brewery;
 import java.awt.BorderLayout;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,6 +17,7 @@ public class BreweriesManagementPane extends javax.swing.JPanel {
 
     BeerKnowledge beerKnowledge;
     BreweriesTable breweriesTable;
+    private static Logger LOGGER = Logger.getLogger(BreweriesManagementPane.class.getName());
     
     public BreweriesManagementPane(BeerKnowledge beerKnowledge) {
         initComponents();
@@ -142,7 +146,6 @@ public class BreweriesManagementPane extends javax.swing.JPanel {
             Brewery brewery = beerKnowledge.makeBrewery();
             brewery.setName(addBreweryDialog.getBreweryName());
             brewery.setLogo(addBreweryDialog.getLogo());
-            breweriesTable.breweryAdded();
         }
     }
 
@@ -161,13 +164,12 @@ public class BreweriesManagementPane extends javax.swing.JPanel {
                 "Confirm deletion", JOptionPane.YES_NO_OPTION, 
                 JOptionPane.QUESTION_MESSAGE, null, null, null);
             if (res == JOptionPane.YES_OPTION) {
-                int count = beerKnowledge.getBeersOf(brewery).size();
-                if (count > 0) {
-                    JOptionPane.showMessageDialog(this, "Cannot delete brewery, because related beers exist",
-                            "Operation failed", JOptionPane.WARNING_MESSAGE);
-                } else {
+                try {
                     beerKnowledge.deleteBrewery(brewery);
-                    breweriesTable.notifyDataChanged();
+                } catch (BeerKnowledgeException ex) {
+                    String mssg = "Cannot delete brewery, because related beers exist";                        
+                    LOGGER.log(Level.INFO, mssg, ex);
+                    JOptionPane.showMessageDialog(this, mssg, "Operation failed", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }
@@ -181,7 +183,6 @@ public class BreweriesManagementPane extends javax.swing.JPanel {
             if (dialog.isApproved()) {
                 brewery.setName(dialog.getBreweryName());
                 brewery.setLogo(dialog.getLogo());
-                breweriesTable.notifyDataChanged();
             }
         }
     }

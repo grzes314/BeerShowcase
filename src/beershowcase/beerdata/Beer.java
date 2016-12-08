@@ -20,8 +20,36 @@ public class Beer implements JsonRepresentable {
     private boolean available = true;
     private final LazyImage labelImage = new LazyImage();
     private final LazyImage bottleImage = new LazyImage();
-    private final ArrayList<StyleKeywords> keywords = new ArrayList<>();
+    private final ArrayList<StyleKeyword> keywords = new ArrayList<>();
+    
+    private final ArrayList<ChangeListener> changeListeners = new ArrayList<>();
 
+    public static class EditionEvent {
+        public final Beer source;
+
+        public EditionEvent(Beer source) {
+            this.source = source;
+        }
+    }
+    
+    public static interface ChangeListener {
+        void beerEdited(EditionEvent event);
+    }
+
+    public boolean addChangeListener(ChangeListener cl) {
+        return changeListeners.add(cl);
+    }
+
+    public boolean removeChangeListener(ChangeListener cl) {
+        return changeListeners.remove(cl);
+    }
+    
+    public void fireEditionEvent(EditionEvent event) {
+        for (ChangeListener cl: changeListeners) {
+            cl.beerEdited(event);
+        }
+    }
+    
     @Override
     public JsonObject toJson() {
         JsonObject value = Json.createObjectBuilder()
@@ -137,13 +165,13 @@ public class Beer implements JsonRepresentable {
         }
     }
     
-    public void addStyleKeyword(StyleKeywords keyword) {
+    public void addStyleKeyword(StyleKeyword keyword) {
         if (!keywords.contains(keyword)) {
             keywords.add(keyword);
         }        
     }
     
-    public void removeStyleKeyword(StyleKeywords keyword) {
+    public void removeStyleKeyword(StyleKeyword keyword) {
         if (keywords.contains(keyword)) {
             keywords.remove(keyword);
         }        
@@ -151,20 +179,20 @@ public class Beer implements JsonRepresentable {
 
     private ArrayList<String> getKeywordsAsStrings() {
         ArrayList<String> arr = new ArrayList<>();
-        for (StyleKeywords keyword: keywords)
+        for (StyleKeyword keyword: keywords)
             arr.add(keyword.name());
         return arr;
     }
 
-    public void addStyleKeywords(ArrayList<StyleKeywords> newKeywords) {
-        for (StyleKeywords keyword: newKeywords)
+    public void addStyleKeywords(ArrayList<StyleKeyword> newKeywords) {
+        for (StyleKeyword keyword: newKeywords)
             addStyleKeyword(keyword);
     }
 
     private void addStyleKeywordsFromStrings(ArrayList<String> keywordStrings) throws BeerKnowledgeParserException {
         try {
             for (String keywordStr: keywordStrings)
-                keywords.add(StyleKeywords.valueOf(keywordStr));
+                keywords.add(StyleKeyword.valueOf(keywordStr));
         } catch (IllegalArgumentException ex) {
             throw new BeerKnowledgeParserException(ex);
         }
@@ -178,7 +206,7 @@ public class Beer implements JsonRepresentable {
         return "label_" + id + ".jpg";
     }
     
-    public boolean hasStyle(StyleKeywords keyword) {
+    public boolean hasStyle(StyleKeyword keyword) {
         return keywords.contains(keyword);
     }
 }

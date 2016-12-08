@@ -5,7 +5,7 @@ package beershowcase.beerdata;
  * Class gathering all possible tags used to describe a beer style.
  * @author Grzegorz Łoś
  */
-public enum StyleKeywords {
+public enum StyleKeyword {
     //origin
     Czech,
     American,

@@ -2,9 +2,11 @@
 package beershowcase.beerdata;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 
 /**
  *
@@ -13,22 +15,27 @@ import javax.json.JsonArrayBuilder;
 class JsonUtils {
 
     public static <T extends JsonRepresentable>
-    JsonArray toJsonArray(ArrayList<T> arrayList) {
+    JsonArray toJsonArray(Collection<T> coll) {
         JsonArrayBuilder builder = Json.createArrayBuilder();
-        for (T elem: arrayList)
+        for (T elem: coll)
             builder.add(elem.toJson());
         return builder.build();
     }
 
     public static <T extends JsonRepresentable>
-    void fillJsonArray(JsonArray jsonArray, ArrayList<T> array) throws BeerKnowledgeParserException {
-        for (int i = 0; i < array.size(); ++i) {
+    void fromJsonArray(JsonArray jsonArray, Collection<T> coll) throws BeerKnowledgeParserException {
+        int i = 0;
+        for (T elem: coll) {
             try {
-                array.get(i).fromJson(jsonArray.getJsonObject(i));
+                elem.fromJson(jsonArray.getJsonObject(i));
+                i++;
             } catch (IndexOutOfBoundsException ex) {
                 throw new BeerKnowledgeParserException(ex);
             }
         }
+        if (i < coll.size())
+            throw new BeerKnowledgeParserException("JsonArray contained less"
+                    + " objects than Java collection");
     }
     
     public static JsonArray stringListToJson(ArrayList<String> stringList) {

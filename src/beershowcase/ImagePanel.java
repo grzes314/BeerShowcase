@@ -10,17 +10,31 @@ import javax.swing.JPanel;
  * @author Grzegorz Łoś
  */
 public class ImagePanel extends JPanel {
-    public final Image image;
+    public Image image;
+
+    public ImagePanel() {
+    }
 
     public ImagePanel(Image image) {
+        this.image = image;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
         this.image = image;
     }
     
     @Override
     public void paint(Graphics gr) {
         double f = getResizeFactor();
-        gr.drawImage(image, 0, 0, (int)(f * image.getWidth(null)),
-                (int)(f * image.getHeight(null)), null);
+        int W = this.getSize().width;
+        int H = this.getSize().height;
+        int w = (int)(f * image.getWidth(null));
+        int h = (int)(f * image.getHeight(null));
+        gr.drawImage(image, (W-w)/2, (H-h)/2, w, h, null);
     }
 
     private double getResizeFactor() {
