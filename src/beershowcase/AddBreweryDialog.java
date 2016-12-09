@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
  */
 public class AddBreweryDialog extends javax.swing.JDialog {
 
-    SelectImagePanel selectImagePanel = new SelectImagePanel();
+    SelectImagePanel selectImagePanel;
     boolean approved = false;
     
     /**
@@ -20,16 +20,17 @@ public class AddBreweryDialog extends javax.swing.JDialog {
     public AddBreweryDialog(java.awt.Frame parent) {
         super(parent, true /* modal */);
         initComponents();
+        selectImagePanel = new SelectImagePanel();
         imageSelectionContainer.setLayout(new BorderLayout());
         imageSelectionContainer.add(selectImagePanel, BorderLayout.CENTER);
     }
     
     public AddBreweryDialog(java.awt.Frame parent, Brewery brewery) {
         super(parent, true /* modal */);
+        selectImagePanel = new SelectImagePanel(brewery.getLogo());
         initComponents();
         imageSelectionContainer.setLayout(new BorderLayout());
         imageSelectionContainer.add(selectImagePanel, BorderLayout.CENTER);
-        selectImagePanel.setInitialImage(brewery.getLogo());
         breweryName.setText(brewery.getName());
     }
 

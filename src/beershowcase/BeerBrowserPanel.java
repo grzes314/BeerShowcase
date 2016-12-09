@@ -2,19 +2,22 @@
 package beershowcase;
 
 import beershowcase.beerdata.Beer;
-import beershowcase.beerdata.BeerKnowledge;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 /**
  *
  * @author grzes
  */
-public class BeerBrowserPanel extends javax.swing.JPanel {
-    private ArrayList<Beer> beers = new ArrayList<>();
-    private HashMap<Integer, BeerViewPanel> beerViews = new HashMap<>();
+public class BeerBrowserPanel extends javax.swing.JPanel
+        implements Beer.ChangeListener {
+    private ArrayList<Beer> displayed = new ArrayList<>();
+    private final HashMap<Integer, BeerViewPanel> beerViews = new HashMap<>();
     private int index = 0;
+    
+    private static final Logger LOGGER = Logger.getLogger(BeerBrowserPanel.class.getName());
     
     /**
      * Creates new form BeerBrowserPanel
@@ -22,7 +25,6 @@ public class BeerBrowserPanel extends javax.swing.JPanel {
     public BeerBrowserPanel() {
         initComponents();
         beerViewContainer.setLayout(new BorderLayout());
-        setBeerView();
         setButtonAvailability();
     }
 
@@ -119,7 +121,7 @@ public class BeerBrowserPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        if (index < beers.size() - 1)
+        if (index < displayed.size() - 1)
             index++;
         setBeerView();
         setButtonAvailability();
@@ -144,24 +146,41 @@ public class BeerBrowserPanel extends javax.swing.JPanel {
     private javax.swing.JButton prevButton;
     // End of variables declaration//GEN-END:variables
 
-    void setBeers(ArrayList<Beer> beers) {
-        this.beers = beers;
-        for (Beer beer: beers) {
-            BeerViewPanel beerViewPanel = new BeerViewPanel(
-                    beer, RunningApplication.beerKnowledge.getBreweryOfBeer(beer));
-            beerViews.put(beer.getId(), beerViewPanel);
-        }
+    public void setDisplayedBeers(ArrayList<Beer> beers) {
+        clean();
+        displayed = beers;
         index = 0;
+        buildBeerViews();
         setButtonAvailability();
         setBeerView();
     }
     
+    private void clean() {
+        for (Beer b: displayed)
+            b.removeChangeListener(this);
+        displayed.clear();
+        beerViews.clear();
+    }
+    
+    private void buildBeerViews() {
+        for (Beer beer: displayed) {
+            buildBeerView(beer);
+        }
+    }
+    
+    private void buildBeerView(Beer beer) {
+        BeerViewPanel beerViewPanel = new BeerViewPanel(
+                beer, RunningApplication.beerKnowledge.getBreweryOfBeer(beer));
+        beerViews.put(beer.getId(), beerViewPanel);      
+        beer.addChangeListener(this);
+    }
+    
     private void setBeerView() {
         beerViewContainer.removeAll();
-        if (beers.isEmpty()) {
+        if (displayed.isEmpty()) {
             beerViewContainer.add(noResultsLabel);
         } else {
-            Beer beer = beers.get(index);
+            Beer beer = displayed.get(index);
             BeerViewPanel beerViewPanel = beerViews.get(beer.getId());
             beerViewContainer.add(beerViewPanel);
         }        
@@ -170,7 +189,39 @@ public class BeerBrowserPanel extends javax.swing.JPanel {
     }
 
     private void setButtonAvailability() {
-        nextButton.setEnabled(index < beers.size() - 1);
+        nextButton.setEnabled(index < displayed.size() - 1);
         prevButton.setEnabled(index > 0);            
     }
+
+
+    @Override
+    public void beerEdited(Beer.EditionEvent event) {
+        Beer beer = event.source;
+        buildBeerView(beer);
+        setBeerView();
+    }
+
+    void addBeer(Beer beer) {
+        displayed.add(beer);
+        buildBeerView(beer);
+    }
+
+    void showBeer(Beer beer) {
+        for (int i = 0; i < displayed.size(); ++i) {
+            if (displayed.get(i) == beer) {
+                index = i;
+                setBeerView();
+                setButtonAvailability();
+                break;
+            }
+        }
+    }
+
+    public Beer getCurrBeer() {
+        if (displayed.isEmpty())
+            return null;
+        else
+            return displayed.get(index);
+    }
 }
+           

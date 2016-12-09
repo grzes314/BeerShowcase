@@ -48,6 +48,7 @@ public class BeerManagement extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             RunningApplication.MainFrame = new BeerManagement();
+            RunningApplication.MainFrame.setLocationRelativeTo(null);
             RunningApplication.MainFrame.setVisible(true);
         });
     }

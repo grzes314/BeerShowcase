@@ -1,23 +1,35 @@
 
 package beershowcase;
 
+import beershowcase.beerdata.Beer;
+import beershowcase.beerdata.filters.Conjunction;
+import beershowcase.beerdata.filters.Filter;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Grzegorz Łoś
  */
 public class BeersManagementPane extends javax.swing.JPanel {
-    BeerBrowserPanel beerBrowserPanel;
+    //implements BeerKnowledge.ChangeListener {
+    private Filter filter = new Conjunction();
+    private BeerBrowserPanel beerBrowserPanel;
+    private ActiveDisplayMode displayMode = ActiveDisplayMode.Browser;
+    
+    private static final Logger LOGGER = Logger.getLogger(BeersManagementPane.class.getName());
     
     /**
      * Creates new form BeersManagementPane
      */
     public BeersManagementPane() {
-        beerBrowserPanel = new BeerBrowserPanel();
         initComponents();
+        beerBrowserPanel = new BeerBrowserPanel();
         beersViewContainer.setLayout(new BorderLayout());
         beersViewContainer.add(beerBrowserPanel);
+        //RunningApplication.beerKnowledge.addChangeListener(this);
     }
 
     /**
@@ -125,11 +137,11 @@ public class BeersManagementPane extends javax.swing.JPanel {
     }//GEN-LAST:event_addBeerButtonActionPerformed
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        // TODO add your handling code here:
+        editBeerClicked();
     }//GEN-LAST:event_editButtonActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        // TODO add your handling code here:
+        removeClicked();
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void modeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modeButtonActionPerformed
@@ -148,15 +160,109 @@ public class BeersManagementPane extends javax.swing.JPanel {
 
     private void addBeerClicked() {
         EditBeerDialog editBeerDialog = new EditBeerDialog(RunningApplication.MainFrame);
+        editBeerDialog.setLocationRelativeTo(this);
         editBeerDialog.setVisible(true);
         if (editBeerDialog.isConfirmed()) {
-            editBeerDialog.fill(RunningApplication.beerKnowledge.makeBeer());
+            Beer beer = RunningApplication.beerKnowledge.makeBeer();
+            editBeerDialog.fill(beer);
+            if (filter.filter(beer)) {
+                addBeerToComponents(beer);
+                beerBrowserPanel.showBeer(beer);
+                revalidate();
+                repaint();
+            }
         }
     }
     
     void reset() {
-        beerBrowserPanel.setBeers(RunningApplication.beerKnowledge.getBeers());
+        //RunningApplication.beerKnowledge.addChangeListener(this);
+        addAllBeersToComponents();
         repaint();
         revalidate();
+    }
+    
+    /*@Override
+    public void knowledgeChanged(BeerKnowledge.ChangeEvent event) {
+        if (!(event.affectedObject instanceof Beer))
+            return;
+        Beer beer = (Beer) event.affectedObject;
+        
+        switch (event.changeType) {
+            case Addition:
+                if (filter.filter(beer))
+                    addBeerToComponents(beer);
+                break;
+            case Removal:
+                if (filter.filter(beer))
+                    removeBeerFromComponents(beer);
+                break;
+            default:
+                LOGGER.log(Level.WARNING, "Not handling event of type " + event.changeType);
+        }
+    }*/
+
+    private void addAllBeersToComponents() {
+        ArrayList<Beer> beers = RunningApplication.beerKnowledge.getBeers();
+        beerBrowserPanel.setDisplayedBeers(beers);
+    }
+
+    private void addBeerToComponents(Beer beer) {
+        beerBrowserPanel.addBeer(beer);
+    }
+
+    private void removeBeerFromComponents(Beer beer) {
+        ArrayList<Beer> beers = RunningApplication.beerKnowledge.getBeers(filter);
+        beerBrowserPanel.setDisplayedBeers(beers);
+    }
+    
+    private void editBeerClicked() {
+        Beer beer = getSelectedBeer();
+        if (beer == null) {
+            JOptionPane.showMessageDialog(RunningApplication.MainFrame,
+                    "Please select a beer first.");
+        } else {
+            openEditDialog(beer);
+        }
+    }
+    
+    private Beer getSelectedBeer() {
+        if (displayMode == ActiveDisplayMode.Browser) {
+            return beerBrowserPanel.getCurrBeer();
+        } else {
+            return null;
+        }
+    }    
+
+    private void openEditDialog(Beer beer) {
+        EditBeerDialog editBeerDialog = new EditBeerDialog(RunningApplication.MainFrame, beer);
+        editBeerDialog.setLocationRelativeTo(this);
+        editBeerDialog.setVisible(true);
+        if (editBeerDialog.isConfirmed()) {
+            editBeerDialog.fill(beer);
+        }
+    }
+
+    private void removeClicked() {
+        Beer beer = getSelectedBeer();
+        if (beer == null) {
+            JOptionPane.showMessageDialog(RunningApplication.MainFrame,
+                    "Please select a beer first.");
+        } else {
+            String question = new StringBuilder()
+                    .append("Are you sure you want to delete \"")
+                    .append(beer.getName())
+                    .append("\"?\n\nRemember you can mark this beer as not available instead.")
+                    .toString();
+            int res = JOptionPane.showConfirmDialog(RunningApplication.MainFrame,
+                    question, "Confirm", JOptionPane.YES_NO_OPTION);
+            if (res == JOptionPane.YES_OPTION) {
+                RunningApplication.beerKnowledge.deleteBeer(beer);
+                removeBeerFromComponents(beer);
+            }
+        }
+    }
+    
+    private enum ActiveDisplayMode {
+        Browser, Table
     }
 }

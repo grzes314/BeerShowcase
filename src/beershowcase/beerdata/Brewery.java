@@ -30,12 +30,13 @@ public class Brewery implements JsonRepresentable {
         void breweryEdited(EditionEvent event);
     }
 
-    public boolean addChangeListener(ChangeListener cl) {
-        return changeListeners.add(cl);
+    public void addChangeListener(ChangeListener cl) {
+        if (!changeListeners.contains(cl))
+            changeListeners.add(cl);
     }
 
-    public boolean removeChangeListener(ChangeListener cl) {
-        return changeListeners.remove(cl);
+    public void removeChangeListener(ChangeListener cl) {
+        changeListeners.remove(cl);
     }
     
     public void fireEditionEvent(EditionEvent event) {

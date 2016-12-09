@@ -20,8 +20,13 @@ public class BeerKnowledge implements JsonRepresentable {
     private final BeerFactory beerFactory = new BeerFactory();
     private final ArrayList<Beer> beers = new ArrayList<>();
     private final Map<Integer, Brewery> breweryById = new HashMap<>();
+    Brewery unknown = new Brewery();
     
     private final ArrayList<ChangeListener> changeListeners = new ArrayList<>();
+
+    public BeerKnowledge() {
+        unknown.setName("Unknown");
+    }
     
     static final Logger LOGGER = Logger.getLogger(BeerKnowledge.class.getName());
 
@@ -32,12 +37,10 @@ public class BeerKnowledge implements JsonRepresentable {
     public static class ChangeEvent {
         public final ChangeType changeType;
         public final Object affectedObject;
-        public final Class objectsClass;
 
-        public ChangeEvent(ChangeType changeType, Object affectedObject, Class objectsClass) {
+        public ChangeEvent(ChangeType changeType, Object affectedObject) {
             this.changeType = changeType;
             this.affectedObject = affectedObject;
-            this.objectsClass = objectsClass;
         }
     }
     
@@ -101,14 +104,14 @@ public class BeerKnowledge implements JsonRepresentable {
     public Brewery makeBrewery() {
         Brewery brewery = breweryFactory.makeBrewery();
         breweryById.put(brewery.getId(), brewery);
-        fireChangeEvent(new ChangeEvent(ChangeType.Addition, brewery, Brewery.class));
+        fireChangeEvent(new ChangeEvent(ChangeType.Addition, brewery));
         return brewery;
     }
 
     public Beer makeBeer() {
         Beer beer = beerFactory.makeBeer();
         beers.add(beer);
-        fireChangeEvent(new ChangeEvent(ChangeType.Addition, beer, Beer.class));
+        fireChangeEvent(new ChangeEvent(ChangeType.Addition, beer));
         return beer;
     }
 
@@ -127,7 +130,7 @@ public class BeerKnowledge implements JsonRepresentable {
                         + " There are beers related to it.");
         }
         breweryById.remove(brewery.getId());
-        fireChangeEvent(new ChangeEvent(ChangeType.Removal, brewery, Brewery.class));
+        fireChangeEvent(new ChangeEvent(ChangeType.Removal, brewery));
     }
 
     public ArrayList<Beer> getBeers(Filter filter) {
@@ -147,11 +150,19 @@ public class BeerKnowledge implements JsonRepresentable {
     }
 
     public Brewery getBreweryOfBeer(Beer beer) {
-        Brewery brewery = breweryById.get(beer.getBreweryId());
+        int brId = beer.getBreweryId();
+        if (brId <= 0)
+            return unknown;
+        Brewery brewery = breweryById.get(brId);
         if (brewery != null)
             return brewery;
         else
             throw new RuntimeException("No brewery for beer " + beer.getId());
+    }
+
+    public void deleteBeer(Beer beer) {
+        beers.remove(beer);
+        fireChangeEvent(new ChangeEvent(ChangeType.Removal, beer));
     }
 
 }

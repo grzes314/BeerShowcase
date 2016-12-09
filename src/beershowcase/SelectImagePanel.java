@@ -22,6 +22,13 @@ public class SelectImagePanel extends javax.swing.JPanel {
     public SelectImagePanel() {
         initComponents();
     }
+    
+    public SelectImagePanel(BufferedImage logo) {
+        initComponents();
+        image = logo;
+        if (logo != null)
+            setImageLabel(new ImageIcon(logo));
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -283,7 +290,7 @@ public class SelectImagePanel extends javax.swing.JPanel {
         imageLabel.setText(txt);
     }
 
-    void setInitialImage(BufferedImage logo) {
+    public void setInitialImage(BufferedImage logo) {
         image = logo;
         if (logo != null)
             setImageLabel(new ImageIcon(logo));

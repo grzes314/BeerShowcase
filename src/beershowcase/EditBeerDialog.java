@@ -5,6 +5,7 @@ import beershowcase.beerdata.Beer;
 import beershowcase.beerdata.BeerKnowledge;
 import beershowcase.beerdata.Brewery;
 import java.awt.BorderLayout;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
@@ -32,6 +33,21 @@ public class EditBeerDialog extends javax.swing.JDialog {
         bottleSelectorContainer.add(bottleImageSelector);
         labelSelectorContainer.setLayout(new BorderLayout());
         labelSelectorContainer.add(labelImageSelector);
+    }
+
+    EditBeerDialog(java.awt.Frame parent, Beer beer) {
+        super(parent, true);
+        initComponents();
+        
+        setTitle("Edit a beer");
+        styleContainer.setLayout(new BorderLayout());
+        styleContainer.add(new JScrollPane(stylesPanel));
+        bottleSelectorContainer.setLayout(new BorderLayout());
+        bottleSelectorContainer.add(bottleImageSelector);
+        labelSelectorContainer.setLayout(new BorderLayout());
+        labelSelectorContainer.add(labelImageSelector);
+        
+        setDataFrom(beer);
     }
 
     /**
@@ -403,9 +419,24 @@ public class EditBeerDialog extends javax.swing.JDialog {
     private void selectBrewerClicked() {
         SelectBreweryDialog selectBreweryDialog = new SelectBreweryDialog(
                 RunningApplication.MainFrame);
+        selectBreweryDialog.setLocationRelativeTo(this);
         selectBreweryDialog.setVisible(true);
-        selectedBrewery = selectBreweryDialog.getSelectedBrewery();
-        if (selectedBrewery != null)
+        Brewery br = selectBreweryDialog.getSelectedBrewery();
+        if (br != null) {
+            selectedBrewery = br;
             breweryField.setText(selectedBrewery.getName());
+        }
+    }
+
+    private void setDataFrom(Beer beer) {
+        nameField.setText(beer.getName());
+        styleField.setText(beer.getDeclaredStyle());
+        selectedBrewery = RunningApplication.beerKnowledge.getBreweryOfBeer(beer);
+        breweryField.setText(selectedBrewery != null ? selectedBrewery.getName() : "?");
+        description.setText(beer.getDescritpion());
+        availableBox.setSelected(beer.isAvailable());
+        stylesPanel.setSelectedKeywords(beer.getStyleKeywords());
+        bottleImageSelector.setInitialImage(beer.getBottleImage());
+        labelImageSelector.setInitialImage(beer.getLabelImage());        
     }
 }

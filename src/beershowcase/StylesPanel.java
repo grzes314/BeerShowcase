@@ -43,4 +43,13 @@ public class StylesPanel extends JPanel {
         for (Map.Entry<StyleKeyword, JCheckBox> pair: checkBoxes.entrySet())
             pair.getValue().setSelected(false);
     }
+
+    void setSelectedKeywords(ArrayList<StyleKeyword> styleKeywords) {
+        for (Map.Entry<StyleKeyword, JCheckBox> pair: checkBoxes.entrySet()) {
+            if (styleKeywords.contains(pair.getKey()))
+                pair.getValue().setSelected(true);
+            else
+                pair.getValue().setSelected(false);
+        }
+    }
 }

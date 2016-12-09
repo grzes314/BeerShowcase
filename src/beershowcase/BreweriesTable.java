@@ -220,7 +220,7 @@ class BreweriesTableModel extends AbstractTableModel
 
     @Override
     public void knowledgeChanged(BeerKnowledge.ChangeEvent event) {
-        if (event.objectsClass != Brewery.class)
+        if (!(event.affectedObject instanceof Brewery))
             return ;
         Brewery br = (Brewery) event.affectedObject;
         if (!isDisplayed(br))
