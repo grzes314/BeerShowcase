@@ -1,6 +1,6 @@
 * Store all data in one zip file. 
 
-* Redisign keywords.
+* Redesign keywords.
 
 * Automatically fill keywords from a declared style.
 
@@ -13,7 +13,13 @@
 
 * Enable filtering beers in management pane.
 
+* Store ingredient data.
+
 * Write a script/program to download information about all beers from an external source to BeerKnowledge.
+
+* Application internationalization.
+
+* Add comments and logs.
 
 * LazyImage
     - Delete from memory images that have not been used in a while.

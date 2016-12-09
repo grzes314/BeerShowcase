@@ -2,16 +2,24 @@
 package beershowcase;
 
 import beershowcase.beerdata.BeerKnowledge;
+import beershowcase.beerdata.BeerKnowledgeParserException;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
@@ -108,15 +116,17 @@ public class BeerManagement extends JFrame {
         File file = chooseFileToOpen();
         if (file == null)
             return;
+        FileSystem prevSystem = RunningApplication.fileSystem;
         try {
-            JsonObject json = readJsonFromFile(file);
-            BeerKnowledge beerKnowledge = new BeerKnowledge();
-            beerKnowledge.fromJson(json);
+            RunningApplication.fileSystem = openFileSystem(file);
+            BeerKnowledge beerKnowledge = readBeerKnowledge();
+            // if we are here reading went successfully
             switchKnowledge(beerKnowledge);
         } catch (Exception ex) {
             LOGGER.log(Level.INFO, null, ex);
             JOptionPane.showMessageDialog(this, "Selected file seems to be corrupted.",
                     "Error", JOptionPane.ERROR_MESSAGE);
+            RunningApplication.fileSystem = prevSystem;
         }
     }
     
@@ -135,13 +145,24 @@ public class BeerManagement extends JFrame {
             return null;
         }
     }
-
-    private JsonObject readJsonFromFile(File file) throws FileNotFoundException {
-        JsonObject json;
-        try (JsonReader jsonReader = Json.createReader(new FileInputStream(file))) {
-            json = jsonReader.readObject();
+    
+    private FileSystem openFileSystem(File file) throws IOException {
+        URI uri = URI.create("jar:" + file.toURI());
+        Map<String, String> env = new HashMap<>(); 
+        env.put("create", "true");
+        return FileSystems.newFileSystem(uri, env);
+    }
+    
+    private BeerKnowledge readBeerKnowledge()
+            throws IOException, BeerKnowledgeParserException {
+        Path path = RunningApplication.fileSystem.getPath("BeerKnowledge.json");
+        try (   BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+                JsonReader jsonReader = Json.createReader(reader)) {
+            JsonObject json = jsonReader.readObject();
+            BeerKnowledge beerKnowledge = new BeerKnowledge();
+            beerKnowledge.fromJson(json);
+            return beerKnowledge;
         }
-        return json;
     }
     
     private void saveClicked() {

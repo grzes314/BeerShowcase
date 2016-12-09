@@ -1,9 +1,13 @@
 
 package beershowcase.beerdata;
 
+import beershowcase.RunningApplication;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -15,28 +19,18 @@ import javax.imageio.ImageIO;
  */
 
 class LazyImage {
-    private static final String PATH_TO_IMG_REPO = "~/.BeerShowcase/pictures/";
-    private String imageName;
+    private String pathOnFileSystem;
     private BufferedImage image;
     private boolean imageFileExists = false;
     private static final Logger LOGGER = Logger.getLogger(LazyImage.class.getName());
     
-    static {
-        File file = new File(PATH_TO_IMG_REPO);
-        file.mkdirs();
-    }
-    
-    public String getImageName() {
-        return imageName;
+    public String getPath() {
+        return pathOnFileSystem;
     }
 
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
+    public void setPath(String path) {
+        this.pathOnFileSystem = path;
         checkIfImageFileExists();
-    }
-    
-    public String getLocalPath() {
-        return PATH_TO_IMG_REPO + imageName;
     }
     
     public void set(BufferedImage picture) {
@@ -44,7 +38,7 @@ class LazyImage {
     }
           
     public BufferedImage getPicture() {
-        if (!imageFileExists)
+        if (image == null && !imageFileExists)
             return null;
         
         try {
@@ -57,17 +51,26 @@ class LazyImage {
     }
 
     private void readPicture() throws IOException {
-        File file = new File(getLocalPath());
-        image = ImageIO.read(file);
+        Path path = RunningApplication.fileSystem.getPath(pathOnFileSystem);
+        try(InputStream is = Files.newInputStream(path)) {
+            image = ImageIO.read(is);
+        }
     }
 
     public void save() {
         try {            
             if (image != null)
-                ImageIO.write(image, "jpg", new File(getLocalPath()));
+                writeOnFileSystem();
             imageFileExists = true;
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to save {0}", getLocalPath());
+            LOGGER.log(Level.SEVERE, "Failed to save {0}",pathOnFileSystem);
+        }
+    }
+    
+    private void writeOnFileSystem() throws IOException {
+        Path path = RunningApplication.fileSystem.getPath(pathOnFileSystem);
+        try(OutputStream out = Files.newOutputStream(path)) {
+            ImageIO.write(image, "jpg", out);
         }
     }
     
@@ -76,18 +79,18 @@ class LazyImage {
     }
 
     private void checkIfImageFileExists() {
-        if (imageName == null) {
+        if (pathOnFileSystem == null) {
             imageFileExists = false;
         } else {
-            File file = new File(getLocalPath());
-            imageFileExists = file.exists();
+            Path path = RunningApplication.fileSystem.getPath(pathOnFileSystem);
+            imageFileExists = Files.exists(path);
         } 
     }
 
-    public void delete() {
+    /*public void delete() {
         if (imageFileExists) {
             File file = new File(getLocalPath());
             file.delete();
         }
-    }
+    }*/
 }

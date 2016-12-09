@@ -87,8 +87,8 @@ public class Beer implements JsonRepresentable {
         available = json.getBoolean("available");
         addStyleKeywordsFromStrings(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
         
-        bottleImage.setImageName(makeBottleImageName());
-        labelImage.setImageName(makeLabelImageName());
+        bottleImage.setPath(makeBottleImagePath());
+        labelImage.setPath(makeLabelImagePath());
         fireEditionEvent(new EditionEvent(this));
     }
     
@@ -174,7 +174,7 @@ public class Beer implements JsonRepresentable {
     public void setLabelImage(BufferedImage newLabelImage) {
         if (labelImage.getPicture() != newLabelImage) {
             this.labelImage.set(newLabelImage);
-            this.labelImage.setImageName(makeLabelImageName());
+            this.labelImage.setPath(makeLabelImagePath());
             this.labelImage.save();
             fireEditionEvent(new EditionEvent(this));
         }
@@ -187,7 +187,7 @@ public class Beer implements JsonRepresentable {
     public void setBottleImage(BufferedImage newBottleImage) {
         if (bottleImage.getPicture() != newBottleImage) {
             this.bottleImage.set(newBottleImage);
-            this.bottleImage.setImageName(makeBottleImageName());
+            this.bottleImage.setPath(makeBottleImagePath());
             this.bottleImage.save();
         fireEditionEvent(new EditionEvent(this));
         }
@@ -233,12 +233,12 @@ public class Beer implements JsonRepresentable {
         }
     }
     
-    private String makeBottleImageName() {
-        return "bottle_" + id + ".jpg";
+    private String makeBottleImagePath() {
+        return "bottles/" + id + ".jpg";
     }
     
-    private String makeLabelImageName() {
-        return "label_" + id + ".jpg";
+    private String makeLabelImagePath() {
+        return "labels/" + id + ".jpg";
     }
     
     public boolean hasStyle(StyleKeyword keyword) {

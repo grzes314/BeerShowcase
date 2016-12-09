@@ -67,7 +67,7 @@ public class Brewery implements JsonRepresentable {
         id = json.getInt("id");
         name = json.getString("name");
         
-        logo.setImageName(makeLogoImageName());
+        logo.setPath(makeLogoImagePath());
     }
 
     public int getId() {
@@ -90,12 +90,12 @@ public class Brewery implements JsonRepresentable {
 
     public void setLogo(BufferedImage logo) {
         this.logo.set(logo);
-        this.logo.setImageName(makeLogoImageName());
+        this.logo.setPath(makeLogoImagePath());
         this.logo.save();
         fireEditionEvent(new EditionEvent(this));
     }    
     
-    private String makeLogoImageName() {
-        return "brewery_" + id + ".jpg";
+    private String makeLogoImagePath() {
+        return "logos/" + id + ".jpg";
     }
 }
