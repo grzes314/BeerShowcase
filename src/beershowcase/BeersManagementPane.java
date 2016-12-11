@@ -163,7 +163,7 @@ public class BeersManagementPane extends javax.swing.JPanel {
         editBeerDialog.setLocationRelativeTo(this);
         editBeerDialog.setVisible(true);
         if (editBeerDialog.isConfirmed()) {
-            Beer beer = RunningApplication.beerKnowledge.makeBeer();
+            Beer beer = RunningApplication.data.beerKnowledge.makeBeer();
             editBeerDialog.fill(beer);
             if (filter.filter(beer)) {
                 addBeerToComponents(beer);
@@ -202,7 +202,7 @@ public class BeersManagementPane extends javax.swing.JPanel {
     }*/
 
     private void addAllBeersToComponents() {
-        ArrayList<Beer> beers = RunningApplication.beerKnowledge.getBeers();
+        ArrayList<Beer> beers = RunningApplication.data.beerKnowledge.getBeers();
         beerBrowserPanel.setDisplayedBeers(beers);
     }
 
@@ -211,7 +211,7 @@ public class BeersManagementPane extends javax.swing.JPanel {
     }
 
     private void removeBeerFromComponents(Beer beer) {
-        ArrayList<Beer> beers = RunningApplication.beerKnowledge.getBeers(filter);
+        ArrayList<Beer> beers = RunningApplication.data.beerKnowledge.getBeers(filter);
         beerBrowserPanel.setDisplayedBeers(beers);
     }
     
@@ -256,7 +256,7 @@ public class BeersManagementPane extends javax.swing.JPanel {
             int res = JOptionPane.showConfirmDialog(RunningApplication.MainFrame,
                     question, "Confirm", JOptionPane.YES_NO_OPTION);
             if (res == JOptionPane.YES_OPTION) {
-                RunningApplication.beerKnowledge.deleteBeer(beer);
+                RunningApplication.data.beerKnowledge.deleteBeer(beer);
                 removeBeerFromComponents(beer);
             }
         }

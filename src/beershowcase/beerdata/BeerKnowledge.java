@@ -1,7 +1,15 @@
 
 package beershowcase.beerdata;
 
+import beershowcase.RunningApplication;
 import beershowcase.beerdata.filters.Filter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +17,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 /**
  * The BeerKnowledge class gathers the information about beers and breweries.
@@ -20,7 +29,8 @@ public class BeerKnowledge implements JsonRepresentable {
     private final BeerFactory beerFactory = new BeerFactory();
     private final ArrayList<Beer> beers = new ArrayList<>();
     private final Map<Integer, Brewery> breweryById = new HashMap<>();
-    Brewery unknown = new Brewery();
+    private final Brewery unknown = new Brewery();
+    private boolean modified = false;
     
     private final ArrayList<ChangeListener> changeListeners = new ArrayList<>();
 
@@ -29,6 +39,12 @@ public class BeerKnowledge implements JsonRepresentable {
     }
     
     static final Logger LOGGER = Logger.getLogger(BeerKnowledge.class.getName());
+
+    public boolean isModified() {
+        //TODO update modified value when beer or brewery is updated
+        return modified;
+    }
+
 
     public static enum ChangeType {
         Addition, Removal
@@ -96,6 +112,41 @@ public class BeerKnowledge implements JsonRepresentable {
         }
         JsonUtils.fromJsonArray(json.getJsonArray("beers"), beers);
     }
+    
+    public void load() throws IOException, BeerKnowledgeParserException {
+        Path path = RunningApplication.data.fileSystem.getPath("BeerKnowledge.json");
+        try (   BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+                JsonReader jsonReader = Json.createReader(reader)) {
+            JsonObject json = jsonReader.readObject();
+            fromJson(json);
+        }
+    }
+    
+    public void saveChanges() throws IOException {
+        saveJson();
+        // TODO save modified pictures !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        modified = false;
+    }
+    
+    public void saveEverything() throws IOException {
+        saveJson();
+        for (Brewery br: breweryById.values())
+            br.saveChanges();
+        for (Beer b: beers)
+            b.saveChanges();
+        
+        modified = false;
+    }
+    
+    private void saveJson() throws IOException {
+        Path path = RunningApplication.data.fileSystem.getPath("BeerKnowledge.json");
+        try (BufferedWriter writer = Files.newBufferedWriter(path,
+                StandardCharsets.UTF_8, StandardOpenOption.WRITE)) {
+            JsonObject json = toJson();
+            String jsonString = json.toString();
+            writer.write(jsonString, 0, jsonString.length());            
+        }
+    }
 
     public Collection<Brewery> getBreweries() {
         return breweryById.values();
@@ -105,6 +156,7 @@ public class BeerKnowledge implements JsonRepresentable {
         Brewery brewery = breweryFactory.makeBrewery();
         breweryById.put(brewery.getId(), brewery);
         fireChangeEvent(new ChangeEvent(ChangeType.Addition, brewery));
+        modified = true;
         return brewery;
     }
 
@@ -112,6 +164,7 @@ public class BeerKnowledge implements JsonRepresentable {
         Beer beer = beerFactory.makeBeer();
         beers.add(beer);
         fireChangeEvent(new ChangeEvent(ChangeType.Addition, beer));
+        modified = true;
         return beer;
     }
 
@@ -130,6 +183,7 @@ public class BeerKnowledge implements JsonRepresentable {
                         + " There are beers related to it.");
         }
         breweryById.remove(brewery.getId());
+        modified = true;
         fireChangeEvent(new ChangeEvent(ChangeType.Removal, brewery));
     }
 
@@ -162,6 +216,7 @@ public class BeerKnowledge implements JsonRepresentable {
 
     public void deleteBeer(Beer beer) {
         beers.remove(beer);
+        modified = true;
         fireChangeEvent(new ChangeEvent(ChangeType.Removal, beer));
     }
 

@@ -136,15 +136,15 @@ class BreweriesTableModel extends AbstractTableModel
     String namePart = "";
 
     BreweriesTableModel() {
-        RunningApplication.beerKnowledge.addChangeListener(this);
-        displayed.addAll(RunningApplication.beerKnowledge.getBreweries());
+        RunningApplication.data.beerKnowledge.addChangeListener(this);
+        displayed.addAll(RunningApplication.data.beerKnowledge.getBreweries());
     }
     
     public void reset() {
         displayed.clear();
         
-        RunningApplication.beerKnowledge.addChangeListener(this);
-        displayed.addAll(RunningApplication.beerKnowledge.getBreweries());
+        RunningApplication.data.beerKnowledge.addChangeListener(this);
+        displayed.addAll(RunningApplication.data.beerKnowledge.getBreweries());
         fireTableDataChanged();
     }
     
@@ -156,7 +156,7 @@ class BreweriesTableModel extends AbstractTableModel
     }
     
     private void rebuildDisplayed() {
-        for (Brewery br: RunningApplication.beerKnowledge.getBreweries()) {
+        for (Brewery br: RunningApplication.data.beerKnowledge.getBreweries()) {
             if (isDisplayed(br))
                 displayed.add(br);
         }

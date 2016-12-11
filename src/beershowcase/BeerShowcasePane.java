@@ -89,7 +89,7 @@ public class BeerShowcasePane extends javax.swing.JPanel {
         container.removeAll();
         
         Filter filter = paramSelectionPanel.buildFilter();
-        ArrayList<Beer> beers = RunningApplication.beerKnowledge.getBeers(filter);
+        ArrayList<Beer> beers = RunningApplication.data.beerKnowledge.getBeers(filter);
         beerBrowserPanel.setDisplayedBeers(beers);
         
         container.add(beerBrowserPanel);

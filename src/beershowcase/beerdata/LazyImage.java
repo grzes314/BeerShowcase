@@ -19,72 +19,93 @@ import javax.imageio.ImageIO;
  */
 
 class LazyImage {
-    private String pathOnFileSystem;
+    private final String pathOnFileSystem;
     private BufferedImage image;
     private boolean imageFileExists = false;
+    private boolean imageFileChanged = false;
     private static final Logger LOGGER = Logger.getLogger(LazyImage.class.getName());
+
+    public LazyImage(String pathOnFileSystem) {
+        this.pathOnFileSystem = pathOnFileSystem;
+        checkIfImageFileExists();
+    }
     
     public String getPath() {
         return pathOnFileSystem;
     }
-
-    public void setPath(String path) {
-        this.pathOnFileSystem = path;
-        checkIfImageFileExists();
-    }
     
-    public void set(BufferedImage picture) {
+    public void setPicture(BufferedImage picture) {
         this.image = picture;
+        imageFileChanged = true;
     }
           
     public BufferedImage getPicture() {
-        if (image == null && !imageFileExists)
+        if (!imageFileExists)
             return null;
         
         try {
             if (image == null)
                 readPicture();
         } catch (IOException ex) {
-            LOGGER.log(Level.INFO, null, ex);
+            LOGGER.log(Level.WARNING, null, ex);
         }
         return image;
     }
 
     private void readPicture() throws IOException {
-        Path path = RunningApplication.fileSystem.getPath(pathOnFileSystem);
+        Path path = RunningApplication.data.fileSystem.getPath(pathOnFileSystem);
         try(InputStream is = Files.newInputStream(path)) {
             image = ImageIO.read(is);
         }
     }
 
-    public void save() {
+    public void saveIfChanged() {
+        try {            
+            if (image != null && imageFileChanged)
+                writeOnFileSystem();
+            imageFileExists = true;
+            imageFileChanged = false;
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Failed to save {0}", pathOnFileSystem);
+        }
+    }
+
+    public void saveForced() {
         try {            
             if (image != null)
                 writeOnFileSystem();
             imageFileExists = true;
+            imageFileChanged = false;
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to save {0}",pathOnFileSystem);
+            LOGGER.log(Level.SEVERE, "Failed to save {0}", pathOnFileSystem);
         }
     }
     
     private void writeOnFileSystem() throws IOException {
-        Path path = RunningApplication.fileSystem.getPath(pathOnFileSystem);
+        Path path = RunningApplication.data.fileSystem.getPath(pathOnFileSystem);
         try(OutputStream out = Files.newOutputStream(path)) {
             ImageIO.write(image, "jpg", out);
         }
     }
     
+    /**
+     * Don't store the image object in memory any more.
+     */
     public void release() {
         image = null;
     }
 
     private void checkIfImageFileExists() {
-        if (pathOnFileSystem == null) {
+        if (RunningApplication.data.fileSystem == null) {
             imageFileExists = false;
         } else {
-            Path path = RunningApplication.fileSystem.getPath(pathOnFileSystem);
+            Path path = RunningApplication.data.fileSystem.getPath(pathOnFileSystem);
             imageFileExists = Files.exists(path);
-        } 
+        }
+    }
+    
+    public boolean isChanged() {
+        return imageFileChanged;
     }
 
     /*public void delete() {

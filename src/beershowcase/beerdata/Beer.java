@@ -18,15 +18,15 @@ public class Beer implements JsonRepresentable {
     private Ingredients ingredients = new Ingredients();
     private String descritpion = "";
     private boolean available = true;
-    private final LazyImage labelImage = new LazyImage();
-    private final LazyImage bottleImage = new LazyImage();
+    private final LazyImage labelImage = new LazyImage(makeLabelImagePath());
+    private final LazyImage bottleImage = new LazyImage(makeBottleImagePath());
     private final ArrayList<StyleKeyword> keywords = new ArrayList<>();
     /**
      * Price in cents.
      */
     int price;
     /**
-     * Density in 0.01 blg units.
+     * Original gravity in 0.01 blg units.
      */
     int plato;
     /**
@@ -70,7 +70,7 @@ public class Beer implements JsonRepresentable {
             .add("name", name)
             .add("declaredStyle", declaredStyle)
             .add("breweryId", breweryId)
-            .add("descritpion", descritpion)
+            //.add("descritpion", descritpion)
             .add("available", available)
             .add("keywords", JsonUtils.stringListToJson(getKeywordsAsStrings()))
             .build();
@@ -83,13 +83,21 @@ public class Beer implements JsonRepresentable {
         name = json.getString("name");
         declaredStyle = json.getString("declaredStyle");
         breweryId = json.getInt("breweryId");
-        descritpion = json.getString("descritpion");
+        //descritpion = json.getString("descritpion");
         available = json.getBoolean("available");
         addStyleKeywordsFromStrings(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
         
-        bottleImage.setPath(makeBottleImagePath());
-        labelImage.setPath(makeLabelImagePath());
         fireEditionEvent(new EditionEvent(this));
+    }
+    
+    public void saveChanges() {
+        labelImage.saveIfChanged();
+        bottleImage.saveIfChanged();
+    }
+    
+    public void saveForced() {
+        labelImage.saveIfChanged();
+        bottleImage.saveIfChanged();
     }
     
     public boolean isAvailable() {
@@ -173,9 +181,7 @@ public class Beer implements JsonRepresentable {
 
     public void setLabelImage(BufferedImage newLabelImage) {
         if (labelImage.getPicture() != newLabelImage) {
-            this.labelImage.set(newLabelImage);
-            this.labelImage.setPath(makeLabelImagePath());
-            this.labelImage.save();
+            this.labelImage.setPicture(newLabelImage);
             fireEditionEvent(new EditionEvent(this));
         }
     }
@@ -186,10 +192,8 @@ public class Beer implements JsonRepresentable {
 
     public void setBottleImage(BufferedImage newBottleImage) {
         if (bottleImage.getPicture() != newBottleImage) {
-            this.bottleImage.set(newBottleImage);
-            this.bottleImage.setPath(makeBottleImagePath());
-            this.bottleImage.save();
-        fireEditionEvent(new EditionEvent(this));
+            this.bottleImage.setPicture(newBottleImage);
+            fireEditionEvent(new EditionEvent(this));
         }
     }
     

@@ -13,7 +13,7 @@ import javax.json.JsonObject;
 public class Brewery implements JsonRepresentable {
     private int id;
     private String name = "";
-    private LazyImage logo = new LazyImage();
+    private LazyImage logo = new LazyImage(makeLogoImagePath());
     BufferedImage noLogo = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     
     private final ArrayList<ChangeListener> changeListeners = new ArrayList<>();
@@ -45,15 +45,6 @@ public class Brewery implements JsonRepresentable {
         }
     }
     
-    @Override
-    public JsonObject toJson() {
-        JsonObject value = Json.createObjectBuilder()
-            .add("id", id)
-            .add("name", name)
-            .build();
-        return value;
-    }
-    
     public Brewery() {
         id = -1;
     }
@@ -63,11 +54,26 @@ public class Brewery implements JsonRepresentable {
     }
     
     @Override
+    public JsonObject toJson() {
+        JsonObject value = Json.createObjectBuilder()
+            .add("id", id)
+            .add("name", name)
+            .build();
+        return value;
+    }
+    
+    @Override
     public void fromJson(JsonObject json) throws BeerKnowledgeParserException {
         id = json.getInt("id");
         name = json.getString("name");
-        
-        logo.setPath(makeLogoImagePath());
+    }
+    
+    public void saveChanges() {
+        logo.saveIfChanged();
+    }
+    
+    public void saveForced() {
+        logo.saveForced();
     }
 
     public int getId() {
@@ -89,9 +95,7 @@ public class Brewery implements JsonRepresentable {
     }
 
     public void setLogo(BufferedImage logo) {
-        this.logo.set(logo);
-        this.logo.setPath(makeLogoImagePath());
-        this.logo.save();
+        this.logo.setPicture(logo);
         fireEditionEvent(new EditionEvent(this));
     }    
     

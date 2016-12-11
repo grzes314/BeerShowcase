@@ -431,7 +431,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
     private void setDataFrom(Beer beer) {
         nameField.setText(beer.getName());
         styleField.setText(beer.getDeclaredStyle());
-        selectedBrewery = RunningApplication.beerKnowledge.getBreweryOfBeer(beer);
+        selectedBrewery = RunningApplication.data.beerKnowledge.getBreweryOfBeer(beer);
         breweryField.setText(selectedBrewery != null ? selectedBrewery.getName() : "?");
         description.setText(beer.getDescritpion());
         availableBox.setSelected(beer.isAvailable());
