@@ -18,8 +18,8 @@ public class Beer implements JsonRepresentable {
     private Ingredients ingredients = new Ingredients();
     private String descritpion = "";
     private boolean available = true;
-    private final LazyImage labelImage = new LazyImage(makeLabelImagePath());
-    private final LazyImage bottleImage = new LazyImage(makeBottleImagePath());
+    private LazyImage labelImage;
+    private LazyImage bottleImage;
     private final ArrayList<StyleKeyword> keywords = new ArrayList<>();
     /**
      * Price in cents.
@@ -87,6 +87,8 @@ public class Beer implements JsonRepresentable {
         available = json.getBoolean("available");
         addStyleKeywordsFromStrings(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
         
+        labelImage = new LazyImage(makeLabelImagePath());
+        bottleImage = new LazyImage(makeBottleImagePath());
         fireEditionEvent(new EditionEvent(this));
     }
     
@@ -114,6 +116,8 @@ public class Beer implements JsonRepresentable {
     
     Beer(int id) {
         this.id = id;
+        labelImage = new LazyImage(makeLabelImagePath());
+        bottleImage = new LazyImage(makeBottleImagePath());
     }
 
     public int getId() {

@@ -2,12 +2,14 @@
 package beershowcase.beerdata;
 
 import beershowcase.RunningApplication;
+import com.sun.org.apache.xerces.internal.parsers.StandardParserConfiguration;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -40,7 +42,7 @@ class LazyImage {
     }
           
     public BufferedImage getPicture() {
-        if (!imageFileExists)
+        if (image == null && !imageFileExists)
             return null;
         
         try {
@@ -83,7 +85,11 @@ class LazyImage {
     
     private void writeOnFileSystem() throws IOException {
         Path path = RunningApplication.data.fileSystem.getPath(pathOnFileSystem);
-        try(OutputStream out = Files.newOutputStream(path)) {
+        Path parentDir = path.getParent();
+        if (!Files.exists(parentDir))
+            Files.createDirectories(parentDir);
+
+        try(OutputStream out = Files.newOutputStream(path, StandardOpenOption.CREATE)) {
             ImageIO.write(image, "jpg", out);
         }
     }

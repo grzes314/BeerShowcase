@@ -31,6 +31,10 @@ import javax.swing.SwingUtilities;
 public class BeerManagement extends JFrame {
     private final ManagementPane managementPane = new ManagementPane();
     private static final Logger LOGGER = Logger.getLogger(BeerManagement.class.getName());
+    private JMenuItem save;
+    private final BeerKnowledge.ChangeListener saveUnlocker = event -> {
+            save.setEnabled(true);
+        };
     
     JFileChooser fileChooser = new JFileChooser();
     
@@ -85,11 +89,11 @@ public class BeerManagement extends JFrame {
             openClicked();
         });
         
-        JMenuItem save = new JMenuItem("Save");
+        save = new JMenuItem("Save");
         save.addActionListener((ActionEvent ae) -> {
             saveClicked();
         });
-        //save.setEnabled(false);
+        save.setEnabled(false);
         
         JMenuItem saveAs = new JMenuItem("Save as");
         saveAs.addActionListener((ActionEvent ae) -> {
@@ -132,6 +136,8 @@ public class BeerManagement extends JFrame {
                 RunningApplication.data.beerKnowledge = new BeerKnowledge();
             }
         }
+        save.setEnabled(false);
+        RunningApplication.data.beerKnowledge.addChangeListener(saveUnlocker);
         managementPane.reset();
     }
 
@@ -157,6 +163,7 @@ public class BeerManagement extends JFrame {
         } else {
             RunningApplication.data = prevAppData;
         }
+        RunningApplication.data.beerKnowledge.addChangeListener(saveUnlocker);
         managementPane.reset();
     }
     
@@ -164,7 +171,9 @@ public class BeerManagement extends JFrame {
     private boolean saveClicked() {
         try {
             RunningApplication.data.beerKnowledge.saveChanges();
-            flushFileSystem(RunningApplication.data.fileSystem, RunningApplication.data.bkFile);
+            closeFileSystem(RunningApplication.data.fileSystem);
+            RunningApplication.data.fileSystem = openFileSystem(RunningApplication.data.bkFile);
+            save.setEnabled(false);
             return true;
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, null, ex);
@@ -188,7 +197,8 @@ public class BeerManagement extends JFrame {
             RunningApplication.data.fileSystem = openFileSystem(file);
             RunningApplication.data.beerKnowledge = prevAppData.beerKnowledge;
             RunningApplication.data.beerKnowledge.saveEverything();
-            flushFileSystem(RunningApplication.data.fileSystem, RunningApplication.data.bkFile);
+            closeFileSystem(RunningApplication.data.fileSystem);
+            RunningApplication.data.fileSystem = openFileSystem(RunningApplication.data.bkFile);
             saved = true;
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, null, ex);
@@ -197,6 +207,9 @@ public class BeerManagement extends JFrame {
         }
         
         if (saved) {
+            save.setEnabled(false);
+            RunningApplication.data.beerKnowledge.addChangeListener(saveUnlocker);
+            managementPane.reset();
             try {
                 closeFileSystem(prevAppData.fileSystem);
             } catch (IOException ex) {
@@ -213,7 +226,11 @@ public class BeerManagement extends JFrame {
     private void exitClicked() {
         boolean allowedToExit = confirmClosingPrevious();
         if (allowedToExit) {
-            confirmClosingPrevious();
+            try {
+                closeFileSystem(RunningApplication.data.fileSystem);
+            } catch (IOException ex) {
+                Logger.getLogger(BeerManagement.class.getName()).log(Level.SEVERE, null, ex);
+            }
             dispose();
         }
     }
@@ -293,13 +310,6 @@ public class BeerManagement extends JFrame {
             return FileSystems.newFileSystem(uri, env);
         } else {
             return null;
-        }
-    }
-    
-    private static void flushFileSystem(FileSystem fs, File zipFile) throws IOException {
-        if (fs != null) {
-            fs.close();
-            fs = openFileSystem(zipFile);
         }
     }
     

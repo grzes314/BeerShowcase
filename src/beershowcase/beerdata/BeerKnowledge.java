@@ -24,7 +24,8 @@ import javax.json.JsonReader;
  * It's also a proxy in creation of new beers and breweries.
  * @author Grzegorz Łoś
  */
-public class BeerKnowledge implements JsonRepresentable {
+public class BeerKnowledge implements JsonRepresentable,
+        Beer.ChangeListener, Brewery.ChangeListener {
     private final BreweryFactory breweryFactory = new BreweryFactory();
     private final BeerFactory beerFactory = new BeerFactory();
     private final ArrayList<Beer> beers = new ArrayList<>();
@@ -41,13 +42,24 @@ public class BeerKnowledge implements JsonRepresentable {
     static final Logger LOGGER = Logger.getLogger(BeerKnowledge.class.getName());
 
     public boolean isModified() {
-        //TODO update modified value when beer or brewery is updated
         return modified;
+    }
+
+    @Override
+    public void beerEdited(Beer.EditionEvent event) {
+        modified = true;
+        fireChangeEvent(new ChangeEvent(ChangeType.Edition, event.source));
+    }
+
+    @Override
+    public void breweryEdited(Brewery.EditionEvent event) {
+        modified = true;
+        fireChangeEvent(new ChangeEvent(ChangeType.Edition, event.source));
     }
 
 
     public static enum ChangeType {
-        Addition, Removal
+        Addition, Removal, Edition
     }
     
     public static class ChangeEvent {
@@ -99,8 +111,11 @@ public class BeerKnowledge implements JsonRepresentable {
 
         ArrayList<Brewery> breweries = new ArrayList<>();
         int breweriesCount = json.getInt("breweriesCount");
-        while (breweriesCount-- > 0)
-            breweries.add(breweryFactory.makeBreweryForRead());
+        while (breweriesCount-- > 0) {
+            Brewery brewery = breweryFactory.makeBreweryForRead();
+            breweries.add(brewery);
+            brewery.addChangeListener(this);
+        }
         JsonUtils.fromJsonArray(json.getJsonArray("breweries"), breweries);
         for (Brewery br: breweries)
             breweryById.put(br.getId(), br);
@@ -109,6 +124,7 @@ public class BeerKnowledge implements JsonRepresentable {
         while (beersCount-- > 0) {
             Beer beer = beerFactory.makeBeerForRead();
             beers.add(beer);
+            beer.addChangeListener(this);
         }
         JsonUtils.fromJsonArray(json.getJsonArray("beers"), beers);
     }
@@ -124,16 +140,19 @@ public class BeerKnowledge implements JsonRepresentable {
     
     public void saveChanges() throws IOException {
         saveJson();
-        // TODO save modified pictures !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        for (Brewery br: breweryById.values())
+            br.saveChanges();
+        for (Beer b: beers)
+            b.saveChanges();
         modified = false;
     }
     
     public void saveEverything() throws IOException {
         saveJson();
         for (Brewery br: breweryById.values())
-            br.saveChanges();
+            br.saveForced();
         for (Beer b: beers)
-            b.saveChanges();
+            b.saveForced();
         
         modified = false;
     }
@@ -141,7 +160,7 @@ public class BeerKnowledge implements JsonRepresentable {
     private void saveJson() throws IOException {
         Path path = RunningApplication.data.fileSystem.getPath("BeerKnowledge.json");
         try (BufferedWriter writer = Files.newBufferedWriter(path,
-                StandardCharsets.UTF_8, StandardOpenOption.WRITE)) {
+                StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
             JsonObject json = toJson();
             String jsonString = json.toString();
             writer.write(jsonString, 0, jsonString.length());            

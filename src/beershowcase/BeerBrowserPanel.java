@@ -25,6 +25,7 @@ public class BeerBrowserPanel extends javax.swing.JPanel
     public BeerBrowserPanel() {
         initComponents();
         beerViewContainer.setLayout(new BorderLayout());
+        setBeerView();
         setButtonAvailability();
     }
 
