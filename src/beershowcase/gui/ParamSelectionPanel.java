@@ -1,5 +1,5 @@
 
-package beershowcase;
+package beershowcase.gui;
 
 import beershowcase.beerdata.StyleKeyword;
 import beershowcase.beerdata.filters.Conjunction;

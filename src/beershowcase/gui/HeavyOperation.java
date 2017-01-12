@@ -1,5 +1,5 @@
 
-package beershowcase;
+package beershowcase.gui;
 
 import java.beans.PropertyChangeEvent;
 import javax.swing.JDialog;

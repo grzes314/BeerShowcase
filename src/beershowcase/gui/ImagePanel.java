@@ -1,5 +1,5 @@
 
-package beershowcase;
+package beershowcase.gui;
 
 import java.awt.Graphics;
 import java.awt.Image;

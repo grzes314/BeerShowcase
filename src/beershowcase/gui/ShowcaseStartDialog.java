@@ -1,4 +1,4 @@
-package beershowcase;
+package beershowcase.gui;
 
 import java.io.File;
 import javax.swing.JFileChooser;

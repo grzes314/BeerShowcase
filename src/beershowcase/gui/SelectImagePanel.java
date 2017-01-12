@@ -1,5 +1,5 @@
 
-package beershowcase;
+package beershowcase.gui;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

@@ -1,5 +1,5 @@
 
-package beershowcase;
+package beershowcase.gui;
 
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;

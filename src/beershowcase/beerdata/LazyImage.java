@@ -1,8 +1,7 @@
 
 package beershowcase.beerdata;
 
-import beershowcase.RunningApplication;
-import com.sun.org.apache.xerces.internal.parsers.StandardParserConfiguration;
+import beershowcase.gui.RunningApplication;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;

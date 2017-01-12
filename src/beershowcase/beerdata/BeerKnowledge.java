@@ -1,7 +1,7 @@
 
 package beershowcase.beerdata;
 
-import beershowcase.RunningApplication;
+import beershowcase.gui.RunningApplication;
 import beershowcase.beerdata.filters.Filter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

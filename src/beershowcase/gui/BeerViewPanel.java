@@ -1,5 +1,5 @@
 
-package beershowcase;
+package beershowcase.gui;
 
 import beershowcase.beerdata.Beer;
 import beershowcase.beerdata.Brewery;

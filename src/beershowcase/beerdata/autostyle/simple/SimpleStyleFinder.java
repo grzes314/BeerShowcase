@@ -3,9 +3,9 @@ package beershowcase.beerdata.autostyle.simple;
 
 import beershowcase.beerdata.StyleKeyword;
 import beershowcase.beerdata.autostyle.StyleFinder;
-import com.sun.istack.internal.logging.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 /**
  *
@@ -15,7 +15,7 @@ public class SimpleStyleFinder implements StyleFinder {
 
     private ArrayList<Rule> rules = new ArrayList<>();
     private static final int MAX_ITER = 20;
-    private static final Logger LOGGER = Logger.getLogger(SimpleStyleFinder.class);
+    private static final Logger LOGGER = Logger.getLogger(SimpleStyleFinder.class.getName());
     
     public SimpleStyleFinder() {
         rules = new RulesCreator().makeRules();
