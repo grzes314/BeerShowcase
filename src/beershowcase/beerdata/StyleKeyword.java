@@ -6,59 +6,58 @@ package beershowcase.beerdata;
  * @author Grzegorz Łoś
  */
 public enum StyleKeyword {
-    //origin
-    Czech,
-    American,
-    English,
-    Belgian,
-    German,
-    Irish,
-
-    // colour
-    Pale,
-    Helles,
-    Amber,
-    Brown,
-    Golden,
-    Red,
-    Dark,
-    Dunkel,
-    Black,
-
-    // Malts
-    Barley,
-    Wheat,
-    Rye,
-    Oatmeal,
-    Corn,
-    Rice,
-
+    
     // fermentation type
     Ale,
     Lager,
-    Hybrid,
-    Spontanous,
+    Wild,
 
-    // German and Czech syles
-    Pilzner,
+    // colour
+    Pale,
+    Amber,
+    Dark,
+    
+    // Main branches
+    PaleAleFamily,
+    IpaFamily,
+    AmberAleFamily,
+    BrownAleFamily,
+    StrongAleFamily,
+    PorterFamily,
+    StoutFamily,
+    PaleLagerFamily,
+    PilsnerFamily,
+    AmberLagerFamily,
+    DarkLagerFamily,
+    BockFamily,
+    WheatBeerFamily, 
+
+    // Specific German syles
     Marzen,
-    Bock,
     Hefeweizen,
     Weizenbock,
     Roggenbier,
     Schwarzbier,
-    BalticPorter,
+    ViennaLager,
+    Rauchbier,
+    Kellerbier,
     Altbier,
+    BerlinerWeisse,
+    Gose,
+    Lichtenhainer,
+    Munich,
 
-    // English styles
-    Bitter,
-    Mild,
+    // specific Anglo-saxon styles
     Porter,
-    IPA,
-    Stout,
-    Smoked,
+    BitterStyle,
+    GoldenAle,
+    Mild,
+    BarleyWine,
+    WheatWine,
+    AmericanWheat,
 
-    // Belgian styles
+    // specific Belgian styles
+    Trappist,
     Dubbel,
     Tripel,
     Quadruppel,
@@ -66,17 +65,36 @@ public enum StyleKeyword {
     Lambic,
     Kriek,
     Saison,
+    Gueuze,
 
     // Other
+    BiereDeGarde,
+    BalticPorter,
     Grodziskie,
     Sahti,
-    Brett,
-    Other,
 
-    // Modifiers
-    Strong,
-    Double,
+    // Features
+    American,
+    British,
+    Belgian,
     Imperial,
-    Extra
+    Smoked,
+    Milk,
+    Brett,
+    Rye,
+    Oatmeal,
+    Rice,
+    Fruit,
+    
+    // Flavours
+    Malty,
+    BitterTaste,
+    Balanced,
+    Hoppy,
+    Roasty,
+    SmokeTaste,
+    Sour,
+    Fruitty,
+    Spice, 
 }
     
