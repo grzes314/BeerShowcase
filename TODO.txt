@@ -1,8 +1,3 @@
-* Store all data in one zip file. 
-
-* Redesign keywords.
-
-* Automatically fill keywords from a declared style.
 
 * Automatically read beer data from external sources.
 
