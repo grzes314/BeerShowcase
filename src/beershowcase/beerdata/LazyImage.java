@@ -1,11 +1,11 @@
 
 package beershowcase.beerdata;
 
-import beershowcase.gui.RunningApplication;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -22,13 +22,11 @@ import javax.imageio.ImageIO;
 class LazyImage {
     private final String pathOnFileSystem;
     private BufferedImage image;
-    private boolean imageFileExists = false;
     private boolean imageFileChanged = false;
     private static final Logger LOGGER = Logger.getLogger(LazyImage.class.getName());
 
     public LazyImage(String pathOnFileSystem) {
         this.pathOnFileSystem = pathOnFileSystem;
-        checkIfImageFileExists();
     }
     
     public String getPath() {
@@ -40,50 +38,48 @@ class LazyImage {
         imageFileChanged = true;
     }
           
-    public BufferedImage getPicture() {
-        if (image == null && !imageFileExists)
+    public BufferedImage getPicture(FileSystem fileSystem) {
+        if (image == null && !imageFileExists(fileSystem))
             return null;
         
         try {
             if (image == null)
-                readPicture();
+                readPicture(fileSystem);
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
         return image;
     }
 
-    private void readPicture() throws IOException {
-        Path path = RunningApplication.data.fileSystem.getPath(pathOnFileSystem);
+    private void readPicture(FileSystem fileSystem) throws IOException {
+        Path path = fileSystem.getPath(pathOnFileSystem);
         try(InputStream is = Files.newInputStream(path)) {
             image = ImageIO.read(is);
         }
     }
 
-    public void saveIfChanged() {
+    public void saveIfChanged(FileSystem fileSystem) {
         try {            
             if (image != null && imageFileChanged)
-                writeOnFileSystem();
-            imageFileExists = true;
+                writeOnFileSystem(fileSystem);
             imageFileChanged = false;
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Failed to save {0}", pathOnFileSystem);
         }
     }
 
-    public void saveForced() {
+    public void saveForced(FileSystem fileSystem) {
         try {            
             if (image != null)
-                writeOnFileSystem();
-            imageFileExists = true;
+                writeOnFileSystem(fileSystem);
             imageFileChanged = false;
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Failed to save {0}", pathOnFileSystem);
         }
     }
     
-    private void writeOnFileSystem() throws IOException {
-        Path path = RunningApplication.data.fileSystem.getPath(pathOnFileSystem);
+    private void writeOnFileSystem(FileSystem fileSystem) throws IOException {
+        Path path = fileSystem.getPath(pathOnFileSystem);
         Path parentDir = path.getParent();
         if (!Files.exists(parentDir))
             Files.createDirectories(parentDir);
@@ -100,12 +96,12 @@ class LazyImage {
         image = null;
     }
 
-    private void checkIfImageFileExists() {
-        if (RunningApplication.data.fileSystem == null) {
-            imageFileExists = false;
+    private boolean imageFileExists(FileSystem fileSystem) {
+        if (fileSystem == null) {
+            return false;
         } else {
-            Path path = RunningApplication.data.fileSystem.getPath(pathOnFileSystem);
-            imageFileExists = Files.exists(path);
+            Path path = fileSystem.getPath(pathOnFileSystem);
+            return Files.exists(path);
         }
     }
     

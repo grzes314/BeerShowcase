@@ -133,7 +133,7 @@ public class BreweryView extends javax.swing.JPanel {
     
     private void updateView() {
         name.setText(brewery.getName());
-        logo = brewery.getLogo();
+        logo = brewery.getLogo(RunningApplication.data.fileSystem);
         if (logo == null) {
             logoLabel.setText("No logo");
             logoLabel.setIcon(null);

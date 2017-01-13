@@ -1,12 +1,12 @@
 
 package beershowcase.beerdata;
 
-import beershowcase.gui.RunningApplication;
 import beershowcase.beerdata.filters.Filter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -129,8 +129,8 @@ public class BeerKnowledge implements JsonRepresentable,
         JsonUtils.fromJsonArray(json.getJsonArray("beers"), beers);
     }
     
-    public void load() throws IOException, BeerKnowledgeParserException {
-        Path path = RunningApplication.data.fileSystem.getPath("BeerKnowledge.json");
+    public void load(FileSystem fileSystem) throws IOException, BeerKnowledgeParserException {
+        Path path = fileSystem.getPath("BeerKnowledge.json");
         try (   BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
                 JsonReader jsonReader = Json.createReader(reader)) {
             JsonObject json = jsonReader.readObject();
@@ -138,27 +138,27 @@ public class BeerKnowledge implements JsonRepresentable,
         }
     }
     
-    public void saveChanges() throws IOException {
-        saveJson();
+    public void saveChanges(FileSystem fileSystem) throws IOException {
+        saveJson(fileSystem);
         for (Brewery br: breweryById.values())
-            br.saveChanges();
+            br.saveChanges(fileSystem);
         for (Beer b: beers)
-            b.saveChanges();
+            b.saveChanges(fileSystem);
         modified = false;
     }
     
-    public void saveEverything() throws IOException {
-        saveJson();
+    public void saveEverything(FileSystem fileSystem) throws IOException {
+        saveJson(fileSystem);
         for (Brewery br: breweryById.values())
-            br.saveForced();
+            br.saveForced(fileSystem);
         for (Beer b: beers)
-            b.saveForced();
+            b.saveForced(fileSystem);
         
         modified = false;
     }
     
-    private void saveJson() throws IOException {
-        Path path = RunningApplication.data.fileSystem.getPath("BeerKnowledge.json");
+    private void saveJson(FileSystem fileSystem) throws IOException {
+        Path path = fileSystem.getPath("BeerKnowledge.json");
         try (BufferedWriter writer = Files.newBufferedWriter(path,
                 StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
             JsonObject json = toJson();

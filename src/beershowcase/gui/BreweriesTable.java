@@ -203,7 +203,7 @@ class BreweriesTableModel extends AbstractTableModel
     @Override
     public Object getValueAt(int row, int col) {
         Brewery b = displayed.get(row);
-        Image logo = b.getLogo();
+        Image logo = b.getLogo(RunningApplication.data.fileSystem);
         switch(col) {
             case 0:
                 return b.getName();

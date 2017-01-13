@@ -222,7 +222,7 @@ public class BeerViewPanel extends javax.swing.JPanel {
     }
 
     private void setBreweryLogo() {
-        BufferedImage image = brewery.getLogo();
+        BufferedImage image = brewery.getLogo(RunningApplication.data.fileSystem);
         Component comp;
         if (image == null) {
             comp = new JLabel("No logo");
@@ -233,9 +233,9 @@ public class BeerViewPanel extends javax.swing.JPanel {
     }
 
     private void setBeerImage() {
-        BufferedImage image = beer.getBottleImage();
+        BufferedImage image = beer.getBottleImage(RunningApplication.data.fileSystem);
         if (image == null)
-            image = beer.getLabelImage();
+            image = beer.getLabelImage(RunningApplication.data.fileSystem);
         
         Component comp;
         if (image == null) {

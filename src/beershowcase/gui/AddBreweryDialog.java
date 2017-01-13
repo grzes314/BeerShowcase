@@ -27,7 +27,8 @@ public class AddBreweryDialog extends javax.swing.JDialog {
     
     public AddBreweryDialog(java.awt.Frame parent, Brewery brewery) {
         super(parent, true /* modal */);
-        selectImagePanel = new SelectImagePanel(brewery.getLogo());
+        selectImagePanel = new SelectImagePanel(
+                brewery.getLogo(RunningApplication.data.fileSystem));
         initComponents();
         imageSelectionContainer.setLayout(new BorderLayout());
         imageSelectionContainer.add(selectImagePanel, BorderLayout.CENTER);

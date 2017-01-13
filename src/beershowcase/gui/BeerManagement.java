@@ -170,7 +170,7 @@ public class BeerManagement extends JFrame {
     
     private boolean saveClicked() {
         try {
-            RunningApplication.data.beerKnowledge.saveChanges();
+            RunningApplication.data.beerKnowledge.saveChanges(RunningApplication.data.fileSystem);
             closeFileSystem(RunningApplication.data.fileSystem);
             RunningApplication.data.fileSystem = openFileSystem(RunningApplication.data.bkFile);
             save.setEnabled(false);
@@ -196,7 +196,7 @@ public class BeerManagement extends JFrame {
             RunningApplication.data.bkFile = file;
             RunningApplication.data.fileSystem = openFileSystem(file);
             RunningApplication.data.beerKnowledge = prevAppData.beerKnowledge;
-            RunningApplication.data.beerKnowledge.saveEverything();
+            RunningApplication.data.beerKnowledge.saveEverything(RunningApplication.data.fileSystem);
             closeFileSystem(RunningApplication.data.fileSystem);
             RunningApplication.data.fileSystem = openFileSystem(RunningApplication.data.bkFile);
             saved = true;
@@ -241,7 +241,7 @@ public class BeerManagement extends JFrame {
             RunningApplication.data.bkFile = file;
             RunningApplication.data.fileSystem =  openFileSystem(file);
             RunningApplication.data.beerKnowledge = new BeerKnowledge();
-            RunningApplication.data.beerKnowledge.load();
+            RunningApplication.data.beerKnowledge.load(RunningApplication.data.fileSystem);
             return true;
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, null, ex);

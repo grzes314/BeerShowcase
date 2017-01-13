@@ -436,7 +436,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
         description.setText(beer.getDescritpion());
         availableBox.setSelected(beer.isAvailable());
         stylesPanel.setSelectedKeywords(beer.getStyleKeywords());
-        bottleImageSelector.setInitialImage(beer.getBottleImage());
-        labelImageSelector.setInitialImage(beer.getLabelImage());        
+        bottleImageSelector.setInitialImage(beer.getBottleImage(RunningApplication.data.fileSystem));
+        labelImageSelector.setInitialImage(beer.getLabelImage(RunningApplication.data.fileSystem));        
     }
 }

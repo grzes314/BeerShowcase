@@ -2,6 +2,7 @@
 package beershowcase.beerdata;
 
 import java.awt.image.BufferedImage;
+import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -92,14 +93,14 @@ public class Beer implements JsonRepresentable {
         fireEditionEvent(new EditionEvent(this));
     }
     
-    public void saveChanges() {
-        labelImage.saveIfChanged();
-        bottleImage.saveIfChanged();
+    public void saveChanges(FileSystem fileSystem) {
+        labelImage.saveIfChanged(fileSystem);
+        bottleImage.saveIfChanged(fileSystem);
     }
     
-    public void saveForced() {
-        labelImage.saveIfChanged();
-        bottleImage.saveIfChanged();
+    public void saveForced(FileSystem fileSystem) {
+        labelImage.saveForced(fileSystem);
+        bottleImage.saveForced(fileSystem);
     }
     
     public boolean isAvailable() {
@@ -179,26 +180,22 @@ public class Beer implements JsonRepresentable {
         }
     }
 
-    public BufferedImage getLabelImage() {
-        return labelImage.getPicture();
+    public BufferedImage getLabelImage(FileSystem fileSystem) {
+        return labelImage.getPicture(fileSystem);
     }
 
     public void setLabelImage(BufferedImage newLabelImage) {
-        if (labelImage.getPicture() != newLabelImage) {
-            this.labelImage.setPicture(newLabelImage);
-            fireEditionEvent(new EditionEvent(this));
-        }
+        this.labelImage.setPicture(newLabelImage);
+        fireEditionEvent(new EditionEvent(this));
     }
 
-    public BufferedImage getBottleImage() {
-        return bottleImage.getPicture();
+    public BufferedImage getBottleImage(FileSystem fileSystem) {
+        return bottleImage.getPicture(fileSystem);
     }
 
     public void setBottleImage(BufferedImage newBottleImage) {
-        if (bottleImage.getPicture() != newBottleImage) {
-            this.bottleImage.setPicture(newBottleImage);
-            fireEditionEvent(new EditionEvent(this));
-        }
+        this.bottleImage.setPicture(newBottleImage);
+        fireEditionEvent(new EditionEvent(this));
     }
     
     public void addStyleKeyword(StyleKeyword keyword) {

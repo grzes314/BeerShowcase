@@ -2,6 +2,7 @@
 package beershowcase.beerdata;
 
 import java.awt.image.BufferedImage;
+import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -70,12 +71,12 @@ public class Brewery implements JsonRepresentable {
         logo = new LazyImage(makeLogoImagePath());
     }
     
-    public void saveChanges() {
-        logo.saveIfChanged();
+    public void saveChanges(FileSystem fileSystem) {
+        logo.saveIfChanged(fileSystem);
     }
     
-    public void saveForced() {
-        logo.saveForced();
+    public void saveForced(FileSystem fileSystem) {
+        logo.saveForced(fileSystem);
     }
 
     public int getId() {
@@ -91,8 +92,8 @@ public class Brewery implements JsonRepresentable {
         fireEditionEvent(new EditionEvent(this));
     }
 
-    public BufferedImage getLogo() {
-        BufferedImage img = logo.getPicture();
+    public BufferedImage getLogo(FileSystem fileSystem) {
+        BufferedImage img = logo.getPicture(fileSystem);
         return img == null ? noLogo : img;
     }
 
