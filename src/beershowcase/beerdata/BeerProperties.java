@@ -19,9 +19,14 @@ public class BeerProperties {
     public String declaredStyle = "";
     
     /**
-     * Original gravity in 0.01 blg units.
+     * Original gravity in 0.1 blg units.
      */
     public int plato;
+    
+    /**
+     * Alcohol content by volume in promiles.
+     */
+    public int abv;
     
     /**
      * Bitternes in IBU.
