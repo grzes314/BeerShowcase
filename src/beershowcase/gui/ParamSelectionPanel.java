@@ -14,7 +14,7 @@ import java.util.Collection;
  */
 public class ParamSelectionPanel extends javax.swing.JPanel {
 
-    private final StylesPanel stylesPanel = new StylesPanel();
+    private final AllKeywordsPanel stylesPanel = new AllKeywordsPanel();
     private final BeerShowcasePane beerShowcasePane;
     /**
      * Creates new form ParamSelectionPanel

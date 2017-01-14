@@ -245,8 +245,8 @@
         <Container class="javax.swing.JPanel" name="styleContainer">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Style">
-                <Property name="tabTitle" type="java.lang.String" value="Style"/>
+              <JTabbedPaneConstraints tabName="Tags">
+                <Property name="tabTitle" type="java.lang.String" value="Tags"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

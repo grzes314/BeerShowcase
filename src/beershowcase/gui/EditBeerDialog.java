@@ -12,7 +12,7 @@ import javax.swing.JScrollPane;
  * @author Grzegorz Łoś
  */
 public class EditBeerDialog extends javax.swing.JDialog {
-    StylesPanel stylesPanel = new StylesPanel();
+    AllKeywordsPanel stylesPanel = new AllKeywordsPanel();
     SelectImagePanel bottleImageSelector = new SelectImagePanel();
     SelectImagePanel labelImageSelector = new SelectImagePanel();
     boolean confirmed;
@@ -197,7 +197,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
             .addGap(0, 454, Short.MAX_VALUE)
         );
 
-        tabbedPane.addTab("Style", styleContainer);
+        tabbedPane.addTab("Tags", styleContainer);
 
         jLabel7.setFont(new java.awt.Font("Dialog", 1, 15)); // NOI18N
         jLabel7.setText("Select label image");
