@@ -14,6 +14,11 @@ public class BeerProperties {
     public String name = "";
     
     /**
+     * Name of the brwery that produced this beer.
+     */
+    public String breweryName = "";
+    
+    /**
      * Style stated by the brewery.
      */
     public String declaredStyle = "";

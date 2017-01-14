@@ -34,6 +34,9 @@ public class PolskiKraftTest extends TestCase {
      */
     public void testReadFrom() {
         BeerProperties props = polskiKraft.readFrom("ADDRESS DOESNT MATTER");
+        assertEquals(props.name, "Kwas Theta");
+        assertEquals(props.breweryName, "PINTA");
+        assertEquals(props.declaredStyle, "Wild Sour Cheery RIS");
         assertEquals(55, props.ibu);
         assertEquals(247, props.plato);
         assertEquals(102, props.abv);
