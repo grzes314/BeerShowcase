@@ -2,6 +2,7 @@
 package beershowcase.external;
 
 import beershowcase.beerdata.BeerProperties;
+import beershowcase.beerdata.StyleKeyword;
 import junit.framework.TestCase;
 
 /**
@@ -21,6 +22,7 @@ public class PolskiKraftTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         polskiKraft.setPageReader(new MockPageReader());
+        polskiKraft.setFetchImage(false);
         
     }
     
@@ -37,9 +39,14 @@ public class PolskiKraftTest extends TestCase {
         assertEquals(props.name, "Kwas Theta");
         assertEquals(props.breweryName, "PINTA");
         assertEquals(props.declaredStyle, "Wild Sour Cheery RIS");
+        assertEquals(props.descritpion, "Pinta miesiąca Grudzień 2016.");
         assertEquals(55, props.ibu);
         assertEquals(247, props.plato);
         assertEquals(102, props.abv);
+        assertTrue(props.keywords.contains(StyleKeyword.StoutFamily));
+        assertTrue(props.keywords.contains(StyleKeyword.Imperial));
+        assertTrue(props.keywords.contains(StyleKeyword.Wild));
+        assertTrue(props.keywords.contains(StyleKeyword.Sour));
     }
     
 }

@@ -19,7 +19,7 @@ import javax.imageio.ImageIO;
  * @author Grzegorz Łoś
  */
 
-class LazyImage {
+public class LazyImage {
     private final String pathOnFileSystem;
     private BufferedImage image;
     private boolean imageFileChanged = false;

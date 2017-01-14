@@ -2,8 +2,15 @@
 package beershowcase.external;
 
 import beershowcase.beerdata.BeerProperties;
+import beershowcase.beerdata.autostyle.StyleFinder;
+import beershowcase.beerdata.autostyle.simple.SimpleStyleFinder;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -12,6 +19,8 @@ import java.util.logging.Logger;
 public class PolskiKraft implements ExternalSource {
 
     private PageReader pageReader = new DefaultPageReader();
+    private StyleFinder styleFinder = new SimpleStyleFinder();
+    private boolean fetchImage = true;
     String content;
     
     @Override
@@ -21,9 +30,16 @@ public class PolskiKraft implements ExternalSource {
         props.name = readName();
         props.breweryName = readBrewery();
         props.declaredStyle = readDeclaredStyle();
+        props.descritpion = readDescription();
         props.abv = readAbv();
         props.ibu = readIbu();
         props.plato = readBlg();
+        props.keywords.addAll(styleFinder.findStyleKeywords(props.declaredStyle));
+        if (fetchImage) {
+            BufferedImage image = readImage();
+            if (image != null)
+                props.labelImage.setPicture(image);
+        }
         content = null;
         return props;
     }
@@ -34,6 +50,22 @@ public class PolskiKraft implements ExternalSource {
 
     void setPageReader(PageReader pageReader) {
         this.pageReader = pageReader;
+    }
+
+    StyleFinder getStyleFinder() {
+        return styleFinder;
+    }
+
+    void setStyleFinder(StyleFinder styleFinder) {
+        this.styleFinder = styleFinder;
+    }
+
+    boolean isFetchImage() {
+        return fetchImage;
+    }
+
+    void setFetchImage(boolean fetchImage) {
+        this.fetchImage = fetchImage;
     }
     
     private String getElementContent(String tagType, String wholeMarkup) {
@@ -80,6 +112,10 @@ public class PolskiKraft implements ExternalSource {
         }
     }
 
+    private String readDescription() {
+        return getElementContent("p", "<p class=\"description\"").trim();
+    }
+
     private int readAbv() {
         try {
             String doubleStr = getElementContent("h1", "<h1 id=\"amount-alc-s\">");
@@ -106,6 +142,35 @@ public class PolskiKraft implements ExternalSource {
             return d.intValue();
         } catch (NumberFormatException ex) {
             return 0;
+        }
+    }
+
+    private BufferedImage readImage() {
+        try {
+            URL url = buildImageUrl();
+            if (url != null)
+                return ImageIO.read(url);
+            else
+                return null;
+        } catch (IOException ex) {
+            Logger.getLogger(PolskiKraft.class.getName()).log(Level.WARNING, null, ex);
+            return null;
+        }
+    }
+
+    private URL buildImageUrl() {
+        String locator = "<meta property=\"og:image\"content=\"";
+        int i = content.indexOf(locator);
+        if (i < 0)
+            return null;
+        int start = i + locator.length();
+        int end = content.indexOf("\"", start);
+        String urlString = content.substring(start, end);
+        try {
+            return new URL(urlString);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(PolskiKraft.class.getName()).log(Level.WARNING, null, ex);
+            return null;
         }
     }
 }
