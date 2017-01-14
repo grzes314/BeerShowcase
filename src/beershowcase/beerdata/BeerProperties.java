@@ -54,11 +54,6 @@ public class BeerProperties {
     public LazyImage labelImage;
     
     /**
-     * Image of the beer's bottle.
-     */
-    public LazyImage bottleImage;
-    
-    /**
      * Style keywords associated with this beer.
      */
     public final ArrayList<StyleKeyword> keywords = new ArrayList<>();

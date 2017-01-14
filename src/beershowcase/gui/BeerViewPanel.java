@@ -233,9 +233,7 @@ public class BeerViewPanel extends javax.swing.JPanel {
     }
 
     private void setBeerImage() {
-        BufferedImage image = beer.getBottleImage(RunningApplication.data.fileSystem);
-        if (image == null)
-            image = beer.getLabelImage(RunningApplication.data.fileSystem);
+        BufferedImage image = beer.getLabelImage(RunningApplication.data.fileSystem);
         
         Component comp;
         if (image == null) {

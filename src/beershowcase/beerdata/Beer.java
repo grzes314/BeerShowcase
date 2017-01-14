@@ -91,18 +91,15 @@ public class Beer implements JsonRepresentable {
         addStyleKeywordsFromStrings(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
         
         properties.labelImage = new LazyImage(makeLabelImagePath());
-        properties.bottleImage = new LazyImage(makeBottleImagePath());
         fireEditionEvent(new EditionEvent(this));
     }
     
     public void saveChanges(FileSystem fileSystem) {
         properties.labelImage.saveIfChanged(fileSystem);
-        properties.bottleImage.saveIfChanged(fileSystem);
     }
     
     public void saveForced(FileSystem fileSystem) {
         properties.labelImage.saveForced(fileSystem);
-        properties.bottleImage.saveForced(fileSystem);
     }
     
     public boolean isAvailable() {
@@ -120,7 +117,6 @@ public class Beer implements JsonRepresentable {
     Beer(int id) {
         this.id = id;
         properties.labelImage = new LazyImage(makeLabelImagePath());
-        properties.bottleImage = new LazyImage(makeBottleImagePath());
     }
 
     public int getId() {
@@ -190,15 +186,6 @@ public class Beer implements JsonRepresentable {
         properties.labelImage.setPicture(newLabelImage);
         fireEditionEvent(new EditionEvent(this));
     }
-
-    public BufferedImage getBottleImage(FileSystem fileSystem) {
-        return properties.bottleImage.getPicture(fileSystem);
-    }
-
-    public void setBottleImage(BufferedImage newBottleImage) {
-        properties.bottleImage.setPicture(newBottleImage);
-        fireEditionEvent(new EditionEvent(this));
-    }
     
     public void addStyleKeyword(StyleKeyword keyword) {
         if (!properties.keywords.contains(keyword)) {
@@ -238,10 +225,6 @@ public class Beer implements JsonRepresentable {
         } catch (IllegalArgumentException ex) {
             throw new BeerKnowledgeParserException(ex);
         }
-    }
-    
-    private String makeBottleImagePath() {
-        return "bottles/" + id + ".jpg";
     }
     
     private String makeLabelImagePath() {

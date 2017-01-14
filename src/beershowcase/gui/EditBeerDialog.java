@@ -2,10 +2,8 @@
 package beershowcase.gui;
 
 import beershowcase.beerdata.Beer;
-import beershowcase.beerdata.BeerKnowledge;
 import beershowcase.beerdata.Brewery;
 import java.awt.BorderLayout;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
@@ -29,8 +27,6 @@ public class EditBeerDialog extends javax.swing.JDialog {
         setTitle("Add new beer");
         styleContainer.setLayout(new BorderLayout());
         styleContainer.add(new JScrollPane(stylesPanel));
-        bottleSelectorContainer.setLayout(new BorderLayout());
-        bottleSelectorContainer.add(bottleImageSelector);
         labelSelectorContainer.setLayout(new BorderLayout());
         labelSelectorContainer.add(labelImageSelector);
     }
@@ -42,8 +38,6 @@ public class EditBeerDialog extends javax.swing.JDialog {
         setTitle("Edit a beer");
         styleContainer.setLayout(new BorderLayout());
         styleContainer.add(new JScrollPane(stylesPanel));
-        bottleSelectorContainer.setLayout(new BorderLayout());
-        bottleSelectorContainer.add(bottleImageSelector);
         labelSelectorContainer.setLayout(new BorderLayout());
         labelSelectorContainer.add(labelImageSelector);
         
@@ -76,11 +70,6 @@ public class EditBeerDialog extends javax.swing.JDialog {
         jLabel8 = new javax.swing.JLabel();
         styleContainer = new javax.swing.JPanel();
         imagesPanel = new javax.swing.JPanel();
-        jSplitPane1 = new javax.swing.JSplitPane();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        bottleSelectorContainer = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         labelSelectorContainer = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
@@ -210,45 +199,6 @@ public class EditBeerDialog extends javax.swing.JDialog {
 
         tabbedPane.addTab("Style", styleContainer);
 
-        jSplitPane1.setDividerLocation(300);
-        jSplitPane1.setResizeWeight(0.5);
-
-        jLabel6.setFont(new java.awt.Font("Dialog", 1, 15)); // NOI18N
-        jLabel6.setText("Select bottle image");
-
-        bottleSelectorContainer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        javax.swing.GroupLayout bottleSelectorContainerLayout = new javax.swing.GroupLayout(bottleSelectorContainer);
-        bottleSelectorContainer.setLayout(bottleSelectorContainerLayout);
-        bottleSelectorContainerLayout.setHorizontalGroup(
-            bottleSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        bottleSelectorContainerLayout.setVerticalGroup(
-            bottleSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 412, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel6)
-                .addGap(0, 140, Short.MAX_VALUE))
-            .addComponent(bottleSelectorContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bottleSelectorContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jSplitPane1.setLeftComponent(jPanel1);
-
         jLabel7.setFont(new java.awt.Font("Dialog", 1, 15)); // NOI18N
         jLabel7.setText("Select label image");
 
@@ -258,46 +208,33 @@ public class EditBeerDialog extends javax.swing.JDialog {
         labelSelectorContainer.setLayout(labelSelectorContainerLayout);
         labelSelectorContainerLayout.setHorizontalGroup(
             labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 613, Short.MAX_VALUE)
         );
         labelSelectorContainerLayout.setVerticalGroup(
             labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 412, Short.MAX_VALUE)
+            .addGap(0, 450, Short.MAX_VALUE)
         );
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel7)
-                .addContainerGap(145, Short.MAX_VALUE))
-            .addComponent(labelSelectorContainer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jSplitPane1.setRightComponent(jPanel2);
 
         javax.swing.GroupLayout imagesPanelLayout = new javax.swing.GroupLayout(imagesPanel);
         imagesPanel.setLayout(imagesPanelLayout);
         imagesPanelLayout.setHorizontalGroup(
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1)
+            .addGroup(imagesPanelLayout.createSequentialGroup()
+                .addComponent(jLabel7)
+                .addGap(0, 468, Short.MAX_VALUE))
+            .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         imagesPanelLayout.setVerticalGroup(
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1)
+            .addGroup(imagesPanelLayout.createSequentialGroup()
+                .addComponent(jLabel7)
+                .addGap(0, 436, Short.MAX_VALUE))
+            .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tabbedPane.addTab("Pictures", imagesPanel);
+        tabbedPane.addTab("Picture", imagesPanel);
 
         okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -353,7 +290,6 @@ public class EditBeerDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox availableBox;
-    private javax.swing.JPanel bottleSelectorContainer;
     private javax.swing.JTextField breweryField;
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextArea description;
@@ -363,13 +299,9 @@ public class EditBeerDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JPanel labelSelectorContainer;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField nameField;
@@ -392,7 +324,6 @@ public class EditBeerDialog extends javax.swing.JDialog {
         newBeer.setAvailable(availableBox.isSelected());
         newBeer.addStyleKeywords(stylesPanel.getSelectedKeywords());
         newBeer.setDescritpion(description.getText());
-        newBeer.setBottleImage(bottleImageSelector.getImage());
         newBeer.setLabelImage(labelImageSelector.getImage());
     }
 
@@ -436,7 +367,6 @@ public class EditBeerDialog extends javax.swing.JDialog {
         description.setText(beer.getDescritpion());
         availableBox.setSelected(beer.isAvailable());
         stylesPanel.setSelectedKeywords(beer.getStyleKeywords());
-        bottleImageSelector.setInitialImage(beer.getBottleImage(RunningApplication.data.fileSystem));
         labelImageSelector.setInitialImage(beer.getLabelImage(RunningApplication.data.fileSystem));        
     }
 }
