@@ -254,7 +254,13 @@ public class SimpleStyleFinderTest {
             
             new Task("Robust Porter",
                 c(PorterFamily, Porter, BitterTaste),
-                c(BalticPorter))
+                c(BalticPorter)),
+            
+            new Task("Wild Sour Cherry RIS",
+                c(Wild, StoutFamily, Imperial, Sour, Fruitty),
+                c(Ale))
+                
+                
         );
     }
     

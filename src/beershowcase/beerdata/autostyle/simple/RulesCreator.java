@@ -66,6 +66,10 @@ public class RulesCreator {
                 Conds( P("\\blager\\b") ),
                 Actions( A(Lager) )
             ),
+            new Rule(
+                Conds( P("\\bwild\\b") ),
+                Actions( A(Wild) )
+            ),
         };
     }
     
@@ -94,7 +98,7 @@ public class RulesCreator {
                 Actions( A(Ale) )
             ),
             new Rule(
-                Conds( K(StoutFamily) ),
+                Conds( K(StoutFamily), new Not(HasFerment) ),
                 Actions( A(Ale) )
             ),
             new Rule(
@@ -531,6 +535,10 @@ public class RulesCreator {
             ),
             new Rule(
                 Conds( K(Fruit) ),
+                Actions( A(Fruitty) )                    
+            ),
+            new Rule(
+                Conds( C("Cherry|Apple|Lemon|Lime") ),
                 Actions( A(Fruitty) )                    
             ),
             new Rule(
