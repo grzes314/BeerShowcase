@@ -1,10 +1,11 @@
 
 package beershowcase.beerdata;
 
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
 
 /**
  * Record-like class for storage of the beer properties.
+ * Represents only factual data that is accessible from exteranal sources.
  * @author Grzegorz Łoś
  */
 public class BeerProperties {
@@ -51,11 +52,24 @@ public class BeerProperties {
     /**
      * Image of the beer's label.
      */
-    public LazyImage labelImage;
+    public BufferedImage labelImage;
+
+    public BeerProperties() {
+    }
     
     /**
-     * Style keywords associated with this beer.
+     * Copy constructor.
+     * @param original 
      */
-    public final ArrayList<StyleKeyword> keywords = new ArrayList<>();
-    
+    public BeerProperties(BeerProperties original) {
+        name = original.name;
+        breweryName = original.breweryName;
+        declaredStyle = original.declaredStyle;
+        plato = original.plato;
+        abv = original.abv;
+        ibu = original.ibu;
+        ingredients = new Ingredients();
+        descritpion = original.descritpion;
+        labelImage = original.labelImage;
+    }
 }

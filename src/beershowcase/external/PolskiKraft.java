@@ -2,8 +2,6 @@
 package beershowcase.external;
 
 import beershowcase.beerdata.BeerProperties;
-import beershowcase.beerdata.autostyle.StyleFinder;
-import beershowcase.beerdata.autostyle.simple.SimpleStyleFinder;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -19,7 +17,6 @@ import javax.imageio.ImageIO;
 public class PolskiKraft implements ExternalSource {
 
     private PageReader pageReader = new DefaultPageReader();
-    private StyleFinder styleFinder = new SimpleStyleFinder();
     private boolean fetchImage = true;
     String content;
     
@@ -34,12 +31,8 @@ public class PolskiKraft implements ExternalSource {
         props.abv = readAbv();
         props.ibu = readIbu();
         props.plato = readBlg();
-        props.keywords.addAll(styleFinder.findStyleKeywords(props.declaredStyle));
-        if (fetchImage) {
-            BufferedImage image = readImage();
-            if (image != null)
-                props.labelImage.setPicture(image);
-        }
+        if (fetchImage)
+            props.labelImage = readImage();
         content = null;
         return props;
     }
@@ -50,14 +43,6 @@ public class PolskiKraft implements ExternalSource {
 
     void setPageReader(PageReader pageReader) {
         this.pageReader = pageReader;
-    }
-
-    StyleFinder getStyleFinder() {
-        return styleFinder;
-    }
-
-    void setStyleFinder(StyleFinder styleFinder) {
-        this.styleFinder = styleFinder;
     }
 
     boolean isFetchImage() {

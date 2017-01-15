@@ -170,6 +170,14 @@ public class BeerKnowledge implements JsonRepresentable,
     public Collection<Brewery> getBreweries() {
         return breweryById.values();
     }
+    
+    public Brewery getBreweryByName(String name) {
+        for (Brewery br: breweryById.values()) {
+            if (br.getName().equalsIgnoreCase(name))
+                return br;
+        }
+        return null;
+    }
 
     public Brewery makeBrewery() {
         Brewery brewery = breweryFactory.makeBrewery();

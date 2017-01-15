@@ -35,35 +35,40 @@ public class Beer implements JsonRepresentable {
     /**
      * Beer's properties.
      */
-    private BeerProperties properties;
+    private BeerProperties properties = new BeerProperties();
     
+    /**
+     * Beer's or beer label's picture.
+     */
+    private LazyImage image;
+    
+    /**
+     * Style keywords associated with this beer.
+     */
+    private final ArrayList<StyleKeyword> keywords = new ArrayList<>();
+    
+    /**
+     * List of objects following beer's changes.
+     */
     private final ArrayList<ChangeListener> changeListeners = new ArrayList<>();
-
-    public static class EditionEvent {
-        public final Beer source;
-
-        public EditionEvent(Beer source) {
-            this.source = source;
-        }
+    
+    /**
+     * Constructs object with an "invalid state". Must be followed by 
+     * fromJson method which will initialize it properly. Package access as
+     * Beer objects should be create only by factories.
+     */
+    Beer() {
+        this.id = -1;
     }
     
-    public static interface ChangeListener {
-        void beerEdited(EditionEvent event);
-    }
-
-    public void addChangeListener(ChangeListener cl) {
-        if (!changeListeners.contains(cl))
-            changeListeners.add(cl);
-    }
-
-    public void removeChangeListener(ChangeListener cl) {
-        changeListeners.remove(cl);
-    }
-    
-    public void fireEditionEvent(EditionEvent event) {
-        for (ChangeListener cl: changeListeners) {
-            cl.beerEdited(event);
-        }
+    /**
+     * Constructs a new beer. Package access as
+     * Beer objects should be create only by factories.
+     * @param id beer's unique id.
+     */
+    Beer(int id) {
+        this.id = id;
+        image = new LazyImage(makeLabelImagePath());
     }
     
     @Override
@@ -90,16 +95,31 @@ public class Beer implements JsonRepresentable {
         available = json.getBoolean("available");
         addStyleKeywordsFromStrings(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
         
-        properties.labelImage = new LazyImage(makeLabelImagePath());
+        image = new LazyImage(makeLabelImagePath());
         fireEditionEvent(new EditionEvent(this));
     }
     
     public void saveChanges(FileSystem fileSystem) {
-        properties.labelImage.saveIfChanged(fileSystem);
+        image.saveIfChanged(fileSystem);
     }
     
     public void saveForced(FileSystem fileSystem) {
-        properties.labelImage.saveForced(fileSystem);
+        image.saveForced(fileSystem);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getBreweryId() {
+        return breweryId;
+    }
+
+    public void setBreweryId(int newBrewery) {
+        if (newBrewery != breweryId) {
+            this.breweryId = newBrewery;
+            fireEditionEvent(new EditionEvent(this));
+        }
     }
     
     public boolean isAvailable() {
@@ -109,18 +129,27 @@ public class Beer implements JsonRepresentable {
     public void setAvailable(boolean string) {
         this.available = string;
     }
-
-    Beer() {
-        this.id = -1;
+    
+    /**
+     * Returns beer's price in cents.
+     * @return 
+     */
+    public int getPrice() {
+        return price;
     }
     
-    Beer(int id) {
-        this.id = id;
-        properties.labelImage = new LazyImage(makeLabelImagePath());
+    /**
+     * Sets the price of beer in cents.
+     * @param price 
+     */
+    public void setPrice(int price) {
+        this.price = price;
     }
-
-    public int getId() {
-        return id;
+    
+    public void setProperties(BeerProperties beerProps) {
+        properties = new BeerProperties(beerProps);
+        image.setPicture(properties.labelImage);
+        properties.labelImage = null;
     }
 
     public String getName() {
@@ -145,13 +174,35 @@ public class Beer implements JsonRepresentable {
         }
     }
 
-    public int getBreweryId() {
-        return breweryId;
+    public int getPlato() {
+        return properties.plato;
+    }
+    
+    public void setPlato(int plato) {
+        if (properties.plato != plato) {
+            properties.plato = plato;
+            fireEditionEvent(new EditionEvent(this));
+        }
     }
 
-    public void setBreweryId(int newBrewery) {
-        if (newBrewery != breweryId) {
-            this.breweryId = newBrewery;
+    public int getAbv() {
+        return properties.abv;
+    }
+    
+    public void setAbv(int abv) {
+        if (properties.abv != abv) {
+            properties.abv = abv;
+            fireEditionEvent(new EditionEvent(this));
+        }
+    }
+
+    public int getIbu() {
+        return properties.ibu;
+    }
+    
+    public void setIbu(int ibu) {
+        if (properties.ibu != ibu) {
+            properties.ibu = ibu;
             fireEditionEvent(new EditionEvent(this));
         }
     }
@@ -179,37 +230,37 @@ public class Beer implements JsonRepresentable {
     }
 
     public BufferedImage getLabelImage(FileSystem fileSystem) {
-        return properties.labelImage.getPicture(fileSystem);
+        return image.getPicture(fileSystem);
     }
 
     public void setLabelImage(BufferedImage newLabelImage) {
-        properties.labelImage.setPicture(newLabelImage);
+        image.setPicture(newLabelImage);
         fireEditionEvent(new EditionEvent(this));
     }
     
     public void addStyleKeyword(StyleKeyword keyword) {
-        if (!properties.keywords.contains(keyword)) {
-            properties.keywords.add(keyword);
+        if (!keywords.contains(keyword)) {
+            keywords.add(keyword);
             fireEditionEvent(new EditionEvent(this));
         }        
     }
     
     public void removeStyleKeyword(StyleKeyword keyword) {
-        if (properties.keywords.contains(keyword)) {
-            properties.keywords.remove(keyword);
+        if (keywords.contains(keyword)) {
+            keywords.remove(keyword);
             fireEditionEvent(new EditionEvent(this));
         }        
     }
 
     private ArrayList<String> getKeywordsAsStrings() {
         ArrayList<String> arr = new ArrayList<>();
-        for (StyleKeyword keyword: properties.keywords)
+        for (StyleKeyword keyword: keywords)
             arr.add(keyword.name());
         return arr;
     }
     
     public ArrayList<StyleKeyword> getStyleKeywords() {
-        return properties.keywords;
+        return keywords;
     }
 
     public void addStyleKeywords(ArrayList<StyleKeyword> newKeywords) {
@@ -221,7 +272,7 @@ public class Beer implements JsonRepresentable {
     private void addStyleKeywordsFromStrings(ArrayList<String> keywordStrings) throws BeerKnowledgeParserException {
         try {
             for (String keywordStr: keywordStrings)
-                properties.keywords.add(StyleKeyword.valueOf(keywordStr));
+                keywords.add(StyleKeyword.valueOf(keywordStr));
         } catch (IllegalArgumentException ex) {
             throw new BeerKnowledgeParserException(ex);
         }
@@ -232,6 +283,33 @@ public class Beer implements JsonRepresentable {
     }
     
     public boolean hasStyle(StyleKeyword keyword) {
-        return properties.keywords.contains(keyword);
+        return keywords.contains(keyword);
+    }
+    
+    public static class EditionEvent {
+        public final Beer source;
+
+        public EditionEvent(Beer source) {
+            this.source = source;
+        }
+    }
+    
+    public static interface ChangeListener {
+        void beerEdited(EditionEvent event);
+    }
+
+    public void addChangeListener(ChangeListener cl) {
+        if (!changeListeners.contains(cl))
+            changeListeners.add(cl);
+    }
+
+    public void removeChangeListener(ChangeListener cl) {
+        changeListeners.remove(cl);
+    }
+    
+    public void fireEditionEvent(EditionEvent event) {
+        for (ChangeListener cl: changeListeners) {
+            cl.beerEdited(event);
+        }
     }
 }

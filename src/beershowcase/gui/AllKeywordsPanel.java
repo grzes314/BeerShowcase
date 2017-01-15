@@ -5,6 +5,7 @@ import beershowcase.beerdata.StyleKeyword;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JCheckBox;
@@ -65,7 +66,7 @@ public class AllKeywordsPanel extends JPanel {
             pair.getValue().setSelected(false);
     }
 
-    void setSelectedKeywords(ArrayList<StyleKeyword> styleKeywords) {
+    void setSelectedKeywords(Collection<StyleKeyword> styleKeywords) {
         for (Map.Entry<StyleKeyword, JCheckBox> pair: checkBoxes.entrySet()) {
             if (styleKeywords.contains(pair.getKey()))
                 pair.getValue().setSelected(true);

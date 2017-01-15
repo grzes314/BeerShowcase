@@ -2,8 +2,15 @@
 package beershowcase.gui;
 
 import beershowcase.beerdata.Beer;
+import beershowcase.beerdata.BeerProperties;
 import beershowcase.beerdata.Brewery;
+import beershowcase.beerdata.StyleKeyword;
+import beershowcase.beerdata.autostyle.StyleFinder;
+import beershowcase.beerdata.autostyle.simple.SimpleStyleFinder;
+import beershowcase.external.ExternalSource;
+import beershowcase.external.ExternalSourceDispatcher;
 import java.awt.BorderLayout;
+import java.util.Collection;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
@@ -12,11 +19,13 @@ import javax.swing.JScrollPane;
  * @author Grzegorz Łoś
  */
 public class EditBeerDialog extends javax.swing.JDialog {
-    AllKeywordsPanel stylesPanel = new AllKeywordsPanel();
-    SelectImagePanel bottleImageSelector = new SelectImagePanel();
-    SelectImagePanel labelImageSelector = new SelectImagePanel();
-    boolean confirmed;
-    Brewery selectedBrewery;
+    private final AllKeywordsPanel keywordsPanel = new AllKeywordsPanel();
+    private final SelectImagePanel labelImageSelector = new SelectImagePanel();
+    private boolean confirmed;
+    private Brewery selectedBrewery;
+    private final StyleFinder styleFinder = new SimpleStyleFinder();
+    private final ExternalSource external = new ExternalSourceDispatcher();
+    
     /**
      * Creates new form EditBeerDialog
      */
@@ -24,9 +33,9 @@ public class EditBeerDialog extends javax.swing.JDialog {
         super(parent, true);
         initComponents();
         
-        setTitle("Add new beer");
-        styleContainer.setLayout(new BorderLayout());
-        styleContainer.add(new JScrollPane(stylesPanel));
+        setTitle("Add a new beer");
+        keywordsContainer.setLayout(new BorderLayout());
+        keywordsContainer.add(new JScrollPane(keywordsPanel));
         labelSelectorContainer.setLayout(new BorderLayout());
         labelSelectorContainer.add(labelImageSelector);
     }
@@ -36,8 +45,8 @@ public class EditBeerDialog extends javax.swing.JDialog {
         initComponents();
         
         setTitle("Edit a beer");
-        styleContainer.setLayout(new BorderLayout());
-        styleContainer.add(new JScrollPane(stylesPanel));
+        keywordsContainer.setLayout(new BorderLayout());
+        keywordsContainer.add(new JScrollPane(keywordsPanel));
         labelSelectorContainer.setLayout(new BorderLayout());
         labelSelectorContainer.add(labelImageSelector);
         
@@ -64,11 +73,22 @@ public class EditBeerDialog extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         description = new javax.swing.JTextArea();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        availableBox = new javax.swing.JCheckBox();
         styleField = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        styleContainer = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        availableBox = new javax.swing.JCheckBox();
+        jLabel6 = new javax.swing.JLabel();
+        priceSpinner = new javax.swing.JSpinner();
+        jButton1 = new javax.swing.JButton();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 32767));
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        blgSpinner = new javax.swing.JSpinner();
+        abvSpinner = new javax.swing.JSpinner();
+        ibuSpinner = new javax.swing.JSpinner();
+        keywordsContainer = new javax.swing.JPanel();
         imagesPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         labelSelectorContainer = new javax.swing.JPanel();
@@ -107,30 +127,93 @@ public class EditBeerDialog extends javax.swing.JDialog {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabel4.setText("Description:");
 
+        jLabel8.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel8.setText("Declared style:");
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Store"));
+
         jLabel5.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabel5.setText("Available:");
 
         availableBox.setSelected(true);
 
-        jLabel8.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabel8.setText("Declared style:");
+        jLabel6.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel6.setText("Price:");
+
+        priceSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 1000.0d, 0.0d));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(priceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(availableBox)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(availableBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(priceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 12, Short.MAX_VALUE))
+        );
+
+        jButton1.setText("Auto fill");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel9.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel9.setText("Alc. vol.:");
+
+        jLabel10.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel10.setText("Blg:");
+
+        jLabel11.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel11.setText("IBU:");
+
+        blgSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
+
+        abvSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
+
+        ibuSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 200, 1));
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(filler1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
+                        .addGap(24, 24, 24)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(breweryField, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                        .addComponent(breweryField, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(selectBreweryButton))
                     .addGroup(mainPanelLayout.createSequentialGroup()
@@ -142,22 +225,31 @@ public class EditBeerDialog extends javax.swing.JDialog {
                             .addComponent(styleField)
                             .addComponent(nameField)))))
             .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(abvSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(blgSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ibuSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1))
-            .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(availableBox)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -171,33 +263,41 @@ public class EditBeerDialog extends javax.swing.JDialog {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(breweryField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectBreweryButton))
-                .addGap(31, 31, 31)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ibuSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(abvSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(blgSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(56, 56, 56)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(availableBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(103, Short.MAX_VALUE))
+                        .addGap(57, 57, 57)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         tabbedPane.addTab("Main", mainPanel);
 
-        javax.swing.GroupLayout styleContainerLayout = new javax.swing.GroupLayout(styleContainer);
-        styleContainer.setLayout(styleContainerLayout);
-        styleContainerLayout.setHorizontalGroup(
-            styleContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 590, Short.MAX_VALUE)
+        javax.swing.GroupLayout keywordsContainerLayout = new javax.swing.GroupLayout(keywordsContainer);
+        keywordsContainer.setLayout(keywordsContainerLayout);
+        keywordsContainerLayout.setHorizontalGroup(
+            keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 648, Short.MAX_VALUE)
         );
-        styleContainerLayout.setVerticalGroup(
-            styleContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 454, Short.MAX_VALUE)
+        keywordsContainerLayout.setVerticalGroup(
+            keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 497, Short.MAX_VALUE)
         );
 
-        tabbedPane.addTab("Tags", styleContainer);
+        tabbedPane.addTab("Tags", keywordsContainer);
 
         jLabel7.setFont(new java.awt.Font("Dialog", 1, 15)); // NOI18N
         jLabel7.setText("Select label image");
@@ -208,11 +308,11 @@ public class EditBeerDialog extends javax.swing.JDialog {
         labelSelectorContainer.setLayout(labelSelectorContainerLayout);
         labelSelectorContainerLayout.setHorizontalGroup(
             labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 613, Short.MAX_VALUE)
+            .addGap(0, 644, Short.MAX_VALUE)
         );
         labelSelectorContainerLayout.setVerticalGroup(
             labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 450, Short.MAX_VALUE)
+            .addGap(0, 493, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout imagesPanelLayout = new javax.swing.GroupLayout(imagesPanel);
@@ -221,7 +321,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(imagesPanelLayout.createSequentialGroup()
                 .addComponent(jLabel7)
-                .addGap(0, 468, Short.MAX_VALUE))
+                .addGap(0, 499, Short.MAX_VALUE))
             .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(labelSelectorContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -229,7 +329,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(imagesPanelLayout.createSequentialGroup()
                 .addComponent(jLabel7)
-                .addGap(0, 436, Short.MAX_VALUE))
+                .addGap(0, 479, Short.MAX_VALUE))
             .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(labelSelectorContainer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -288,26 +388,41 @@ public class EditBeerDialog extends javax.swing.JDialog {
         selectBrewerClicked();
     }//GEN-LAST:event_selectBreweryButtonActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        autoFill();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JSpinner abvSpinner;
     private javax.swing.JCheckBox availableBox;
+    private javax.swing.JSpinner blgSpinner;
     private javax.swing.JTextField breweryField;
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextArea description;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.JSpinner ibuSpinner;
     private javax.swing.JPanel imagesPanel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel keywordsContainer;
     private javax.swing.JPanel labelSelectorContainer;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField nameField;
     private javax.swing.JButton okButton;
+    private javax.swing.JSpinner priceSpinner;
     private javax.swing.JButton selectBreweryButton;
-    private javax.swing.JPanel styleContainer;
     private javax.swing.JTextField styleField;
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
@@ -322,7 +437,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
         newBeer.setDeclaredStyle(styleField.getText());
         newBeer.setBreweryId(selectedBrewery.getId());
         newBeer.setAvailable(availableBox.isSelected());
-        newBeer.addStyleKeywords(stylesPanel.getSelectedKeywords());
+        newBeer.addStyleKeywords(keywordsPanel.getSelectedKeywords());
         newBeer.setDescritpion(description.getText());
         newBeer.setLabelImage(labelImageSelector.getImage());
     }
@@ -361,12 +476,55 @@ public class EditBeerDialog extends javax.swing.JDialog {
 
     private void setDataFrom(Beer beer) {
         nameField.setText(beer.getName());
-        styleField.setText(beer.getDeclaredStyle());
         selectedBrewery = RunningApplication.data.beerKnowledge.getBreweryOfBeer(beer);
         breweryField.setText(selectedBrewery != null ? selectedBrewery.getName() : "?");
+        styleField.setText(beer.getDeclaredStyle());
+        blgSpinner.setValue(beer.getPlato() / 10.0);
+        abvSpinner.setValue(beer.getAbv() / 10.0);
+        ibuSpinner.setValue(beer.getIbu());
         description.setText(beer.getDescritpion());
+        labelImageSelector.setInitialImage(beer.getLabelImage(RunningApplication.data.fileSystem)); 
+        
+        priceSpinner.setValue(beer.getPrice() / 100.0);
         availableBox.setSelected(beer.isAvailable());
-        stylesPanel.setSelectedKeywords(beer.getStyleKeywords());
-        labelImageSelector.setInitialImage(beer.getLabelImage(RunningApplication.data.fileSystem));        
+        keywordsPanel.setSelectedKeywords(beer.getStyleKeywords());       
+    }
+    
+    private void setDataFrom(BeerProperties props) {
+        nameField.setText(props.name);
+        selectedBrewery = RunningApplication.data.beerKnowledge.getBreweryByName(props.breweryName);
+        breweryField.setText(selectedBrewery != null ? selectedBrewery.getName() : "?");
+        styleField.setText(props.declaredStyle);
+        description.setText(props.descritpion);
+        labelImageSelector.setInitialImage(props.labelImage);
+        blgSpinner.setValue(props.plato);
+        abvSpinner.setValue(props.abv);
+        ibuSpinner.setValue(props.ibu);
+        
+        autoselectKeywords(props.declaredStyle);
+    }
+
+    private void autoselectKeywords(String declaredStyle) {
+        Collection<StyleKeyword> keywords = styleFinder.findStyleKeywords(declaredStyle);
+        keywordsPanel.setSelectedKeywords(keywords);
+    }
+
+    private void autoFill() {
+        String address = JOptionPane.showInputDialog(rootPane,
+                "Paste address of the webpage storing beer's data",
+                "Input a web address", JOptionPane.QUESTION_MESSAGE);
+        if (address != null) {
+            BeerProperties props = external.readFrom(address);
+            handleFetchedProperties(props);
+        }
+    }
+
+    private void handleFetchedProperties(BeerProperties props) {
+        if (props == null) {
+            JOptionPane.showMessageDialog(rootPane, "Provided address was invalid",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return ;
+        }
+        setDataFrom(props);
     }
 }

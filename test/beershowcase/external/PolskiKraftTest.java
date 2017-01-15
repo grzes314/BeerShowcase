@@ -43,10 +43,6 @@ public class PolskiKraftTest extends TestCase {
         assertEquals(55, props.ibu);
         assertEquals(247, props.plato);
         assertEquals(102, props.abv);
-        assertTrue(props.keywords.contains(StyleKeyword.StoutFamily));
-        assertTrue(props.keywords.contains(StyleKeyword.Imperial));
-        assertTrue(props.keywords.contains(StyleKeyword.Wild));
-        assertTrue(props.keywords.contains(StyleKeyword.Sour));
     }
     
 }
