@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author Grzegorz Łoś
  */
 public class BeerShowcasePane extends javax.swing.JPanel {
-    private final ParamSelectionPanel paramSelectionPanel;
+    private final BeerSearchPanel beerSearchPanel;
     private final BeerBrowserPanel beerBrowserPanel;
     
     /**
@@ -21,10 +21,10 @@ public class BeerShowcasePane extends javax.swing.JPanel {
     public BeerShowcasePane() {
         initComponents();
         container.setLayout(new BorderLayout());
-        paramSelectionPanel = new ParamSelectionPanel(this);
+        beerSearchPanel = new BeerSearchPanel(this);
         beerBrowserPanel = new BeerBrowserPanel();
         backButton.setVisible(false);
-        container.add(paramSelectionPanel);
+        container.add(beerSearchPanel);
     }
 
     /**
@@ -88,7 +88,7 @@ public class BeerShowcasePane extends javax.swing.JPanel {
         backButton.setVisible(true);
         container.removeAll();
         
-        Filter filter = paramSelectionPanel.buildFilter();
+        Filter filter = beerSearchPanel.buildFilter();
         ArrayList<Beer> beers = RunningApplication.data.beerKnowledge.getBeers(filter);
         beerBrowserPanel.setDisplayedBeers(beers);
         
@@ -100,7 +100,7 @@ public class BeerShowcasePane extends javax.swing.JPanel {
     void goToSelectionMode() {
         backButton.setVisible(false);
         container.removeAll();
-        container.add(paramSelectionPanel);
+        container.add(beerSearchPanel);
         repaint();
         revalidate();
     }
