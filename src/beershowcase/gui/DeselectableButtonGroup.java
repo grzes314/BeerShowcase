@@ -8,12 +8,12 @@ import javax.swing.ButtonModel;
  *
  * @author Grzegorz Łoś
  */
-public class MyButtonGroup extends ButtonGroup {
+public class DeselectableButtonGroup extends ButtonGroup {
     @Override
-    public void setSelected(ButtonModel bm, boolean s) {
-        if (isSelected(bm))
+    public void setSelected(ButtonModel bm, boolean b) {
+        if (!b)
             clearSelection();
         else
-            super.setSelected(bm, s);
+            super.setSelected(bm, b);
     }
 }

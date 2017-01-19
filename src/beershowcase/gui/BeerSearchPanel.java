@@ -17,9 +17,9 @@ public class BeerSearchPanel extends javax.swing.JPanel {
     private static final int MAX_BLG = 400; // 40 degrees
     
     private final BeerShowcasePane beerShowcasePane;
-    private MyButtonGroup buttonGroupPopularStyles = new MyButtonGroup();
-    private MyButtonGroup buttonGroupFermentation = new MyButtonGroup();
-    private MyButtonGroup buttonGroupColor = new MyButtonGroup();
+    private DeselectableButtonGroup buttonGroupPopularStyles = new DeselectableButtonGroup();
+    private DeselectableButtonGroup buttonGroupFermentation = new DeselectableButtonGroup();
+    private DeselectableButtonGroup buttonGroupColor = new DeselectableButtonGroup();
     private RangeSelector priceSelector = new RangeSelector(0, MAX_PRICE);
     private RangeSelector ibuSelector = new RangeSelector(0, MAX_IBU);
     private RangeSelector abvSelector = new RangeSelector(0, MAX_ABV);
