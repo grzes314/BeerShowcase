@@ -18,6 +18,15 @@ public class RunningApplication {
         public FileSystem fileSystem;
 
         public BeerKnowledge beerKnowledge;
+
+        public Data() {
+        }
+
+        public Data(File bkFile, FileSystem fileSystem, BeerKnowledge beerKnowledge) {
+            this.bkFile = bkFile;
+            this.fileSystem = fileSystem;
+            this.beerKnowledge = beerKnowledge;
+        }
     }
         
     public static JFrame MainFrame;

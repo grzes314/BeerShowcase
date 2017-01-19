@@ -18,6 +18,7 @@ public class RangeSelector extends javax.swing.JPanel {
     }
 
     public RangeSelector(int min, int max) {
+        initComponents();
         setRange(min, max);
     }
     
