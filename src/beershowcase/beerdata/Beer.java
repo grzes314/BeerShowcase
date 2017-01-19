@@ -28,9 +28,9 @@ public class Beer implements JsonRepresentable {
     private boolean available = true;
     
     /**
-     * Price in cents.
+     * Price.
      */
-    private int price;
+    private FixedPointReal price = new FixedPointReal(0,2);
     
     /**
      * Beer's properties.
@@ -75,11 +75,15 @@ public class Beer implements JsonRepresentable {
     public JsonObject toJson() {
         JsonObject value = Json.createObjectBuilder()
             .add("id", id)
+            .add("breweryId", breweryId)
+            .add("available", available)
+            .add("price", price.toString())
             .add("name", properties.name)
             .add("declaredStyle", properties.declaredStyle)
-            .add("breweryId", breweryId)
+            .add("plato", properties.plato.toString())
+            .add("abv", properties.abv.toString())
+            .add("ibu", properties.ibu)
             //.add("descritpion", descritpion)
-            .add("available", available)
             .add("keywords", JsonUtils.stringListToJson(getKeywordsAsStrings()))
             .build();
         return value;
@@ -88,11 +92,15 @@ public class Beer implements JsonRepresentable {
     @Override
     public void fromJson(JsonObject json) throws BeerKnowledgeParserException {
         id = json.getInt("id");
+        breweryId = json.getInt("breweryId");
+        available = json.getBoolean("available");
+        price = new FixedPointReal(json.getString("price"));
         properties.name = json.getString("name");
         properties.declaredStyle = json.getString("declaredStyle");
-        breweryId = json.getInt("breweryId");
+        properties.plato = new FixedPointReal(json.getString("plato"));
+        properties.abv = new FixedPointReal(json.getString("abv"));
+        properties.ibu = json.getInt("ibu");
         //descritpion = json.getString("descritpion");
-        available = json.getBoolean("available");
         addStyleKeywordsFromStrings(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
         
         image = new LazyImage(makeLabelImagePath());
@@ -134,7 +142,7 @@ public class Beer implements JsonRepresentable {
      * Returns beer's price in cents.
      * @return 
      */
-    public int getPrice() {
+    public FixedPointReal getPrice() {
         return price;
     }
     
@@ -142,7 +150,7 @@ public class Beer implements JsonRepresentable {
      * Sets the price of beer in cents.
      * @param price 
      */
-    public void setPrice(int price) {
+    public void setPrice(FixedPointReal price) {
         this.price = price;
     }
     
@@ -174,23 +182,23 @@ public class Beer implements JsonRepresentable {
         }
     }
 
-    public int getPlato() {
+    public FixedPointReal getPlato() {
         return properties.plato;
     }
     
-    public void setPlato(int plato) {
-        if (properties.plato != plato) {
+    public void setPlato(FixedPointReal plato) {
+        if (!properties.plato.equals(plato)) {
             properties.plato = plato;
             fireEditionEvent(new EditionEvent(this));
         }
     }
 
-    public int getAbv() {
+    public FixedPointReal getAbv() {
         return properties.abv;
     }
     
-    public void setAbv(int abv) {
-        if (properties.abv != abv) {
+    public void setAbv(FixedPointReal abv) {
+        if (!properties.abv.equals(abv)) {
             properties.abv = abv;
             fireEditionEvent(new EditionEvent(this));
         }

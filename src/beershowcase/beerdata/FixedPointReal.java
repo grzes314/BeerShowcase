@@ -35,6 +35,12 @@ public class FixedPointReal implements Comparable<FixedPointReal> {
             throw new NumberFormatException("Invalid FixedPointReal representation: " + units + "." + pointPos);
     }
 
+    public FixedPointReal(double d, int pointPos) {
+        this.pointPos = pointPos;
+        this.units = Math.round(d * pow10(pointPos));
+    }
+    
+
     public FixedPointReal(FixedPointReal origin) {
         units = origin.units;
         pointPos = origin.pointPos;
@@ -128,6 +134,16 @@ public class FixedPointReal implements Comparable<FixedPointReal> {
                 sb.append('0');
             return sb.toString();
         }
+    }
+
+    public FixedPointReal plus(FixedPointReal other) {
+        SamePointPosPair pair = new SamePointPosPair(this, other);
+        return new FixedPointReal(pair.left.units + pair.right.units, pair.left.pointPos);
+    }
+
+    public FixedPointReal minus(FixedPointReal other) {
+        SamePointPosPair pair = new SamePointPosPair(this, other);
+        return new FixedPointReal(pair.left.units - pair.right.units, pair.left.pointPos);
     }
     
     private static class SamePointPosPair {

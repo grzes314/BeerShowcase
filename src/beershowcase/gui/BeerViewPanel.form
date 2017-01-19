@@ -45,12 +45,9 @@
                               <Component id="logoContainer" pref="140" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="alcLabel" pref="126" max="32767" attributes="0"/>
-                                      <Component id="priceLabel" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Component id="jLabel9" min="-2" pref="126" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="alcLabel" pref="126" max="32767" attributes="0"/>
+                                  <Component id="priceLabel" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="breweryNameLabel" max="32767" attributes="0"/>
@@ -85,10 +82,7 @@
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jLabel5" alignment="3" min="-2" pref="42" max="-2" attributes="0"/>
-                                  <Component id="jLabel9" alignment="3" min="-2" pref="42" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="jLabel5" min="-2" pref="42" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel1" min="-2" pref="46" max="-2" attributes="0"/>
@@ -221,11 +215,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="ibuLabel">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel7"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLabel9">
       <Properties>
         <Property name="text" type="java.lang.String" value="jLabel7"/>
       </Properties>

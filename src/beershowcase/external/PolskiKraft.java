@@ -2,6 +2,7 @@
 package beershowcase.external;
 
 import beershowcase.beerdata.BeerProperties;
+import beershowcase.beerdata.FixedPointReal;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -101,13 +102,13 @@ public class PolskiKraft implements ExternalSource {
         return getElementContent("p", "<p class=\"description\"").trim();
     }
 
-    private int readAbv() {
+    private FixedPointReal readAbv() {
         try {
             String doubleStr = getElementContent("h1", "<h1 id=\"amount-alc-s\">");
-            Double d = 10 * Double.parseDouble(doubleStr);
-            return d.intValue();
+            double d = Double.parseDouble(doubleStr);
+            return new FixedPointReal(d, 1);
         } catch (NumberFormatException ex) {
-            return 0;
+            return new FixedPointReal(0, 1);
         }
     }
 
@@ -120,13 +121,13 @@ public class PolskiKraft implements ExternalSource {
         }
     }
 
-    private int readBlg() {
+    private FixedPointReal readBlg() {
         try {
             String doubleStr = getElementContent("h1", "<h1 id=\"amount-blg-s\">");
-            Double d = 10 * Double.parseDouble(doubleStr);
-            return d.intValue();
+            double d = Double.parseDouble(doubleStr);
+            return new FixedPointReal(d, 1);
         } catch (NumberFormatException ex) {
-            return 0;
+            return new FixedPointReal(0, 1);
         }
     }
 

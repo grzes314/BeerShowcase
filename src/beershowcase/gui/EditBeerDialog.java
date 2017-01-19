@@ -4,6 +4,7 @@ package beershowcase.gui;
 import beershowcase.beerdata.Beer;
 import beershowcase.beerdata.BeerProperties;
 import beershowcase.beerdata.Brewery;
+import beershowcase.beerdata.FixedPointReal;
 import beershowcase.beerdata.StyleKeyword;
 import beershowcase.beerdata.autostyle.StyleFinder;
 import beershowcase.beerdata.autostyle.simple.SimpleStyleFinder;
@@ -13,6 +14,7 @@ import java.awt.BorderLayout;
 import java.util.Collection;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.SpinnerNumberModel;
 
 /**
  *
@@ -143,7 +145,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabel6.setText("Price:");
 
-        priceSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 1000.0d, 0.0d));
+        priceSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, 1000.0, 0.1));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -191,9 +193,9 @@ public class EditBeerDialog extends javax.swing.JDialog {
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabel11.setText("IBU:");
 
-        blgSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
+        blgSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, 100.0, 0.1));
 
-        abvSpinner.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
+        abvSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, 100.0, 0.1));
 
         ibuSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 200, 1));
 
@@ -281,7 +283,8 @@ public class EditBeerDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(51, 51, 51))
         );
 
         tabbedPane.addTab("Main", mainPanel);
@@ -294,7 +297,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
         );
         keywordsContainerLayout.setVerticalGroup(
             keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 497, Short.MAX_VALUE)
+            .addGap(0, 450, Short.MAX_VALUE)
         );
 
         tabbedPane.addTab("Tags", keywordsContainer);
@@ -312,7 +315,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
         );
         labelSelectorContainerLayout.setVerticalGroup(
             labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 493, Short.MAX_VALUE)
+            .addGap(0, 446, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout imagesPanelLayout = new javax.swing.GroupLayout(imagesPanel);
@@ -329,7 +332,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
             imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(imagesPanelLayout.createSequentialGroup()
                 .addComponent(jLabel7)
-                .addGap(0, 479, Short.MAX_VALUE))
+                .addGap(0, 432, Short.MAX_VALUE))
             .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(labelSelectorContainer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -365,7 +368,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(tabbedPane)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 477, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okButton)
@@ -433,10 +436,14 @@ public class EditBeerDialog extends javax.swing.JDialog {
     }
 
     public void fill(Beer newBeer) {
-        newBeer.setName(nameField.getText().trim());
-        newBeer.setDeclaredStyle(styleField.getText());
         newBeer.setBreweryId(selectedBrewery.getId());
         newBeer.setAvailable(availableBox.isSelected());
+        newBeer.setPrice(new FixedPointReal((Double) priceSpinner.getValue(), 2));
+        newBeer.setName(nameField.getText().trim());
+        newBeer.setDeclaredStyle(styleField.getText());
+        newBeer.setPlato(new FixedPointReal((Double) blgSpinner.getValue(), 1));
+        newBeer.setAbv(new FixedPointReal((Double) abvSpinner.getValue(), 1));
+        newBeer.setIbu((Integer) ibuSpinner.getValue());
         newBeer.addStyleKeywords(keywordsPanel.getSelectedKeywords());
         newBeer.setDescritpion(description.getText());
         newBeer.setLabelImage(labelImageSelector.getImage());
@@ -479,13 +486,13 @@ public class EditBeerDialog extends javax.swing.JDialog {
         selectedBrewery = RunningApplication.data.beerKnowledge.getBreweryOfBeer(beer);
         breweryField.setText(selectedBrewery != null ? selectedBrewery.getName() : "?");
         styleField.setText(beer.getDeclaredStyle());
-        blgSpinner.setValue(beer.getPlato() / 10.0);
-        abvSpinner.setValue(beer.getAbv() / 10.0);
+        blgSpinner.setValue(beer.getPlato().getDoubleValue());
+        abvSpinner.setValue(beer.getAbv().getDoubleValue());
         ibuSpinner.setValue(beer.getIbu());
         description.setText(beer.getDescritpion());
         labelImageSelector.setInitialImage(beer.getLabelImage(RunningApplication.data.fileSystem)); 
         
-        priceSpinner.setValue(beer.getPrice() / 100.0);
+        priceSpinner.setValue(beer.getPrice().getDoubleValue());
         availableBox.setSelected(beer.isAvailable());
         keywordsPanel.setSelectedKeywords(beer.getStyleKeywords());       
     }
@@ -497,8 +504,8 @@ public class EditBeerDialog extends javax.swing.JDialog {
         styleField.setText(props.declaredStyle);
         description.setText(props.descritpion);
         labelImageSelector.setInitialImage(props.labelImage);
-        blgSpinner.setValue(props.plato);
-        abvSpinner.setValue(props.abv);
+        blgSpinner.setValue(props.plato.getDoubleValue());
+        abvSpinner.setValue(props.abv.getDoubleValue());
         ibuSpinner.setValue(props.ibu);
         
         autoselectKeywords(props.declaredStyle);
