@@ -542,6 +542,10 @@ public class RulesCreator {
                 Actions( A(Fruitty) )                    
             ),
             new Rule(
+                Conds( C("sour") ),
+                Actions( A(Sour) )                    
+            ),
+            new Rule(
                 Conds( K(Wild) ),
                 Actions( A(Sour) )                    
             ),
