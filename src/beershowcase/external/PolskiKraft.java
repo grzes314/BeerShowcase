@@ -2,7 +2,7 @@
 package beershowcase.external;
 
 import beershowcase.beerdata.BeerProperties;
-import beershowcase.beerdata.FixedPointReal;
+import beershowcase.utils.FixedPointReal;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;

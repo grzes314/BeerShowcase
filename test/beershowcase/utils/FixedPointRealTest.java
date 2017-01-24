@@ -1,6 +1,7 @@
 
-package beershowcase.beerdata;
+package beershowcase.utils;
 
+import beershowcase.utils.FixedPointReal;
 import junit.framework.TestCase;
 
 /**
@@ -184,6 +185,7 @@ public class FixedPointRealTest extends TestCase {
         assertEquals("17.230", a3.toString());
         assertEquals("17.2300", a4.toString());
         assertEquals("17.000", new FixedPointReal("17.000").toString());
+        assertEquals("17.02", new FixedPointReal("17.02").toString());
     }
     
 }

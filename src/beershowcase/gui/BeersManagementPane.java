@@ -2,7 +2,7 @@
 package beershowcase.gui;
 
 import beershowcase.beerdata.Beer;
-import beershowcase.beerdata.filters.Conjunction;
+import beershowcase.beerdata.filters.And;
 import beershowcase.beerdata.filters.Filter;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  */
 public class BeersManagementPane extends javax.swing.JPanel {
     //implements BeerKnowledge.ChangeListener {
-    private Filter filter = new Conjunction();
+    private Filter filter = new And();
     private BeerBrowserPanel beerBrowserPanel;
     private ActiveDisplayMode displayMode = ActiveDisplayMode.Browser;
     

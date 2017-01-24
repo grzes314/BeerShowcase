@@ -19,15 +19,15 @@
           <Component id="jPanel3" alignment="1" max="32767" attributes="0"/>
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="jPanel5" max="32767" attributes="0"/>
-                  <Component id="jPanel6" max="32767" attributes="0"/>
+                  <Component id="fermentationPanel" max="32767" attributes="0"/>
+                  <Component id="colourPanel" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+              <Component id="stylesPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+              <Component id="featuresPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel7" min="-2" max="-2" attributes="0"/>
+              <Component id="tastePanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
           <Component id="jPanel4" alignment="1" max="32767" attributes="0"/>
@@ -40,13 +40,13 @@
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jPanel6" min="-2" max="-2" attributes="0"/>
+                      <Component id="colourPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
+                      <Component id="fermentationPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jPanel1" alignment="1" max="32767" attributes="0"/>
-                  <Component id="jPanel2" alignment="1" max="32767" attributes="0"/>
-                  <Component id="jPanel7" alignment="1" max="32767" attributes="0"/>
+                  <Component id="stylesPanel" alignment="1" max="32767" attributes="0"/>
+                  <Component id="featuresPanel" alignment="1" max="32767" attributes="0"/>
+                  <Component id="tastePanel" alignment="1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel4" max="32767" attributes="0"/>
@@ -55,7 +55,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="jPanel1">
+    <Container class="javax.swing.JPanel" name="stylesPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -75,7 +75,7 @@
                       <Component id="rbBaltic" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="rbBock" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="rbWheat" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="sbSour" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="rbSour" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="rbBelgian" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="24" max="32767" attributes="0"/>
@@ -96,7 +96,7 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="rbWheat" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="sbSour" min="-2" max="-2" attributes="0"/>
+                  <Component id="rbSour" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="rbBelgian" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
@@ -145,7 +145,7 @@
             <Property name="text" type="java.lang.String" value="Wheat beer"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="sbSour">
+        <Component class="javax.swing.JRadioButton" name="rbSour">
           <Properties>
             <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="buttonGroupPopularStyles" type="code"/>
@@ -163,7 +163,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="jPanel2">
+    <Container class="javax.swing.JPanel" name="featuresPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -236,9 +236,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="&lt;html&gt; Milk / &lt;br&gt;with lactose"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="featureMilkActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JCheckBox" name="featureRye">
           <Properties>
@@ -281,7 +278,7 @@
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel5" min="-2" pref="257" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="filler1" pref="112" max="32767" attributes="0"/>
+                  <Component id="filler1" pref="111" max="32767" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="buttonSearch" min="-2" pref="137" max="-2" attributes="0"/>
               </Group>
@@ -386,20 +383,20 @@
                   </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="32767" attributes="0"/>
                           <Component id="jLabel3" min="-2" pref="49" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                          <Component id="ibuRangeContainer" max="32767" attributes="0"/>
+                          <EmptySpace type="unrelated" max="32767" attributes="0"/>
+                          <Component id="ibuRangeContainer" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel1" pref="42" max="32767" attributes="0"/>
                       <Component id="abvContainer" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel4" pref="42" max="32767" attributes="0"/>
                       <Component id="blgRangeContainer" max="32767" attributes="0"/>
@@ -459,7 +456,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="49" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -496,7 +493,7 @@
         </Container>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="jPanel5">
+    <Container class="javax.swing.JPanel" name="fermentationPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -558,7 +555,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="jPanel6">
+    <Container class="javax.swing.JPanel" name="colourPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -619,7 +616,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="jPanel7">
+    <Container class="javax.swing.JPanel" name="tastePanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -635,7 +632,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="tasteMalty" min="-2" max="-2" attributes="0"/>
                       <Component id="tasteBitter" min="-2" max="-2" attributes="0"/>
-                      <Component id="testBalanced" min="-2" max="-2" attributes="0"/>
+                      <Component id="tasteBalanced" min="-2" max="-2" attributes="0"/>
                       <Component id="tasteHoppy" min="-2" max="-2" attributes="0"/>
                       <Component id="tasteRoasty" min="-2" max="-2" attributes="0"/>
                       <Component id="tasteFruitty" min="-2" max="-2" attributes="0"/>
@@ -652,7 +649,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="tasteBitter" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="testBalanced" min="-2" max="-2" attributes="0"/>
+                  <Component id="tasteBalanced" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="tasteHoppy" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -677,7 +674,7 @@
             <Property name="text" type="java.lang.String" value="Bitter"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JCheckBox" name="testBalanced">
+        <Component class="javax.swing.JCheckBox" name="tasteBalanced">
           <Properties>
             <Property name="text" type="java.lang.String" value="Well-balanced"/>
           </Properties>

@@ -9,15 +9,15 @@ import java.util.Collection;
  *
  * @author Grzegorz Łoś
  */
-public class And implements Filter {
+public class Or implements Filter {
 
     Collection<Filter> filters = new ArrayList<>();
     
-    public And() {
+    public Or() {
         
     }
     
-    public And(Filter ...filters) {
+    public Or(Filter ...filters) {
         for (Filter f: filters)
             this.filters.add(f);
     }
@@ -29,10 +29,10 @@ public class And implements Filter {
     @Override
     public boolean filter(Beer beer) {
         for (Filter f: filters) {
-            if (!f.filter(beer))
-                return false;
+            if (f.filter(beer))
+                return true;
         }
-        return true;
+        return false;
     }
     
 }

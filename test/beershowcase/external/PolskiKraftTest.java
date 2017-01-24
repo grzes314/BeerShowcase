@@ -3,6 +3,7 @@ package beershowcase.external;
 
 import beershowcase.beerdata.BeerProperties;
 import beershowcase.beerdata.StyleKeyword;
+import beershowcase.utils.FixedPointReal;
 import junit.framework.TestCase;
 
 /**
@@ -41,8 +42,8 @@ public class PolskiKraftTest extends TestCase {
         assertEquals(props.declaredStyle, "Wild Sour Cheery RIS");
         assertEquals(props.descritpion, "Pinta miesiąca Grudzień 2016.");
         assertEquals(55, props.ibu);
-        assertEquals(247, props.plato);
-        assertEquals(102, props.abv);
+        assertEquals(new FixedPointReal("24.7"), props.plato);
+        assertEquals(new FixedPointReal("10.2"), props.abv);
     }
     
 }

@@ -1,6 +1,7 @@
 
 package beershowcase.beerdata;
 
+import beershowcase.utils.FixedPointReal;
 import java.awt.image.BufferedImage;
 import java.nio.file.FileSystem;
 import java.util.ArrayList;

@@ -1,5 +1,5 @@
 
-package beershowcase.beerdata;
+package beershowcase.utils;
 
 /**
  *
@@ -129,9 +129,9 @@ public class FixedPointReal implements Comparable<FixedPointReal> {
             sb.append(units/pow);
             sb.append(".");
             String fracPart = "" + (units % pow);
-            sb.append(fracPart);
             for (int i = fracPart.length(); i < pointPos; ++i)
                 sb.append('0');
+            sb.append(fracPart);
             return sb.toString();
         }
     }

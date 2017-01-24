@@ -49,6 +49,7 @@ public class BeerManagement extends JFrame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        System.setProperty("jsse.enableSNIExtension", "false");
         try {
             tabularasa();
         } catch (IOException ex) {

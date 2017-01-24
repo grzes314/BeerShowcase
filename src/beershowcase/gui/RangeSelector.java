@@ -1,6 +1,8 @@
 
 package beershowcase.gui;
 
+import beershowcase.utils.FixedPointReal;
+import beershowcase.utils.Range;
 import javax.swing.JSlider;
 
 /**
@@ -9,15 +11,21 @@ import javax.swing.JSlider;
  */
 public class RangeSelector extends javax.swing.JPanel {
 
-    private int minValue, maxValue;
-    /**
-     * Creates new form RangeSelector
-     */
-    public RangeSelector() {
+    private FixedPointReal minValue, maxValue;
+    private Limits limits;
+    private String unitSign;
+    private static final char INF = '\u221e';
+
+    public RangeSelector(int min, int max, Limits limits, String unitSign) {
+        this.unitSign = unitSign;
+        this.limits = limits;
         initComponents();
+        setRange(min, max);
     }
 
-    public RangeSelector(int min, int max) {
+    public RangeSelector(FixedPointReal min, FixedPointReal max, Limits limits, String unitSign) {
+        this.unitSign = unitSign;
+        this.limits = limits;
         initComponents();
         setRange(min, max);
     }
@@ -68,38 +76,42 @@ public class RangeSelector extends javax.swing.JPanel {
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(sliderMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(3, 3, 3)
-                        .addComponent(labelMax, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(sliderMin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(3, 3, 3)
-                        .addComponent(labelMin, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(labelMin, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
+                    .addComponent(labelMax, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(sliderMin, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                    .addComponent(sliderMax, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(sliderMin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(labelMin, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(sliderMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(labelMax)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(labelMin)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(7, 7, 7)
+                        .addComponent(jLabel2))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelMax))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sliderMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void sliderMinStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderMinStateChanged
         adjustIfNecessary(sliderMax, sliderMin.getValue());
-        labelMin.setText("" + sliderMin.getValue());
+        labelMin.setText(makeLabelText(sliderMin.getValue(), false));
     }//GEN-LAST:event_sliderMinStateChanged
 
     private void sliderMaxStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderMaxStateChanged
         adjustIfNecessary(sliderMin, sliderMax.getValue());
-        labelMax.setText("" + sliderMax.getValue());
+        labelMax.setText(makeLabelText(sliderMax.getValue(), true));
     }//GEN-LAST:event_sliderMaxStateChanged
 
 
@@ -116,20 +128,64 @@ public class RangeSelector extends javax.swing.JPanel {
         if (max < min)
             max = min;
         
+        minValue = new FixedPointReal(min, 0);
+        maxValue = new FixedPointReal(max, 0);
+        setSliderLimits(sliderMin, min);
+        setSliderLimits(sliderMax, max);
+    }
+    
+    public final void setRange(FixedPointReal min, FixedPointReal max) {
+        if (max.smallerThan(min))
+            max = min;
+        if (min.pointPos < max.pointPos)
+            min = min.toAnotherPointPos(max.pointPos);
+        if (max.pointPos < min.pointPos)
+            max = max.toAnotherPointPos(min.pointPos);
+        
         minValue = min;
         maxValue = max;
-        resetSlider(sliderMin, min);
-        resetSlider(sliderMax, max);
+        setSliderLimits(sliderMin, (int) min.units);
+        setSliderLimits(sliderMax, (int) max.units);
+    }
+    
+    public void reset() {
+        sliderMin.setValue((int) minValue.units);
+        sliderMax.setValue((int) maxValue.units);
     }
 
-    private void resetSlider(JSlider slider, int val) {
-        slider.setMinimum(minValue);
-        slider.setMaximum(maxValue);
+    private void setSliderLimits(JSlider slider, int val) {
+        slider.setMinimum((int) minValue.units);
+        slider.setMaximum((int) maxValue.units);
         slider.setValue(val);
     }
     
+    public FixedPointReal getFromValue() {
+        int pp = minValue.pointPos;
+        return new FixedPointReal(sliderMin.getValue(), pp);
+    }
+    
+    public FixedPointReal getToValue() {
+        int pp = maxValue.pointPos;
+        return new FixedPointReal(sliderMax.getValue(), pp);
+    }
+    
     public Range getRange() {
-        return new Range(sliderMin.getValue(), sliderMax.getValue());
+        if (limits.areBothToInf() && isSetToMaximum() && isSetToMinimum())
+            return new Range(Range.Type.INF_INF);
+        else if (limits.isRightToInf() && isSetToMaximum())
+            return new Range(getFromValue(), Range.Type.VAL_INF);
+        else if (limits.isLeftToInf() && isSetToMinimum())
+            return new Range(getToValue(), Range.Type.INF_VAL);
+        else
+            return new Range(getFromValue(), getToValue());
+    }
+    
+    public boolean isSetToMaximum() {
+        return sliderMax.getValue() >= maxValue.units;
+    }
+    
+    public boolean isSetToMinimum() {
+        return sliderMin.getValue() <= minValue.units;
     }
 
     private void adjustIfNecessary(JSlider slider, int val) {
@@ -138,13 +194,41 @@ public class RangeSelector extends javax.swing.JPanel {
         }
     }
     
-    public static class Range {
-        public final int beg, end;
-
-        public Range(int beg, int end) {
-            this.beg = beg;
-            this.end = end;
-        }
+    private String makeLabelText(int valueOnSlider, boolean forMaxSlider) {
+        int pp = minValue.pointPos;
+        return makeNumberString(
+                new FixedPointReal(valueOnSlider, pp), forMaxSlider) + unitSign;
+    }
+    
+    private String makeNumberString(FixedPointReal value, boolean forMaxSlider) {
+        if (limits.isRightToInf() && forMaxSlider && value.greaterEq(maxValue))
+            return "" + INF;
+        if (limits.isLeftToInf() && !forMaxSlider && value.smallerEq(minValue))
+            return "-" + INF;
+        return value.toString();
     }
 
+    public enum Limits {
+        LEFT_TO_INF(true, false), RIGHT_TO_INF(false, true),
+        BOTH_TO_INF(true, true), NONE_TO_INF(false, false);
+
+        private Limits(boolean isLeftToInf, boolean isRightToInf) {
+            this.isLeftToInf = isLeftToInf;
+            this.isRightToInf = isRightToInf;
+        }
+
+        private final boolean isLeftToInf, isRightToInf;
+        
+        private boolean areBothToInf() {
+            return isLeftToInf && isRightToInf;
+        }
+
+        private boolean isRightToInf() {
+            return isRightToInf;
+        }
+
+        private boolean isLeftToInf() {
+            return isLeftToInf;
+        }
+    }
 }

@@ -1,9 +1,23 @@
 
 package beershowcase.gui;
 
+import beershowcase.beerdata.Beer;
+import beershowcase.utils.FixedPointReal;
+import beershowcase.beerdata.StyleKeyword;
+import beershowcase.beerdata.filters.And;
 import beershowcase.beerdata.filters.Filter;
 import beershowcase.beerdata.filters.NoFilter;
+import beershowcase.beerdata.filters.Or;
+import beershowcase.beerdata.filters.StyleFilter;
+import beershowcase.utils.Range;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.AbstractButton;
+import javax.swing.JPanel;
 
 /**
  *
@@ -11,25 +25,111 @@ import java.awt.BorderLayout;
  */
 public class BeerSearchPanel extends javax.swing.JPanel {
 
-    private static final int MAX_PRICE = 30;
+    private static final FixedPointReal ZERO = new FixedPointReal("0.0");
+    private static final FixedPointReal MAX_PRICE = new FixedPointReal("30.00");
     private static final int MAX_IBU = 120;
-    private static final int MAX_ABV = 200; // 20%
-    private static final int MAX_BLG = 400; // 40 degrees
+    private static final FixedPointReal MAX_ABV = new FixedPointReal("12.0");
+    private static final FixedPointReal MAX_BLG = new FixedPointReal("30.0");
+    private static final String CURR = "\u20ac";
     
     private final BeerShowcasePane beerShowcasePane;
     private DeselectableButtonGroup buttonGroupPopularStyles = new DeselectableButtonGroup();
     private DeselectableButtonGroup buttonGroupFermentation = new DeselectableButtonGroup();
     private DeselectableButtonGroup buttonGroupColor = new DeselectableButtonGroup();
-    private RangeSelector priceSelector = new RangeSelector(0, MAX_PRICE);
-    private RangeSelector ibuSelector = new RangeSelector(0, MAX_IBU);
-    private RangeSelector abvSelector = new RangeSelector(0, MAX_ABV);
-    private RangeSelector blgSelector = new RangeSelector(0, MAX_BLG);
+    private RangeSelector priceSelector = new RangeSelector(ZERO, MAX_PRICE, RangeSelector.Limits.RIGHT_TO_INF, CURR);
+    private RangeSelector ibuSelector = new RangeSelector(0, MAX_IBU, RangeSelector.Limits.RIGHT_TO_INF, "");
+    private RangeSelector abvSelector = new RangeSelector(ZERO, MAX_ABV, RangeSelector.Limits.RIGHT_TO_INF, "%");
+    private RangeSelector blgSelector = new RangeSelector(ZERO, MAX_BLG, RangeSelector.Limits.RIGHT_TO_INF, "\u00b0");
+    private Collection<JPanel> buttonPanels = new ArrayList<>();
+    private Collection<RangeSelector> rangeSelectors = new ArrayList<>();
+    private Map<Component, Filter> compToFilter = new HashMap<>();
+    private Map<RangeSelector, FilterBuilder> rangeSelectorToFilterBuilder = new HashMap<>();
 
     
     public BeerSearchPanel(BeerShowcasePane beerShowcasePane) {
         this.beerShowcasePane = beerShowcasePane;
         initComponents();
         priceRangeContainer.setLayout(new BorderLayout());
+        priceRangeContainer.add(priceSelector);
+        ibuRangeContainer.setLayout(new BorderLayout());
+        ibuRangeContainer.add(ibuSelector);
+        abvContainer.setLayout(new BorderLayout());
+        abvContainer.add(abvSelector);
+        blgRangeContainer.setLayout(new BorderLayout());
+        blgRangeContainer.add(blgSelector);
+        
+        buttonPanels.add(colourPanel);
+        buttonPanels.add(fermentationPanel);
+        buttonPanels.add(stylesPanel);
+        buttonPanels.add(featuresPanel);
+        buttonPanels.add(tastePanel);
+        
+        rangeSelectors.add(priceSelector);
+        rangeSelectors.add(ibuSelector);
+        rangeSelectors.add(abvSelector);
+        rangeSelectors.add(blgSelector);
+        
+        prepareFilters();
+    }
+    
+    private void prepareFilters() {
+        compToFilter.put(rbPale, new StyleFilter(StyleKeyword.Pale));
+        compToFilter.put(rbAmber, new StyleFilter(StyleKeyword.Amber));
+        compToFilter.put(rbDark, new StyleFilter(StyleKeyword.Dark));
+        
+        compToFilter.put(rbAle, new StyleFilter(StyleKeyword.Ale));
+        compToFilter.put(rbLager, new StyleFilter(StyleKeyword.Lager));
+        compToFilter.put(rbWild, new StyleFilter(StyleKeyword.Wild));
+        
+        compToFilter.put(rbIpa, new StyleFilter(StyleKeyword.IpaFamily));
+        compToFilter.put(rbStout, new Or(new StyleFilter(StyleKeyword.StoutFamily),
+                new StyleFilter(StyleKeyword.Porter)) );
+        compToFilter.put(rbBaltic, new StyleFilter(StyleKeyword.BalticPorter));
+        compToFilter.put(rbBock, new StyleFilter(StyleKeyword.BockFamily));
+        compToFilter.put(rbWheat, new StyleFilter(StyleKeyword.WheatBeerFamily));
+        compToFilter.put(rbSour, new StyleFilter(StyleKeyword.Sour));
+        compToFilter.put(rbBelgian, new StyleFilter(StyleKeyword.Belgian));
+        
+        compToFilter.put(featureAmerican, new StyleFilter(StyleKeyword.American));
+        compToFilter.put(featureImperial, new StyleFilter(StyleKeyword.Imperial));
+        compToFilter.put(featureSmoked, new StyleFilter(StyleKeyword.Smoked));
+        compToFilter.put(featureMilk, new StyleFilter(StyleKeyword.Milk));
+        compToFilter.put(featureOatmeal, new StyleFilter(StyleKeyword.Oatmeal));
+        compToFilter.put(featureRye, new StyleFilter(StyleKeyword.Rye));
+        compToFilter.put(featureBrett, new StyleFilter(StyleKeyword.Brett));
+        
+        compToFilter.put(tasteMalty, new StyleFilter(StyleKeyword.Malty));
+        compToFilter.put(tasteBitter, new StyleFilter(StyleKeyword.BitterTaste));
+        compToFilter.put(tasteBalanced, new StyleFilter(StyleKeyword.Balanced));
+        compToFilter.put(tasteHoppy, new StyleFilter(StyleKeyword.Hoppy));
+        compToFilter.put(tasteRoasty, new StyleFilter(StyleKeyword.Roasty));
+        compToFilter.put(tasteFruitty, new StyleFilter(StyleKeyword.Fruitty));
+        compToFilter.put(tasteSpice, new StyleFilter(StyleKeyword.Spice));
+        
+        rangeSelectorToFilterBuilder.put(priceSelector, (FilterBuilder) () -> {
+            Range range = priceSelector.getRange();
+            return (Filter) (Beer beer) -> {
+                return range.inBounds(beer.getPrice());
+            };
+        });
+        rangeSelectorToFilterBuilder.put(ibuSelector, (FilterBuilder) () -> {
+            Range range = ibuSelector.getRange();
+            return (Filter) (Beer beer) -> {
+                return range.inBounds(new FixedPointReal(beer.getIbu(), 0));
+            };
+        });
+        rangeSelectorToFilterBuilder.put(abvSelector, (FilterBuilder) () -> {
+            Range range = abvSelector.getRange();
+            return (Filter) (Beer beer) -> {
+                return range.inBounds(beer.getAbv());
+            };
+        });
+        rangeSelectorToFilterBuilder.put(blgSelector, (FilterBuilder) () -> {
+            Range range = blgSelector.getRange();
+            return (Filter) (Beer beer) -> {
+                return range.inBounds(beer.getPlato());
+            };
+        });
     }
 
     /**
@@ -41,15 +141,15 @@ public class BeerSearchPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        stylesPanel = new javax.swing.JPanel();
         rbIpa = new javax.swing.JRadioButton();
         rbStout = new javax.swing.JRadioButton();
         rbBaltic = new javax.swing.JRadioButton();
         rbBock = new javax.swing.JRadioButton();
         rbWheat = new javax.swing.JRadioButton();
-        sbSour = new javax.swing.JRadioButton();
+        rbSour = new javax.swing.JRadioButton();
         rbBelgian = new javax.swing.JRadioButton();
-        jPanel2 = new javax.swing.JPanel();
+        featuresPanel = new javax.swing.JPanel();
         featureAmerican = new javax.swing.JCheckBox();
         featureSmoked = new javax.swing.JCheckBox();
         featureMilk = new javax.swing.JCheckBox();
@@ -72,24 +172,24 @@ public class BeerSearchPanel extends javax.swing.JPanel {
         ibuRangeContainer = new javax.swing.JPanel();
         abvContainer = new javax.swing.JPanel();
         blgRangeContainer = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
+        fermentationPanel = new javax.swing.JPanel();
         rbAle = new javax.swing.JRadioButton();
         rbLager = new javax.swing.JRadioButton();
         rbWild = new javax.swing.JRadioButton();
-        jPanel6 = new javax.swing.JPanel();
+        colourPanel = new javax.swing.JPanel();
         rbPale = new javax.swing.JRadioButton();
         rbAmber = new javax.swing.JRadioButton();
         rbDark = new javax.swing.JRadioButton();
-        jPanel7 = new javax.swing.JPanel();
+        tastePanel = new javax.swing.JPanel();
         tasteMalty = new javax.swing.JCheckBox();
         tasteBitter = new javax.swing.JCheckBox();
-        testBalanced = new javax.swing.JCheckBox();
+        tasteBalanced = new javax.swing.JCheckBox();
         tasteHoppy = new javax.swing.JCheckBox();
         tasteRoasty = new javax.swing.JCheckBox();
         tasteFruitty = new javax.swing.JCheckBox();
         tasteSpice = new javax.swing.JCheckBox();
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Popular styles"));
+        stylesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Popular styles"));
 
         buttonGroupPopularStyles.add(rbIpa);
         rbIpa.setText("IPA");
@@ -106,31 +206,31 @@ public class BeerSearchPanel extends javax.swing.JPanel {
         buttonGroupPopularStyles.add(rbWheat);
         rbWheat.setText("Wheat beer");
 
-        buttonGroupPopularStyles.add(sbSour);
-        sbSour.setText("Sour beers");
+        buttonGroupPopularStyles.add(rbSour);
+        rbSour.setText("Sour beers");
 
         buttonGroupPopularStyles.add(rbBelgian);
         rbBelgian.setText("Belgian styles");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout stylesPanelLayout = new javax.swing.GroupLayout(stylesPanel);
+        stylesPanel.setLayout(stylesPanelLayout);
+        stylesPanelLayout.setHorizontalGroup(
+            stylesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(stylesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(stylesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(rbIpa)
                     .addComponent(rbStout)
                     .addComponent(rbBaltic)
                     .addComponent(rbBock)
                     .addComponent(rbWheat)
-                    .addComponent(sbSour)
+                    .addComponent(rbSour)
                     .addComponent(rbBelgian))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        stylesPanelLayout.setVerticalGroup(
+            stylesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(stylesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(rbIpa)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -142,24 +242,19 @@ public class BeerSearchPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(rbWheat)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sbSour)
+                .addComponent(rbSour)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(rbBelgian)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Features"));
+        featuresPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Features"));
 
         featureAmerican.setText("American");
 
         featureSmoked.setText("Smoked");
 
         featureMilk.setText("<html> Milk / <br>with lactose");
-        featureMilk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                featureMilkActionPerformed(evt);
-            }
-        });
 
         featureRye.setText("Rye");
 
@@ -169,21 +264,21 @@ public class BeerSearchPanel extends javax.swing.JPanel {
 
         featureImperial.setText("<html> Double / <br>Imperial");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout featuresPanelLayout = new javax.swing.GroupLayout(featuresPanel);
+        featuresPanel.setLayout(featuresPanelLayout);
+        featuresPanelLayout.setHorizontalGroup(
+            featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(featuresPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGroup(featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, featuresPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(featureMilk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(featureSmoked)
                             .addComponent(featureAmerican)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(featuresPanelLayout.createSequentialGroup()
+                        .addGroup(featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(featureOatmeal)
                             .addComponent(featureRye)
                             .addComponent(featureBrett)
@@ -191,9 +286,9 @@ public class BeerSearchPanel extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        featuresPanelLayout.setVerticalGroup(
+            featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(featuresPanelLayout.createSequentialGroup()
                 .addComponent(featureAmerican)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(featureImperial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -241,7 +336,7 @@ public class BeerSearchPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(filler1, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+                .addComponent(filler1, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -287,7 +382,7 @@ public class BeerSearchPanel extends javax.swing.JPanel {
         );
         ibuRangeContainerLayout.setVerticalGroup(
             ibuRangeContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 49, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout abvContainerLayout = new javax.swing.GroupLayout(abvContainer);
@@ -339,23 +434,23 @@ public class BeerSearchPanel extends javax.swing.JPanel {
                     .addComponent(priceRangeContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(ibuRangeContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ibuRangeContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
                     .addComponent(abvContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(12, 12, 12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
                     .addComponent(blgRangeContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Fermentation"));
+        fermentationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Fermentation"));
 
         buttonGroupFermentation.add(rbAle);
         rbAle.setText("Ale");
@@ -366,20 +461,20 @@ public class BeerSearchPanel extends javax.swing.JPanel {
         buttonGroupFermentation.add(rbWild);
         rbWild.setText("Wild");
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout fermentationPanelLayout = new javax.swing.GroupLayout(fermentationPanel);
+        fermentationPanel.setLayout(fermentationPanelLayout);
+        fermentationPanelLayout.setHorizontalGroup(
+            fermentationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fermentationPanelLayout.createSequentialGroup()
+                .addGroup(fermentationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(rbWild)
                     .addComponent(rbLager)
                     .addComponent(rbAle))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        fermentationPanelLayout.setVerticalGroup(
+            fermentationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fermentationPanelLayout.createSequentialGroup()
                 .addComponent(rbAle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(rbLager)
@@ -388,7 +483,7 @@ public class BeerSearchPanel extends javax.swing.JPanel {
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Colour"));
+        colourPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Colour"));
 
         buttonGroupColor.add(rbPale);
         rbPale.setText("Pale");
@@ -399,20 +494,20 @@ public class BeerSearchPanel extends javax.swing.JPanel {
         buttonGroupColor.add(rbDark);
         rbDark.setText("Dark");
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout colourPanelLayout = new javax.swing.GroupLayout(colourPanel);
+        colourPanel.setLayout(colourPanelLayout);
+        colourPanelLayout.setHorizontalGroup(
+            colourPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(colourPanelLayout.createSequentialGroup()
+                .addGroup(colourPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(rbPale)
                     .addComponent(rbAmber)
                     .addComponent(rbDark))
                 .addGap(0, 36, Short.MAX_VALUE))
         );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        colourPanelLayout.setVerticalGroup(
+            colourPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(colourPanelLayout.createSequentialGroup()
                 .addComponent(rbPale)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(rbAmber)
@@ -420,13 +515,13 @@ public class BeerSearchPanel extends javax.swing.JPanel {
                 .addComponent(rbDark))
         );
 
-        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Taste"));
+        tastePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Taste"));
 
         tasteMalty.setText("Malty");
 
         tasteBitter.setText("Bitter");
 
-        testBalanced.setText("Well-balanced");
+        tasteBalanced.setText("Well-balanced");
 
         tasteHoppy.setText("Hoppy");
 
@@ -436,29 +531,29 @@ public class BeerSearchPanel extends javax.swing.JPanel {
 
         tasteSpice.setText("Spice");
 
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout tastePanelLayout = new javax.swing.GroupLayout(tastePanel);
+        tastePanel.setLayout(tastePanelLayout);
+        tastePanelLayout.setHorizontalGroup(
+            tastePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tastePanelLayout.createSequentialGroup()
+                .addGroup(tastePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(tasteMalty)
                     .addComponent(tasteBitter)
-                    .addComponent(testBalanced)
+                    .addComponent(tasteBalanced)
                     .addComponent(tasteHoppy)
                     .addComponent(tasteRoasty)
                     .addComponent(tasteFruitty)
                     .addComponent(tasteSpice))
                 .addGap(0, 16, Short.MAX_VALUE))
         );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
+        tastePanelLayout.setVerticalGroup(
+            tastePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tastePanelLayout.createSequentialGroup()
                 .addComponent(tasteMalty)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tasteBitter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(testBalanced)
+                .addComponent(tasteBalanced)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tasteHoppy)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -477,14 +572,14 @@ public class BeerSearchPanel extends javax.swing.JPanel {
             .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(fermentationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(colourPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(stylesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(featuresPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tastePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -495,26 +590,24 @@ public class BeerSearchPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(colourPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(fermentationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(stylesPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(featuresPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tastePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void featureMilkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_featureMilkActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_featureMilkActionPerformed
 
     private void buttonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSearchActionPerformed
         beerShowcasePane.goToBrowsingMode();
     }//GEN-LAST:event_buttonSearchActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
+        clearButtons();
+        clearRanges();
         revalidate();
         repaint();
     }//GEN-LAST:event_buttonClearActionPerformed
@@ -525,6 +618,7 @@ public class BeerSearchPanel extends javax.swing.JPanel {
     private javax.swing.JPanel blgRangeContainer;
     private javax.swing.JButton buttonClear;
     private javax.swing.JButton buttonSearch;
+    private javax.swing.JPanel colourPanel;
     private javax.swing.JCheckBox featureAmerican;
     private javax.swing.JCheckBox featureBrett;
     private javax.swing.JCheckBox featureImperial;
@@ -532,6 +626,8 @@ public class BeerSearchPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox featureOatmeal;
     private javax.swing.JCheckBox featureRye;
     private javax.swing.JCheckBox featureSmoked;
+    private javax.swing.JPanel featuresPanel;
+    private javax.swing.JPanel fermentationPanel;
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
     private javax.swing.JPanel ibuRangeContainer;
@@ -540,13 +636,8 @@ public class BeerSearchPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel priceRangeContainer;
     private javax.swing.JRadioButton rbAle;
     private javax.swing.JRadioButton rbAmber;
@@ -557,20 +648,104 @@ public class BeerSearchPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton rbIpa;
     private javax.swing.JRadioButton rbLager;
     private javax.swing.JRadioButton rbPale;
+    private javax.swing.JRadioButton rbSour;
     private javax.swing.JRadioButton rbStout;
     private javax.swing.JRadioButton rbWheat;
     private javax.swing.JRadioButton rbWild;
-    private javax.swing.JRadioButton sbSour;
+    private javax.swing.JPanel stylesPanel;
+    private javax.swing.JCheckBox tasteBalanced;
     private javax.swing.JCheckBox tasteBitter;
     private javax.swing.JCheckBox tasteFruitty;
     private javax.swing.JCheckBox tasteHoppy;
     private javax.swing.JCheckBox tasteMalty;
+    private javax.swing.JPanel tastePanel;
     private javax.swing.JCheckBox tasteRoasty;
     private javax.swing.JCheckBox tasteSpice;
-    private javax.swing.JCheckBox testBalanced;
     // End of variables declaration//GEN-END:variables
 
     public Filter buildFilter() {
-        return new NoFilter();
+        And and = new And();
+        Filter lastConjunct = null;
+        int count = 0;
+        
+        for (JPanel bttnPanel: buttonPanels) {
+            Filter conjunct = makeFilterFromPanel(bttnPanel);
+            if (conjunct != null) {
+                lastConjunct = conjunct;
+                count++;
+                and.add(conjunct);
+            }
+        }
+        for (RangeSelector rs: rangeSelectors) {
+            Filter conjunct = makeFilterFromRange(rs);
+            if (conjunct != null) {
+                lastConjunct = conjunct;
+                count++;
+                and.add(conjunct);
+            }
+        }
+        
+        if (count > 1)
+            return and;
+        else if (count == 1)
+            return lastConjunct;
+        else
+            return new NoFilter();
     }
+
+    private Filter makeFilterFromPanel(JPanel bttnPanel) {
+        Or or = new Or();
+        Filter lastAlternative = null;
+        int count = 0;
+        
+        Component[] bttns = bttnPanel.getComponents();
+        for (Component comp: bttns) {
+            AbstractButton button = (AbstractButton) comp;
+            if (button.isSelected()) {
+                lastAlternative = compToFilter.get(comp);
+                if (lastAlternative == null) {
+                    throw new RuntimeException();
+                }
+                count++;
+                or.add(lastAlternative);
+            }
+        }
+        
+        if (count > 1)
+            return or;
+        else if (count == 1)
+            return lastAlternative;
+        else
+            return null;
+    }
+
+    private void clearButtons() {
+        for (JPanel bttnPanel: buttonPanels) {
+            clearButtonsOnPanel(bttnPanel);
+        }
+    }
+
+    private void clearButtonsOnPanel(JPanel bttnPanel) {
+        Component[] bttns = bttnPanel.getComponents();
+        for (Component comp: bttns) {
+            AbstractButton button = (AbstractButton) comp;
+            button.setSelected(false);
+        }
+    }
+
+    private void clearRanges() {
+        for (RangeSelector rs: rangeSelectors)
+            rs.reset();
+    }
+
+    private Filter makeFilterFromRange(RangeSelector rs) {
+        FilterBuilder fb = rangeSelectorToFilterBuilder.get(rs);
+        if (fb == null)
+            throw new RuntimeException("Each RangeSelector should have corresponding FilterBuilder");
+        return fb.make();
+    }
+}
+
+interface FilterBuilder {
+    Filter make();
 }

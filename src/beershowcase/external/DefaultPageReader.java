@@ -16,11 +16,7 @@ import java.util.logging.Logger;
  */
 public class DefaultPageReader implements PageReader {
     private final static Logger LOGGER = Logger.getLogger(DefaultPageReader.class.getName());
-    
-    static {
-        System.setProperty("jsse.enableSNIExtension", "false");
-    }
-    
+
     @Override
     public String read(String address) {
         try {

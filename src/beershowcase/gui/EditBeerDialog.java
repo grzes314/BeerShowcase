@@ -4,7 +4,7 @@ package beershowcase.gui;
 import beershowcase.beerdata.Beer;
 import beershowcase.beerdata.BeerProperties;
 import beershowcase.beerdata.Brewery;
-import beershowcase.beerdata.FixedPointReal;
+import beershowcase.utils.FixedPointReal;
 import beershowcase.beerdata.StyleKeyword;
 import beershowcase.beerdata.autostyle.StyleFinder;
 import beershowcase.beerdata.autostyle.simple.SimpleStyleFinder;
