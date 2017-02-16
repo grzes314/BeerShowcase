@@ -65,6 +65,7 @@ public class BeerManagement extends JFrame {
         setJMenuBar(makeMenuBar());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(exitListener);
+        RunningApplication.getBeerKnowledge().addChangeListener(saveUnlocker);
     }
 
     private JMenuBar makeMenuBar() {
@@ -137,6 +138,7 @@ public class BeerManagement extends JFrame {
             AppData appData = BeerKnowledgeIO.readBeerKnowledge(file);
             closeFileSystem(RunningApplication.getFileSystem());
             RunningApplication.setData(appData);
+            RunningApplication.getBeerKnowledge().addChangeListener(saveUnlocker);
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, null, ex);
             JOptionPane.showMessageDialog(this, "Error while opening a file.",

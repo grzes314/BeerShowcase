@@ -27,8 +27,6 @@
 
 * BeerKnowledge.makeBrewery and BeerKnowledge.makeBeer don't register BeerKnowledge as Brewery/Beer change listener.
 
-* Changing beer name does not activate save button.
-
 * "You have some unsaved work" dialgo pops up even if there were no modifications.
 
 * When using "Save As" and selecting currently opened file, an uncaught java.nio.file.FileSystemAlreadyExistsException occurs.
