@@ -1,5 +1,4 @@
-
-* Automatically read beer data from external sources.
+-------------------------- FEATURES -----------------------------------
 
 * Store descriptions in seperate files
     - Use JTextPane to store rich text.
@@ -10,8 +9,6 @@
 
 * Store ingredient data.
 
-* Write a script/program to download information about all beers from an external source to BeerKnowledge.
-
 * Application internationalization.
 
 * Add comments and logs.
@@ -19,7 +16,21 @@
 * LazyImage
     - Delete from memory images that have not been used in a while.
     - setImage(null) + save() should result in image removal.
+
+* Add external beer knowledge source: RateBeer.
     
-* To investigate
-  - BeerKnowledge.makeBrewery and BeerKnowledge.makeBeer don't register BeerKnowledge as Brewery/Beer change listener.
-   
+* Write a script/program to download information about all beers from an external source to BeerKnowledge.
+
+
+
+-------------------- BUGS ------------------------------------
+
+* BeerKnowledge.makeBrewery and BeerKnowledge.makeBeer don't register BeerKnowledge as Brewery/Beer change listener.
+
+* Changing beer name does not activate save button.
+
+* "You have some unsaved work" dialgo pops up even if there were no modifications.
+
+* When using "Save As" and selecting currently opened file, an uncaught java.nio.file.FileSystemAlreadyExistsException occurs.
+
+* Overwriting a .bk file doesn't remove existing resources. Possible solution: remove previous file.
