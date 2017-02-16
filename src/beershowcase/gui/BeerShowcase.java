@@ -8,12 +8,6 @@ import java.awt.HeadlessException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -98,26 +92,13 @@ public class BeerShowcase {
 
     private static BeerKnowledge readBeerKnowledge(File file) {
         try {
-            BeerKnowledge beerKnowledge = new BeerKnowledge();
-            FileSystem fileSystem = openFileSystem(file);
-            beerKnowledge.load(fileSystem);
-            RunningApplication.data = new RunningApplication.Data(file, fileSystem, beerKnowledge);
-            return beerKnowledge;
+            AppData appData = BeerKnowledgeIO.readBeerKnowledge(file);
+            RunningApplication.setData(appData);
+            return appData.beerKnowledge;
         } catch (Exception ex) {
             LOGGER.log(Level.INFO, null, ex);
             JOptionPane.showMessageDialog(null, "Selected file seems to be corrupted.",
                     "Error", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-    }
-    
-    private static FileSystem openFileSystem(File file) throws IOException {
-        if (file != null) {
-            URI uri = URI.create("jar:" + file.toURI());
-            Map<String, String> env = new HashMap<>(); 
-            env.put("create", "true");
-            return FileSystems.newFileSystem(uri, env);
-        } else {
             return null;
         }
     }

@@ -1,6 +1,7 @@
 
 package beershowcase.beerdata;
 
+import beershowcase.lazyresources.LazyImage;
 import beershowcase.utils.FixedPointReal;
 import java.awt.image.BufferedImage;
 import java.nio.file.FileSystem;
@@ -109,11 +110,11 @@ public class Beer implements JsonRepresentable {
     }
     
     public void saveChanges(FileSystem fileSystem) {
-        image.saveIfChanged(fileSystem);
+        image.saveChanges(fileSystem);
     }
     
-    public void saveForced(FileSystem fileSystem) {
-        image.saveForced(fileSystem);
+    public void saveAs(FileSystem currFileSystem, FileSystem newFileSystem) {
+        image.saveAs(currFileSystem, newFileSystem);
     }
 
     public int getId() {

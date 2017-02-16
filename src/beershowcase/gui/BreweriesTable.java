@@ -136,15 +136,15 @@ class BreweriesTableModel extends AbstractTableModel
     String namePart = "";
 
     BreweriesTableModel() {
-        RunningApplication.data.beerKnowledge.addChangeListener(this);
-        displayed.addAll(RunningApplication.data.beerKnowledge.getBreweries());
+        RunningApplication.getBeerKnowledge().addChangeListener(this);
+        displayed.addAll(RunningApplication.getBeerKnowledge().getBreweries());
     }
     
     public void reset() {
         displayed.clear();
         
-        RunningApplication.data.beerKnowledge.addChangeListener(this);
-        displayed.addAll(RunningApplication.data.beerKnowledge.getBreweries());
+        RunningApplication.getBeerKnowledge().addChangeListener(this);
+        displayed.addAll(RunningApplication.getBeerKnowledge().getBreweries());
         fireTableDataChanged();
     }
     
@@ -156,7 +156,7 @@ class BreweriesTableModel extends AbstractTableModel
     }
     
     private void rebuildDisplayed() {
-        for (Brewery br: RunningApplication.data.beerKnowledge.getBreweries()) {
+        for (Brewery br: RunningApplication.getBeerKnowledge().getBreweries()) {
             if (isDisplayed(br))
                 displayed.add(br);
         }
@@ -203,7 +203,7 @@ class BreweriesTableModel extends AbstractTableModel
     @Override
     public Object getValueAt(int row, int col) {
         Brewery b = displayed.get(row);
-        Image logo = b.getLogo(RunningApplication.data.fileSystem);
+        Image logo = b.getLogo(RunningApplication.getFileSystem());
         switch(col) {
             case 0:
                 return b.getName();

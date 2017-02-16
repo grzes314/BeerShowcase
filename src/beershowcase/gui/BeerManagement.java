@@ -9,11 +9,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -50,14 +46,6 @@ public class BeerManagement extends JFrame {
      */
     public static void main(String[] args) {
         System.setProperty("jsse.enableSNIExtension", "false");
-        try {
-            tabularasa();
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Cannot initialize the application.",
-                    "Fatal error", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
         
         SwingUtilities.invokeLater(() -> {
             RunningApplication.MainFrame = new BeerManagement();
@@ -117,28 +105,17 @@ public class BeerManagement extends JFrame {
         jMenuBar.add(file);
         return jMenuBar;
     }
-
-    private static void tabularasa() throws IOException {
-        closeFileSystem(RunningApplication.data.fileSystem);
-        RunningApplication.data = new RunningApplication.Data();
-        RunningApplication.data.beerKnowledge = new BeerKnowledge();
-    }
     
     private void tabularasaClicked() {
         boolean confirmed = confirmClosingPrevious();
-        if (confirmed) {
-            try {
-                tabularasa();
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
-                showCantClosePreviousDocument();
-            } finally {
-                RunningApplication.data = new RunningApplication.Data();
-                RunningApplication.data.beerKnowledge = new BeerKnowledge();
-            }
-        }
+        if (!confirmed)
+            return;
+        
+        closeFileSystem(RunningApplication.getFileSystem());
+        RunningApplication.resetData();
+        
         save.setEnabled(false);
-        RunningApplication.data.beerKnowledge.addChangeListener(saveUnlocker);
+        RunningApplication.getBeerKnowledge().addChangeListener(saveUnlocker);
         managementPane.reset();
     }
 
@@ -151,35 +128,39 @@ public class BeerManagement extends JFrame {
         if (file == null)
             return;
         
-        RunningApplication.Data prevAppData = RunningApplication.data;
-        boolean succ = loadNewApplicationData(file);
-        
-        if (succ) {
-            try {
-                closeFileSystem(prevAppData.fileSystem);
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
-                showCantClosePreviousDocument();
-            }
-        } else {
-            RunningApplication.data = prevAppData;
-        }
-        RunningApplication.data.beerKnowledge.addChangeListener(saveUnlocker);
+        setApplicationData(file);
         managementPane.reset();
+    }
+    
+    private void setApplicationData(File file) {
+        try {
+            AppData appData = BeerKnowledgeIO.readBeerKnowledge(file);
+            closeFileSystem(RunningApplication.getFileSystem());
+            RunningApplication.setData(appData);
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO, null, ex);
+            JOptionPane.showMessageDialog(this, "Error while opening a file.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (BeerKnowledgeParserException ex) {
+            LOGGER.log(Level.INFO, null, ex);
+            JOptionPane.showMessageDialog(this, "Selected file seems to be corrupted.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     
     private boolean saveClicked() {
+        if (RunningApplication.getFileSystem() == null)
+            return saveAsClicked();
+        
         try {
-            RunningApplication.data.beerKnowledge.saveChanges(RunningApplication.data.fileSystem);
-            closeFileSystem(RunningApplication.data.fileSystem);
-            RunningApplication.data.fileSystem = openFileSystem(RunningApplication.data.bkFile);
+            RunningApplication.getBeerKnowledge().saveChanges(
+                    RunningApplication.getFileSystem());
             save.setEnabled(false);
             return true;
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, null, ex);
-            JOptionPane.showMessageDialog(this, "Error while saving file.\n" +
-                    "Data might not have been saved.",
+            JOptionPane.showMessageDialog(this, "Could not save data.",
                     "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -189,86 +170,40 @@ public class BeerManagement extends JFrame {
         File file = chooseFileToSave();
         if (file == null)
             return false;
-         
-        RunningApplication.Data prevAppData = RunningApplication.data;
-        RunningApplication.data = new RunningApplication.Data();
-        boolean saved = false;
+        
+        FileSystem newFileSystem;
+        BeerKnowledge bk;
         try {
-            RunningApplication.data.bkFile = file;
-            RunningApplication.data.fileSystem = openFileSystem(file);
-            RunningApplication.data.beerKnowledge = prevAppData.beerKnowledge;
-            RunningApplication.data.beerKnowledge.saveEverything(RunningApplication.data.fileSystem);
-            closeFileSystem(RunningApplication.data.fileSystem);
-            RunningApplication.data.fileSystem = openFileSystem(RunningApplication.data.bkFile);
-            saved = true;
+            newFileSystem = BeerKnowledgeIO.openFileSystem(file);
+            bk = RunningApplication.getBeerKnowledge();
+            bk.saveAs(RunningApplication.getFileSystem(), newFileSystem);
+            closeFileSystem(newFileSystem);
+            newFileSystem = BeerKnowledgeIO.openFileSystem(file);
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, null, ex);
             JOptionPane.showMessageDialog(this, "Error while writing to selected file",
                     "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        
-        if (saved) {
-            save.setEnabled(false);
-            RunningApplication.data.beerKnowledge.addChangeListener(saveUnlocker);
-            managementPane.reset();
-            try {
-                closeFileSystem(prevAppData.fileSystem);
-            } catch (IOException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
-                showCantClosePreviousDocument();
-            }
-            return true;
-        } else {
-            RunningApplication.data = prevAppData;
             return false;
         }
+        
+        save.setEnabled(false);
+        closeFileSystem(RunningApplication.getFileSystem());
+        RunningApplication.setData(new AppData(bk, newFileSystem));
+        managementPane.reset();
+        return true;
     }
     
     private void exitClicked() {
         boolean allowedToExit = confirmClosingPrevious();
         if (allowedToExit) {
-            try {
-                closeFileSystem(RunningApplication.data.fileSystem);
-            } catch (IOException ex) {
-                Logger.getLogger(BeerManagement.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            RunningApplication.resetData();
             dispose();
         }
     }
     
-    private boolean loadNewApplicationData(File file) {
-        try {
-            RunningApplication.data = new RunningApplication.Data();
-            RunningApplication.data.bkFile = file;
-            RunningApplication.data.fileSystem =  openFileSystem(file);
-            RunningApplication.data.beerKnowledge = new BeerKnowledge();
-            RunningApplication.data.beerKnowledge.load(RunningApplication.data.fileSystem);
-            return true;
-        } catch (IOException ex) {
-            LOGGER.log(Level.INFO, null, ex);
-            JOptionPane.showMessageDialog(this, "Selected file seems to be corrupted.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (BeerKnowledgeParserException ex) {
-            LOGGER.log(Level.INFO, null, ex);
-            JOptionPane.showMessageDialog(this, "Selected file seems to be corrupted.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            try {
-                closeFileSystem(RunningApplication.data.fileSystem);
-            } catch (IOException ex1) {
-                LOGGER.log(Level.SEVERE, null, ex1);
-            }
-        }
-        return false;
-    }
-    
-    private void showCantClosePreviousDocument() {
-        JOptionPane.showMessageDialog(this, "There was a problem with closing" +
-                "of your previous document.\n The data might have been demaged.",
-                "Error", JOptionPane.ERROR_MESSAGE);
-    }
     
     private boolean confirmClosingPrevious() {
-        if (!RunningApplication.data.beerKnowledge.isModified())
+        if (!RunningApplication.getBeerKnowledge().isModified())
             return true;
         
         int res = JOptionPane.showOptionDialog(
@@ -279,7 +214,7 @@ public class BeerManagement extends JFrame {
         
         switch (res) {
             case JOptionPane.YES_OPTION:
-                return saveBeforeClose();
+                return saveClicked();
             case JOptionPane.NO_OPTION:
                 return true;
             default:
@@ -301,23 +236,6 @@ public class BeerManagement extends JFrame {
         } else {
             return null;
         }
-    }
-    
-    private static FileSystem openFileSystem(File file) throws IOException {
-        if (file != null) {
-            URI uri = URI.create("jar:" + file.toURI());
-            Map<String, String> env = new HashMap<>(); 
-            env.put("create", "true");
-            return FileSystems.newFileSystem(uri, env);
-        } else {
-            return null;
-        }
-    }
-    
-    private static void closeFileSystem(FileSystem fs) throws IOException {
-        if (fs != null) {
-            fs.close();
-        }        
     }
     
     private File chooseFileToSave() {
@@ -351,11 +269,19 @@ public class BeerManagement extends JFrame {
              JOptionPane.QUESTION_MESSAGE, null, null, null);
         return confirm == JOptionPane.YES_OPTION;
     }
+
+    private void closeFileSystem(FileSystem fileSystem) {
+        try {
+            BeerKnowledgeIO.closeFileSystem(fileSystem);
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "File system has not been closed properly", ex);
+            showCantClosePreviousDocument();
+        }
+    }
     
-    private boolean saveBeforeClose() {
-        if (RunningApplication.data.fileSystem == null)
-            return saveAsClicked();
-        else
-            return saveClicked();
+    private void showCantClosePreviousDocument() {
+        JOptionPane.showMessageDialog(this, "Problem occured while closing" +
+                "your previous document.\n The data might have been not saved properly.",
+                "Error", JOptionPane.ERROR_MESSAGE);
     }
 }

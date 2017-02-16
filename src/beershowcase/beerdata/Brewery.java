@@ -1,6 +1,7 @@
 
 package beershowcase.beerdata;
 
+import beershowcase.lazyresources.LazyImage;
 import java.awt.image.BufferedImage;
 import java.nio.file.FileSystem;
 import java.util.ArrayList;
@@ -72,11 +73,11 @@ public class Brewery implements JsonRepresentable {
     }
     
     public void saveChanges(FileSystem fileSystem) {
-        logo.saveIfChanged(fileSystem);
+        logo.saveChanges(fileSystem);
     }
     
-    public void saveForced(FileSystem fileSystem) {
-        logo.saveForced(fileSystem);
+    public void saveAs(FileSystem currFileSystem, FileSystem newFileSystem) {
+        logo.saveAs(currFileSystem, newFileSystem);
     }
 
     public int getId() {

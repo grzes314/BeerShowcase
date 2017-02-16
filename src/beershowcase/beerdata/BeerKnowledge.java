@@ -147,12 +147,12 @@ public class BeerKnowledge implements JsonRepresentable,
         modified = false;
     }
     
-    public void saveEverything(FileSystem fileSystem) throws IOException {
-        saveJson(fileSystem);
+    public void saveAs(FileSystem currFileSystem, FileSystem newFileSystem) throws IOException {
+        saveJson(newFileSystem);
         for (Brewery br: breweryById.values())
-            br.saveForced(fileSystem);
+            br.saveAs(currFileSystem, newFileSystem);
         for (Beer b: beers)
-            b.saveForced(fileSystem);
+            b.saveAs(currFileSystem, newFileSystem);
         
         modified = false;
     }

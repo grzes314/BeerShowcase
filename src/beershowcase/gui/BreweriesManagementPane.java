@@ -140,7 +140,7 @@ public class BreweriesManagementPane extends javax.swing.JPanel {
         addBreweryDialog.setLocationRelativeTo(this);
         addBreweryDialog.setVisible(true);
         if (addBreweryDialog.isApproved()) {
-            Brewery brewery = RunningApplication.data.beerKnowledge.makeBrewery();
+            Brewery brewery = RunningApplication.getBeerKnowledge().makeBrewery();
             brewery.setName(addBreweryDialog.getBreweryName());
             brewery.setLogo(addBreweryDialog.getLogo());
         }
@@ -164,7 +164,7 @@ public class BreweriesManagementPane extends javax.swing.JPanel {
                 JOptionPane.QUESTION_MESSAGE, null, null, null);
             if (res == JOptionPane.YES_OPTION) {
                 try {
-                    RunningApplication.data.beerKnowledge.deleteBrewery(brewery);
+                    RunningApplication.getBeerKnowledge().deleteBrewery(brewery);
                 } catch (BeerKnowledgeException ex) {
                     String mssg = "Cannot delete brewery, because related beers exist";                        
                     LOGGER.log(Level.FINE, mssg, ex);

@@ -483,14 +483,14 @@ public class EditBeerDialog extends javax.swing.JDialog {
 
     private void setDataFrom(Beer beer) {
         nameField.setText(beer.getName());
-        selectedBrewery = RunningApplication.data.beerKnowledge.getBreweryOfBeer(beer);
+        selectedBrewery = RunningApplication.getBeerKnowledge().getBreweryOfBeer(beer);
         breweryField.setText(selectedBrewery != null ? selectedBrewery.getName() : "?");
         styleField.setText(beer.getDeclaredStyle());
         blgSpinner.setValue(beer.getPlato().getDoubleValue());
         abvSpinner.setValue(beer.getAbv().getDoubleValue());
         ibuSpinner.setValue(beer.getIbu());
         description.setText(beer.getDescritpion());
-        labelImageSelector.setInitialImage(beer.getLabelImage(RunningApplication.data.fileSystem)); 
+        labelImageSelector.setInitialImage(beer.getLabelImage(RunningApplication.getFileSystem())); 
         
         priceSpinner.setValue(beer.getPrice().getDoubleValue());
         availableBox.setSelected(beer.isAvailable());
@@ -499,7 +499,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
     
     private void setDataFrom(BeerProperties props) {
         nameField.setText(props.name);
-        selectedBrewery = RunningApplication.data.beerKnowledge.getBreweryByName(props.breweryName);
+        selectedBrewery = RunningApplication.getBeerKnowledge().getBreweryByName(props.breweryName);
         breweryField.setText(selectedBrewery != null ? selectedBrewery.getName() : "?");
         styleField.setText(props.declaredStyle);
         description.setText(props.descritpion);

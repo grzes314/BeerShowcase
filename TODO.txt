@@ -19,3 +19,7 @@
 * LazyImage
     - Delete from memory images that have not been used in a while.
     - setImage(null) + save() should result in image removal.
+    
+* To investigate
+  - BeerKnowledge.makeBrewery and BeerKnowledge.makeBeer don't register BeerKnowledge as Brewery/Beer change listener.
+   

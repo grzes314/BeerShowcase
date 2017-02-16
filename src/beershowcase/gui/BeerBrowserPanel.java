@@ -171,7 +171,7 @@ public class BeerBrowserPanel extends javax.swing.JPanel
     
     private void buildBeerView(Beer beer) {
         BeerViewPanel beerViewPanel = new BeerViewPanel(
-                beer, RunningApplication.data.beerKnowledge.getBreweryOfBeer(beer));
+                beer, RunningApplication.getBeerKnowledge().getBreweryOfBeer(beer));
         beerViews.put(beer.getId(), beerViewPanel);      
         beer.addChangeListener(this);
     }

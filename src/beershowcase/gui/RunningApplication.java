@@ -2,7 +2,6 @@
 package beershowcase.gui;
 
 import beershowcase.beerdata.BeerKnowledge;
-import java.io.File;
 import java.nio.file.FileSystem;
 import javax.swing.JFrame;
 
@@ -10,26 +9,26 @@ import javax.swing.JFrame;
  *
  * @author Grzegorz Łoś
  */
-public class RunningApplication {
-    public static class Data {
+class RunningApplication {
+    static JFrame MainFrame;
 
-        public File bkFile;
-
-        public FileSystem fileSystem;
-
-        public BeerKnowledge beerKnowledge;
-
-        public Data() {
-        }
-
-        public Data(File bkFile, FileSystem fileSystem, BeerKnowledge beerKnowledge) {
-            this.bkFile = bkFile;
-            this.fileSystem = fileSystem;
-            this.beerKnowledge = beerKnowledge;
-        }
-    }
-        
-    public static JFrame MainFrame;
+    private static AppData appData = new AppData();
     
-    public static Data data = new Data();
+    static FileSystem getFileSystem() {
+        return appData.fileSystem;
+    }
+
+    static BeerKnowledge getBeerKnowledge() {
+        return appData.beerKnowledge;
+    }
+    
+
+    static void setData(AppData newAppData) {
+        appData = newAppData;
+    }
+    
+    static void resetData() {     
+        appData = new AppData();
+    }
+    
 }

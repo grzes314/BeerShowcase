@@ -1,8 +1,6 @@
 
 package beershowcase.gui;
 
-import beershowcase.beerdata.BeerKnowledge;
-
 /**
  *
  * @author grzes
