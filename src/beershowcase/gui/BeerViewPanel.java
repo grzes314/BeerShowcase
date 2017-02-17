@@ -27,7 +27,8 @@ public class BeerViewPanel extends javax.swing.JPanel {
         beerNameLabel.setText(htmledString(beer.getName()));
         styleLabel.setText(htmledString(beer.getDeclaredStyle()));
         breweryNameLabel.setText(htmledString(brewery.getName()));
-        description.setText(htmledString(beer.getDescritpion()));
+        description.setText(htmledString(beer.getDescritpion(
+                RunningApplication.getFileSystem())));
         priceLabel.setText(beer.getPrice().toString());
         ibuLabel.setText("" + beer.getIbu());
         alcLabel.setText(beer.getAbv().toString() + "%");

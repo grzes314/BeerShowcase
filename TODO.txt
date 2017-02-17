@@ -1,11 +1,8 @@
 -------------------------- FEATURES -----------------------------------
 
-* Store descriptions in seperate files
-    - Use JTextPane to store rich text.
-    
 * Improve looks.
 
-* Add blocking dialog during consuming tasks.
+* Add blocking dialog during time consuming tasks.
     
 * Show beers in a table.
 
@@ -24,6 +21,8 @@
     - setImage(null) + save() should result in image removal.
 
 * Add external beer knowledge source: RateBeer.
+    
+* Store descriptions as rich text.
     
 * Write a script/program to download information about all beers from an external source to BeerKnowledge.
 

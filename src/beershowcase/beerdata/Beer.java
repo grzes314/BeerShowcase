@@ -2,6 +2,7 @@
 package beershowcase.beerdata;
 
 import beershowcase.lazyresources.LazyImage;
+import beershowcase.lazyresources.LazyText;
 import beershowcase.utils.FixedPointReal;
 import java.awt.image.BufferedImage;
 import java.nio.file.FileSystem;
@@ -40,11 +41,6 @@ public class Beer implements JsonRepresentable {
     private String name = "";
     
     /**
-     * Name of the brwery that produced this beer.
-     */
-    private String breweryName = "";
-    
-    /**
      * Style stated by the brewery.
      */
     private String declaredStyle = "";
@@ -67,7 +63,7 @@ public class Beer implements JsonRepresentable {
     /**
      * Commercial description of the beer.
      */
-    public String descritpion = "";
+    public LazyText descritpion;
     
     /**
      * Beer's or beer label's picture.
@@ -100,6 +96,7 @@ public class Beer implements JsonRepresentable {
      */
     Beer(int id) {
         this.id = id;
+        descritpion = new LazyText(makeDescritpionPath());
         image = new LazyImage(makeLabelImagePath());
     }
     
@@ -115,7 +112,6 @@ public class Beer implements JsonRepresentable {
             .add("plato", plato.toString())
             .add("abv", abv.toString())
             .add("ibu", ibu)
-            //.add("descritpion", descritpion)
             .add("keywords", JsonUtils.stringListToJson(getKeywordsAsStrings()))
             .build();
         return value;
@@ -132,18 +128,20 @@ public class Beer implements JsonRepresentable {
         plato = new FixedPointReal(json.getString("plato"));
         abv = new FixedPointReal(json.getString("abv"));
         ibu = json.getInt("ibu");
-        //descritpion = json.getString("descritpion");
         addStyleKeywordsFromStrings(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
         
+        descritpion = new LazyText(makeDescritpionPath());
         image = new LazyImage(makeLabelImagePath());
         fireEditionEvent(new EditionEvent(this));
     }
     
     public void saveChanges(FileSystem fileSystem) {
+        descritpion.saveChanges(fileSystem);
         image.saveChanges(fileSystem);
     }
     
     public void saveAs(FileSystem currFileSystem, FileSystem newFileSystem) {
+        descritpion.saveAs(currFileSystem, newFileSystem);
         image.saveAs(currFileSystem, newFileSystem);
     }
 
@@ -188,12 +186,11 @@ public class Beer implements JsonRepresentable {
     
     public void setProperties(BeerProperties beerProps) {
         name = beerProps.name;
-        breweryName = beerProps.breweryName;
         declaredStyle = beerProps.declaredStyle;
         plato = beerProps.plato;
         abv = beerProps.abv;
         ibu = beerProps.ibu;
-        descritpion = beerProps.descritpion;
+        descritpion.setText(beerProps.descritpion);
         image.setPicture(beerProps.labelImage);
     }
 
@@ -252,15 +249,13 @@ public class Beer implements JsonRepresentable {
         }
     }
 
-    public String getDescritpion() {
-        return descritpion;
+    public String getDescritpion(FileSystem fileSystem) {
+        return descritpion.getText(fileSystem);
     }
 
     public void setDescritpion(String newDescritpion) {
-        if (!descritpion.equals(newDescritpion)) {
-            descritpion = newDescritpion;
-            fireEditionEvent(new EditionEvent(this));
-        }
+        descritpion.setText(newDescritpion);
+        fireEditionEvent(new EditionEvent(this));
     }
 
     public BufferedImage getLabelImage(FileSystem fileSystem) {
@@ -298,9 +293,9 @@ public class Beer implements JsonRepresentable {
     }
 
     public void addStyleKeywords(ArrayList<StyleKeyword> newKeywords) {
-        fireEditionEvent(new EditionEvent(this));
         for (StyleKeyword keyword: newKeywords)
             addStyleKeyword(keyword);
+        fireEditionEvent(new EditionEvent(this));
     }
 
     private void addStyleKeywordsFromStrings(ArrayList<String> keywordStrings) throws BeerKnowledgeParserException {
@@ -310,6 +305,10 @@ public class Beer implements JsonRepresentable {
         } catch (IllegalArgumentException ex) {
             throw new BeerKnowledgeParserException(ex);
         }
+    }
+    
+    private String makeDescritpionPath() {
+        return "descriptions/" + id + ".txt";
     }
     
     private String makeLabelImagePath() {

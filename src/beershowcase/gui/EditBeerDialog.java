@@ -489,7 +489,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
         blgSpinner.setValue(beer.getPlato().getDoubleValue());
         abvSpinner.setValue(beer.getAbv().getDoubleValue());
         ibuSpinner.setValue(beer.getIbu());
-        description.setText(beer.getDescritpion());
+        description.setText(beer.getDescritpion(RunningApplication.getFileSystem()));
         labelImageSelector.setInitialImage(beer.getLabelImage(RunningApplication.getFileSystem())); 
         
         priceSpinner.setValue(beer.getPrice().getDoubleValue());
