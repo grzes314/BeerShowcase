@@ -10,7 +10,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -47,6 +46,11 @@ public class BeerKnowledgeIO {
             fileSystem.close();
             throw ex;
         }
-        return new AppData(bk, fileSystem);
+        return new AppData(bk, file, fileSystem);
+    }
+
+    static FileSystem reopen(File bkFile, FileSystem fileSystem) throws IOException {
+        closeFileSystem(fileSystem);
+        return BeerKnowledgeIO.openFileSystem(bkFile);
     }
 }

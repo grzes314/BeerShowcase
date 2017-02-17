@@ -2,6 +2,8 @@
 package beershowcase.gui;
 
 import beershowcase.beerdata.BeerKnowledge;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.FileSystem;
 import javax.swing.JFrame;
 
@@ -21,6 +23,10 @@ class RunningApplication {
     static BeerKnowledge getBeerKnowledge() {
         return appData.beerKnowledge;
     }
+
+    static File getBkFile() {
+        return appData.bkFile;
+    }
     
 
     static void setData(AppData newAppData) {
@@ -29,6 +35,13 @@ class RunningApplication {
     
     static void resetData() {     
         appData = new AppData();
+    }
+
+    static void flushFileSystem() throws IOException {
+        if (appData.bkFile != null) {
+            FileSystem reopened = BeerKnowledgeIO.reopen(appData.bkFile, appData.fileSystem);
+            appData = new AppData(appData.beerKnowledge, appData.bkFile, reopened);
+        }
     }
     
 }

@@ -158,6 +158,7 @@ public class BeerManagement extends JFrame {
         try {
             RunningApplication.getBeerKnowledge().saveChanges(
                     RunningApplication.getFileSystem());
+            RunningApplication.flushFileSystem();
             save.setEnabled(false);
             return true;
         } catch (IOException ex) {
@@ -179,8 +180,7 @@ public class BeerManagement extends JFrame {
             newFileSystem = BeerKnowledgeIO.openFileSystem(file);
             bk = RunningApplication.getBeerKnowledge();
             bk.saveAs(RunningApplication.getFileSystem(), newFileSystem);
-            closeFileSystem(newFileSystem);
-            newFileSystem = BeerKnowledgeIO.openFileSystem(file);
+            newFileSystem = BeerKnowledgeIO.reopen(file, RunningApplication.getFileSystem());
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, null, ex);
             JOptionPane.showMessageDialog(this, "Error while writing to selected file",
@@ -190,7 +190,7 @@ public class BeerManagement extends JFrame {
         
         save.setEnabled(false);
         closeFileSystem(RunningApplication.getFileSystem());
-        RunningApplication.setData(new AppData(bk, newFileSystem));
+        RunningApplication.setData(new AppData(bk, file, newFileSystem));
         managementPane.reset();
         return true;
     }
