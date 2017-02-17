@@ -11,9 +11,11 @@
 
 * Enable filtering beers in management pane.
 
-* Store ingredient data.
-
 * Application internationalization.
+
+* Create decent cache for lazy resources.
+
+* Store ingredient data.
 
 * Add comments and logs.
 

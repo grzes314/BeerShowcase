@@ -35,9 +35,39 @@ public class Beer implements JsonRepresentable {
     private FixedPointReal price = new FixedPointReal(0,2);
     
     /**
-     * Beer's properties.
+     * Name of the beer.
      */
-    private BeerProperties properties = new BeerProperties();
+    private String name = "";
+    
+    /**
+     * Name of the brwery that produced this beer.
+     */
+    private String breweryName = "";
+    
+    /**
+     * Style stated by the brewery.
+     */
+    private String declaredStyle = "";
+    
+    /**
+     * Original gravity in blg units.
+     */
+    private FixedPointReal plato = new FixedPointReal(0,1);
+    
+    /**
+     * Alcohol content by volume in percents.
+     */
+    private FixedPointReal abv = new FixedPointReal(0,1);
+    
+    /**
+     * Bitternes in IBU.
+     */
+    private int ibu;
+    
+    /**
+     * Commercial description of the beer.
+     */
+    public String descritpion = "";
     
     /**
      * Beer's or beer label's picture.
@@ -80,11 +110,11 @@ public class Beer implements JsonRepresentable {
             .add("breweryId", breweryId)
             .add("available", available)
             .add("price", price.toString())
-            .add("name", properties.name)
-            .add("declaredStyle", properties.declaredStyle)
-            .add("plato", properties.plato.toString())
-            .add("abv", properties.abv.toString())
-            .add("ibu", properties.ibu)
+            .add("name", name)
+            .add("declaredStyle", declaredStyle)
+            .add("plato", plato.toString())
+            .add("abv", abv.toString())
+            .add("ibu", ibu)
             //.add("descritpion", descritpion)
             .add("keywords", JsonUtils.stringListToJson(getKeywordsAsStrings()))
             .build();
@@ -97,11 +127,11 @@ public class Beer implements JsonRepresentable {
         breweryId = json.getInt("breweryId");
         available = json.getBoolean("available");
         price = new FixedPointReal(json.getString("price"));
-        properties.name = json.getString("name");
-        properties.declaredStyle = json.getString("declaredStyle");
-        properties.plato = new FixedPointReal(json.getString("plato"));
-        properties.abv = new FixedPointReal(json.getString("abv"));
-        properties.ibu = json.getInt("ibu");
+        name = json.getString("name");
+        declaredStyle = json.getString("declaredStyle");
+        plato = new FixedPointReal(json.getString("plato"));
+        abv = new FixedPointReal(json.getString("abv"));
+        ibu = json.getInt("ibu");
         //descritpion = json.getString("descritpion");
         addStyleKeywordsFromStrings(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
         
@@ -157,84 +187,78 @@ public class Beer implements JsonRepresentable {
     }
     
     public void setProperties(BeerProperties beerProps) {
-        properties = new BeerProperties(beerProps);
-        image.setPicture(properties.labelImage);
-        properties.labelImage = null;
+        name = beerProps.name;
+        breweryName = beerProps.breweryName;
+        declaredStyle = beerProps.declaredStyle;
+        plato = beerProps.plato;
+        abv = beerProps.abv;
+        ibu = beerProps.ibu;
+        descritpion = beerProps.descritpion;
+        image.setPicture(beerProps.labelImage);
     }
 
     public String getName() {
-        return properties.name;
+        return name;
     }
 
     public void setName(String newName) {
-        if (!properties.name.equals(newName)) {
-            properties.name = newName;
+        if (!name.equals(newName)) {
+            name = newName;
             fireEditionEvent(new EditionEvent(this));
         }
     }
 
     public String getDeclaredStyle() {
-        return properties.declaredStyle;
+        return declaredStyle;
     }
 
     public void setDeclaredStyle(String newDeclaredStyle) {
-        if (!properties.declaredStyle.equals(newDeclaredStyle)) {
-            properties.declaredStyle = newDeclaredStyle;
+        if (!declaredStyle.equals(newDeclaredStyle)) {
+            declaredStyle = newDeclaredStyle;
             fireEditionEvent(new EditionEvent(this));
         }
     }
 
     public FixedPointReal getPlato() {
-        return properties.plato;
+        return plato;
     }
     
-    public void setPlato(FixedPointReal plato) {
-        if (!properties.plato.equals(plato)) {
-            properties.plato = plato;
+    public void setPlato(FixedPointReal newPlato) {
+        if (!plato.equals(newPlato)) {
+            plato = newPlato;
             fireEditionEvent(new EditionEvent(this));
         }
     }
 
     public FixedPointReal getAbv() {
-        return properties.abv;
+        return abv;
     }
     
-    public void setAbv(FixedPointReal abv) {
-        if (!properties.abv.equals(abv)) {
-            properties.abv = abv;
+    public void setAbv(FixedPointReal newAbv) {
+        if (!abv.equals(newAbv)) {
+            abv = newAbv;
             fireEditionEvent(new EditionEvent(this));
         }
     }
 
     public int getIbu() {
-        return properties.ibu;
+        return ibu;
     }
     
-    public void setIbu(int ibu) {
-        if (properties.ibu != ibu) {
-            properties.ibu = ibu;
+    public void setIbu(int newIbu) {
+        if (ibu != newIbu) {
+            ibu = newIbu;
             fireEditionEvent(new EditionEvent(this));
-        }
-    }
-
-    public Ingredients getIngredients() {
-        return properties.ingredients;
-    }
-
-    public void setIngredients(Ingredients newIngredients) {
-        if (!properties.ingredients.equals(newIngredients)) {
-            fireEditionEvent(new EditionEvent(this));
-            properties.ingredients = newIngredients;
         }
     }
 
     public String getDescritpion() {
-        return properties.descritpion;
+        return descritpion;
     }
 
     public void setDescritpion(String newDescritpion) {
-        if (!properties.descritpion.equals(newDescritpion)) {
-            properties.descritpion = newDescritpion;
+        if (!descritpion.equals(newDescritpion)) {
+            descritpion = newDescritpion;
             fireEditionEvent(new EditionEvent(this));
         }
     }
