@@ -29,6 +29,4 @@
 
 * "You have some unsaved work" dialgo pops up even if there were no modifications.
 
-* When using "Save As" and selecting currently opened file, an uncaught java.nio.file.FileSystemAlreadyExistsException occurs.
-
 * Overwriting a .bk file doesn't remove existing resources. Possible solution: remove previous file.

@@ -174,6 +174,9 @@ public class BeerManagement extends JFrame {
         if (file == null)
             return false;
         
+        if (file.equals(RunningApplication.getBkFile()))
+            return saveClicked();
+        
         FileSystem newFileSystem;
         BeerKnowledge bk;
         try {
