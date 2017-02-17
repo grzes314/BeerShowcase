@@ -3,6 +3,7 @@ package beershowcase.gui;
 
 import beershowcase.beerdata.BeerKnowledge;
 import beershowcase.beerdata.BeerKnowledgeParserException;
+import beershowcase.utils.Box;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -25,8 +26,11 @@ import javax.swing.SwingUtilities;
  * @author grzes
  */
 public class BeerManagement extends JFrame {
-    private final ManagementPane managementPane = new ManagementPane();
+    
     private static final Logger LOGGER = Logger.getLogger(BeerManagement.class.getName());
+    private static final String TITLE = "Beer Management";
+    
+    private final ManagementPane managementPane = new ManagementPane();
     private JMenuItem save;
     private final BeerKnowledge.ChangeListener saveUnlocker = event -> {
             save.setEnabled(true);
@@ -60,7 +64,7 @@ public class BeerManagement extends JFrame {
     
     private void init() {
         setSize(800, 600);
-        setTitle("Beer Management");
+        setTitle(TITLE);
         setContentPane(managementPane);
         setJMenuBar(makeMenuBar());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -116,6 +120,7 @@ public class BeerManagement extends JFrame {
         RunningApplication.resetData();
         
         save.setEnabled(false);
+        setTitle(TITLE);
         RunningApplication.getBeerKnowledge().addChangeListener(saveUnlocker);
         managementPane.reset();
     }
@@ -129,7 +134,13 @@ public class BeerManagement extends JFrame {
         if (file == null)
             return;
         
-        setApplicationData(file);
+        new HeavyOperation("Opening file") {
+            @Override
+            protected void timeConsumingTask() {
+                setApplicationData(file);
+            }
+        }.execute();
+        setTitle(TITLE + " - " + file.getName());
         managementPane.reset();
     }
     
@@ -155,6 +166,18 @@ public class BeerManagement extends JFrame {
         if (RunningApplication.getFileSystem() == null)
             return saveAsClicked();
         
+        final Box<Boolean> result = new Box<>(false);
+        new HeavyOperation("Saving data") {
+            @Override
+            protected void timeConsumingTask() {
+                result.value = doSave();
+            }
+        }.execute();     
+        
+        return result.value;
+    }
+    
+    private boolean doSave() {
         try {
             RunningApplication.getBeerKnowledge().saveChanges(
                     RunningApplication.getFileSystem());
@@ -177,13 +200,27 @@ public class BeerManagement extends JFrame {
         if (file.equals(RunningApplication.getBkFile()))
             return saveClicked();
         
+        final Box<Boolean> result = new Box<>(false);
+        new HeavyOperation("Saving data") {
+            @Override
+            protected void timeConsumingTask() {
+                result.value = doSaveAs(file);
+            }
+        }.execute();
+        
+        setTitle(TITLE + " - " + file.getName());
+        
+        return result.value;
+    }
+    
+    private boolean doSaveAs(File newFile) {
         FileSystem newFileSystem;
         BeerKnowledge bk;
         try {
-            newFileSystem = BeerKnowledgeIO.openFileSystem(file);
+            newFileSystem = BeerKnowledgeIO.openFileSystem(newFile);
             bk = RunningApplication.getBeerKnowledge();
             bk.saveAs(RunningApplication.getFileSystem(), newFileSystem);
-            newFileSystem = BeerKnowledgeIO.reopen(file, RunningApplication.getFileSystem());
+            newFileSystem = BeerKnowledgeIO.reopen(newFile, newFileSystem);
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, null, ex);
             JOptionPane.showMessageDialog(this, "Error while writing to selected file",
@@ -193,8 +230,7 @@ public class BeerManagement extends JFrame {
         
         save.setEnabled(false);
         closeFileSystem(RunningApplication.getFileSystem());
-        RunningApplication.setData(new AppData(bk, file, newFileSystem));
-        managementPane.reset();
+        RunningApplication.setData(new AppData(bk, newFile, newFileSystem));
         return true;
     }
     

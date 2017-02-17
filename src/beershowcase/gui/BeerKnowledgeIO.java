@@ -26,13 +26,20 @@ public class BeerKnowledgeIO {
     }
     
     public static FileSystem openFileSystem(File file) throws IOException {
-        if (file != null) {
-            URI uri = URI.create("jar:" + file.toURI());
-            Map<String, String> env = new HashMap<>(); 
-            env.put("create", "true");
-            return FileSystems.newFileSystem(uri, env);
-        } else {
-            return null;
+        try {
+            if (file != null) {
+                URI uri = URI.create("jar:" + file.toURI());
+                Map<String, String> env = new HashMap<>(); 
+                env.put("create", "true");
+                return FileSystems.newFileSystem(uri, env);
+            } else {
+                return null;
+            }
+        } catch (IOException ex) {
+            throw ex;
+        } catch (RuntimeException ex) {
+            throw new IOException("RuntimeException while opening file system "
+                    + file.getAbsolutePath(), ex);
         }
     }
     

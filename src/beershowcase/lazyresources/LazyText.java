@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 /**
  *
@@ -60,7 +61,7 @@ public class LazyText extends LazyResource {
         if (!Files.exists(parentDir))
             Files.createDirectories(parentDir);
         
-        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
             writer.append(ob.toString());
         }
     }

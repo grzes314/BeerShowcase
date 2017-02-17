@@ -76,7 +76,7 @@ public abstract class LazyResource {
                 newValue = null;
             }
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to save {0}", pathOnFileSystem);
+            LOGGER.log(Level.SEVERE, "Failed to save " + pathOnFileSystem, ex);
         }
     }
 
@@ -89,7 +89,7 @@ public abstract class LazyResource {
                 newValue = null;
             }
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Failed to save {0}", pathOnFileSystem);
+            LOGGER.log(Level.SEVERE, "Failed to save " + pathOnFileSystem, ex);
         }
     }
     

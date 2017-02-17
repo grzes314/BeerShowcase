@@ -2,6 +2,7 @@
 package beershowcase.gui;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
@@ -34,14 +35,11 @@ public abstract class HeavyOperation {
                 timeConsumingTask();
                 return null;
             }
-            
-            @Override
-            protected void done() {
-                firePropertyChange("done", null, null);
-            }
         };
         sWorker.addPropertyChangeListener((PropertyChangeEvent evt) -> {
-            dialog.dispose();
+            if ("state".equals(evt.getPropertyName()) &&
+                    "DONE".equals(evt.getNewValue().toString()))
+                dialog.dispose();
         });
         sWorker.execute();
         dialog.setVisible(true);
