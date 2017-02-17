@@ -21,7 +21,7 @@ public abstract class HeavyOperation {
         dialog.setSize(200, 100);
         dialog.setLocationRelativeTo(RunningApplication.MainFrame);
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        JLabel label = new JLabel(desc);
+        JLabel label = new JLabel("<html>" + desc);
         dialog.setContentPane(label);
     }
     

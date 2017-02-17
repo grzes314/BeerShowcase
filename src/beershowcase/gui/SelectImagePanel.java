@@ -50,6 +50,7 @@ public class SelectImagePanel extends javax.swing.JPanel {
         urlField = new javax.swing.JTextField();
         pathField = new javax.swing.JTextField();
         openFileButton = new javax.swing.JButton();
+        fetchButton = new javax.swing.JButton();
 
         jSplitPane1.setDividerLocation(100);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -82,11 +83,6 @@ public class SelectImagePanel extends javax.swing.JPanel {
                 urlFieldActionPerformed(evt);
             }
         });
-        urlField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                urlFieldKeyTyped(evt);
-            }
-        });
 
         pathField.setEnabled(false);
         pathField.addActionListener(new java.awt.event.ActionListener() {
@@ -108,28 +104,30 @@ public class SelectImagePanel extends javax.swing.JPanel {
             }
         });
 
+        fetchButton.setText("Fetch");
+        fetchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fetchButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pathSelectionPanelLayout = new javax.swing.GroupLayout(pathSelectionPanel);
         pathSelectionPanel.setLayout(pathSelectionPanelLayout);
         pathSelectionPanelLayout.setHorizontalGroup(
             pathSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pathSelectionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 348, Short.MAX_VALUE)
-                .addComponent(openFileButton)
-                .addContainerGap())
             .addGroup(pathSelectionPanelLayout.createSequentialGroup()
                 .addGroup(pathSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(byUrl)
                     .addComponent(byPath))
                 .addGap(23, 23, 23)
                 .addGroup(pathSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pathSelectionPanelLayout.createSequentialGroup()
-                        .addComponent(pathField)
-                        .addGap(61, 61, 61))
-                    .addGroup(pathSelectionPanelLayout.createSequentialGroup()
-                        .addComponent(urlField)
-                        .addContainerGap())))
+                    .addComponent(urlField, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addComponent(pathField))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pathSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fetchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(openFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pathSelectionPanelLayout.setVerticalGroup(
             pathSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -141,17 +139,18 @@ public class SelectImagePanel extends javax.swing.JPanel {
                     .addGroup(pathSelectionPanelLayout.createSequentialGroup()
                         .addComponent(byUrl)
                         .addGap(3, 3, 3))
-                    .addComponent(urlField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pathSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(urlField, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(fetchButton)))
                 .addGroup(pathSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pathSelectionPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(openFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pathSelectionPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(byPath))
                     .addGroup(pathSelectionPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(pathField, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(pathSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(pathField, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(openFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -189,19 +188,20 @@ public class SelectImagePanel extends javax.swing.JPanel {
         updateImageLabel();
     }//GEN-LAST:event_pathFieldActionPerformed
 
-    private void urlFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_urlFieldKeyTyped
-        updateImageLabel();
-    }//GEN-LAST:event_urlFieldKeyTyped
-
     private void pathFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pathFieldKeyTyped
         updateImageLabel();
     }//GEN-LAST:event_pathFieldKeyTyped
+
+    private void fetchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fetchButtonActionPerformed
+        updateImageLabel();
+    }//GEN-LAST:event_fetchButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JRadioButton byPath;
     private javax.swing.JRadioButton byUrl;
+    private javax.swing.JButton fetchButton;
     private javax.swing.JLabel imageLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -273,11 +273,16 @@ public class SelectImagePanel extends javax.swing.JPanel {
     }
 
     private void updateImageLabel() {
-        if (byUrl.isSelected()) {
-            readImageFromUrl();
-        } else if (byPath.isSelected()) {
-            readImageFromPath();
-        }
+        new HeavyOperation("Fetching image") {
+            @Override
+            protected void timeConsumingTask() {
+                if (byUrl.isSelected()) {
+                    readImageFromUrl();
+                } else if (byPath.isSelected()) {
+                    readImageFromPath();
+                }
+            }
+        }.execute();
     }
     
     private void setImageLabel(Icon icon) {

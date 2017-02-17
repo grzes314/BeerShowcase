@@ -1,8 +1,6 @@
 -------------------------- FEATURES -----------------------------------
 
 * Improve looks.
-
-* Add blocking dialog during time consuming tasks.
     
 * Show beers in a table.
 

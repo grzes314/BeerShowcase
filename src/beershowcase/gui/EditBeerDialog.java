@@ -521,8 +521,14 @@ public class EditBeerDialog extends javax.swing.JDialog {
                 "Paste address of the webpage storing beer's data",
                 "Input a web address", JOptionPane.QUESTION_MESSAGE);
         if (address != null) {
-            BeerProperties props = external.readFrom(address);
-            handleFetchedProperties(props);
+            new HeavyOperation("Fetching data from external source") {
+                @Override
+                protected void timeConsumingTask() {
+                    BeerProperties props = external.readFrom(address);
+                    handleFetchedProperties(props);
+                }
+                
+            }.execute();
         }
     }
 
