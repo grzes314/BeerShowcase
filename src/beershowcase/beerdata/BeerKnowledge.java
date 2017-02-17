@@ -26,6 +26,9 @@ import javax.json.JsonReader;
  */
 public class BeerKnowledge implements JsonRepresentable,
         Beer.ChangeListener, Brewery.ChangeListener {
+    
+    static final Logger LOGGER = Logger.getLogger(BeerKnowledge.class.getName());
+    
     private final BreweryFactory breweryFactory = new BreweryFactory();
     private final BeerFactory beerFactory = new BeerFactory();
     private final ArrayList<Beer> beers = new ArrayList<>();
@@ -38,8 +41,6 @@ public class BeerKnowledge implements JsonRepresentable,
     public BeerKnowledge() {
         unknown.setName("Unknown");
     }
-    
-    static final Logger LOGGER = Logger.getLogger(BeerKnowledge.class.getName());
 
     public boolean isModified() {
         return modified;
@@ -55,25 +56,6 @@ public class BeerKnowledge implements JsonRepresentable,
     public void breweryEdited(Brewery.EditionEvent event) {
         modified = true;
         fireChangeEvent(new ChangeEvent(ChangeType.Edition, event.source));
-    }
-
-
-    public static enum ChangeType {
-        Addition, Removal, Edition
-    }
-    
-    public static class ChangeEvent {
-        public final ChangeType changeType;
-        public final Object affectedObject;
-
-        public ChangeEvent(ChangeType changeType, Object affectedObject) {
-            this.changeType = changeType;
-            this.affectedObject = affectedObject;
-        }
-    }
-    
-    public static interface ChangeListener {
-        void knowledgeChanged(ChangeEvent event);
     }
 
     public void addChangeListener(ChangeListener cl) {
@@ -114,7 +96,6 @@ public class BeerKnowledge implements JsonRepresentable,
         while (breweriesCount-- > 0) {
             Brewery brewery = breweryFactory.makeBreweryForRead();
             breweries.add(brewery);
-            brewery.addChangeListener(this);
         }
         JsonUtils.fromJsonArray(json.getJsonArray("breweries"), breweries);
         for (Brewery br: breweries)
@@ -124,9 +105,13 @@ public class BeerKnowledge implements JsonRepresentable,
         while (beersCount-- > 0) {
             Beer beer = beerFactory.makeBeerForRead();
             beers.add(beer);
-            beer.addChangeListener(this);
         }
         JsonUtils.fromJsonArray(json.getJsonArray("beers"), beers);
+        
+        for (Brewery brewery: breweries)
+            brewery.addChangeListener(this);
+        for (Beer beer: beers)
+            beer.addChangeListener(this);
     }
     
     public void load(FileSystem fileSystem) throws IOException, BeerKnowledgeParserException {
@@ -245,6 +230,25 @@ public class BeerKnowledge implements JsonRepresentable,
         beers.remove(beer);
         modified = true;
         fireChangeEvent(new ChangeEvent(ChangeType.Removal, beer));
+    }
+
+
+    public static enum ChangeType {
+        Addition, Removal, Edition
+    }
+    
+    public static class ChangeEvent {
+        public final ChangeType changeType;
+        public final Object affectedObject;
+
+        public ChangeEvent(ChangeType changeType, Object affectedObject) {
+            this.changeType = changeType;
+            this.affectedObject = affectedObject;
+        }
+    }
+    
+    public static interface ChangeListener {
+        void knowledgeChanged(ChangeEvent event);
     }
 
 }

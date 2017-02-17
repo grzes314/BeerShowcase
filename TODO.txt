@@ -3,6 +3,10 @@
 * Store descriptions in seperate files
     - Use JTextPane to store rich text.
     
+* Improve looks.
+
+* Add blocking dialog during consuming tasks.
+    
 * Show beers in a table.
 
 * Enable filtering beers in management pane.
@@ -27,6 +31,5 @@
 
 * BeerKnowledge.makeBrewery and BeerKnowledge.makeBeer don't register BeerKnowledge as Brewery/Beer change listener.
 
-* "You have some unsaved work" dialgo pops up even if there were no modifications.
-
 * Overwriting a .bk file doesn't remove existing resources. Possible solution: remove previous file.
+
