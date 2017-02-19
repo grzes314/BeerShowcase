@@ -4,9 +4,11 @@ package beershowcase.gui;
 import beershowcase.beerdata.Beer;
 import beershowcase.beerdata.filters.And;
 import beershowcase.beerdata.filters.Filter;
+import beershowcase.gui.components.AutoLabel;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 /**
@@ -145,7 +147,10 @@ public class BeersManagementPane extends javax.swing.JPanel {
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void modeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modeButtonActionPerformed
-        // TODO add your handling code here:
+        JDialog dialog = new JDialog(RunningApplication.MainFrame);
+        dialog.setSize(100, 100);
+        dialog.setContentPane(new AutoLabel("Zażółć gęślą jaźń"));
+        dialog.setVisible(true);
     }//GEN-LAST:event_modeButtonActionPerformed
 
 
