@@ -34,3 +34,8 @@
 
 * Overwriting a .bk file doesn't remove existing resources. Possible solution: remove previous file.
 
+* Opening opened file results in an error.
+
+* Setting new brewery logo doesn't impact beer views.
+
+* BeerShowcase shows unavailable beers.

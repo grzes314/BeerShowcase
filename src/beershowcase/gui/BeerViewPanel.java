@@ -8,7 +8,6 @@ import beershowcase.gui.components.AutoLabel;
 import beershowcase.gui.components.RelativeLayout;
 import beershowcase.utils.FixedPointReal;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -105,31 +104,37 @@ public class BeerViewPanel extends JPanel {
         rl.setFill(true);
         
         panel.setLayout(rl);
-        panel.add(makeRow1ForHorizontal(), new Float(32));
-        panel.add(makeBeerImagePanel(), new Float(68));
+        panel.add(makeRow1ForHorizontal(), new Float(20));
+        panel.add(makeDescPanel(), new Float(20));
+        panel.add(makeBeerImagePanel(), new Float(60));
         
         return panel;
     }
     
     private JPanel makeRow1ForHorizontal() {
-        JPanel column = new JPanel();
-        RelativeLayout columnLayout = new RelativeLayout(RelativeLayout.Y_AXIS);
-        columnLayout.setFill(true);
-        column.setLayout(columnLayout);
-        column.add(makeNameLabel(), new Float(7.0/32));
-        column.add(makePriceLabel(), new Float(5.0/32));
-        column.add(makeStyleLabel(), new Float(5.0/32));
-        column.add(makeParamsPanel(), new Float(15.0/32));
+        JPanel left = new JPanel();
+        RelativeLayout leftLayout = new RelativeLayout(RelativeLayout.Y_AXIS);
+        leftLayout.setFill(true);
+        left.setLayout(leftLayout);
+        left.add(makeNameLabel(), new Float(7));
+        left.add(makePriceLabel(), new Float(5));
+        left.add(new JPanel(), new Float(8));
         
-        JPanel panel = new JPanel();
+        JPanel right = new JPanel();
+        RelativeLayout rightLayout = new RelativeLayout(RelativeLayout.Y_AXIS);
+        rightLayout.setFill(true);
+        right.setLayout(rightLayout);
+        right.add(makeStyleLabel(), new Float(5));
+        right.add(makeParamsPanel(), new Float(15));
         
+        JPanel row = new JPanel();        
         RelativeLayout rowLayout = new RelativeLayout(RelativeLayout.X_AXIS);
         rowLayout.setFill(true);
-        panel.setLayout(rowLayout);
-        panel.add(column, new Float(50));
-        panel.add(makeDescPanel(), new Float(50));
+        row.setLayout(rowLayout);
+        row.add(left, new Float(40));
+        row.add(right, new Float(30));
         
-        return panel;
+        return row;
     }
     
     private JPanel makeColumn2ForHorizontal() {
@@ -192,6 +197,7 @@ public class BeerViewPanel extends JPanel {
         area.setWrapStyleWord(true);
         area.setBackground(getBackground());
         area.setFont(new Font("Purisa", Font.PLAIN, 12));
+        area.setEditable(false);
         
         JScrollPane scrollPane = new JScrollPane(area);
         scrollPane.setBorder(null);
@@ -218,6 +224,7 @@ public class BeerViewPanel extends JPanel {
         for (StyleKeyword keyword: beer.getStyleKeywords())
             area.append(bullet + keyword.name() + "\n");
         area.setBackground(getBackground());
+        area.setEditable(false);
         
         JScrollPane scrollPane = new JScrollPane(area);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Tags"));
