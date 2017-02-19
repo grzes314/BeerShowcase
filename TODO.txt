@@ -8,6 +8,8 @@
 
 * Application internationalization.
 
+* Enable lack of information about price, gravity, ibu, etc..
+
 * Create decent cache for lazy resources.
 
 * Store ingredient data.
