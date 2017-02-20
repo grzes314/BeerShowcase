@@ -28,6 +28,12 @@ public class AutoLabel extends JPanel {
         renderer.setHorizontalAlignment(horizontalAlignment);
     }
 
+    public AutoLabel(String text, int horizontalAlignment, int fontStyle) {
+        renderer.setText(text);
+        renderer.setHorizontalAlignment(horizontalAlignment);
+        baseFont = baseFont.deriveFont(fontStyle);
+    }
+
     public void setText(String text) {
         renderer.setText(text);
     }
