@@ -15,7 +15,7 @@ import javax.swing.JPanel;
  *
  * @author Grzegorz Łoś
  */
-public class OptionLabel extends JPanel {
+public class OptionField extends JPanel {
     private final CheckBox checkBox;
     private final AutoLabel label;
     
@@ -27,7 +27,7 @@ public class OptionLabel extends JPanel {
         }
     };
 
-    public OptionLabel(String text) {
+    public OptionField(String text) {
         this.checkBox = new CheckBox();
         this.label = new AutoLabel(text);
         

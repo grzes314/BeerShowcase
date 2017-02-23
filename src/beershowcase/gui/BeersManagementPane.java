@@ -5,7 +5,7 @@ import beershowcase.beerdata.Beer;
 import beershowcase.beerdata.filters.And;
 import beershowcase.beerdata.filters.Filter;
 import beershowcase.gui.components.CheckBox;
-import beershowcase.gui.components.OptionLabel;
+import beershowcase.gui.components.OptionField;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.logging.Logger;
@@ -150,7 +150,7 @@ public class BeersManagementPane extends javax.swing.JPanel {
     private void modeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modeButtonActionPerformed
         JDialog dialog = new JDialog(RunningApplication.MainFrame);
         dialog.setSize(100, 100);
-        dialog.setContentPane(new OptionLabel("Tu jest tekst"));
+        dialog.setContentPane(new OptionField("Tu jest tekst"));
         dialog.setVisible(true);
     }//GEN-LAST:event_modeButtonActionPerformed
 

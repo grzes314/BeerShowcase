@@ -1,12 +1,19 @@
 
 package beershowcase.gui;
 
+import beershowcase.beerdata.Beer;
+import beershowcase.beerdata.StyleKeyword;
+import beershowcase.beerdata.filters.And;
 import beershowcase.beerdata.filters.Filter;
 import beershowcase.beerdata.filters.NoFilter;
+import beershowcase.beerdata.filters.Or;
+import beershowcase.beerdata.filters.StyleFilter;
 import beershowcase.gui.components.AutoLabel;
-import beershowcase.gui.components.OptionLabel;
+import beershowcase.gui.components.OptionField;
+import beershowcase.gui.components.RangeSelector;
 import beershowcase.gui.components.RelativeLayout;
 import beershowcase.utils.FixedPointReal;
+import beershowcase.utils.Range;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -44,42 +51,42 @@ public class BeerSearchPanel extends JPanel {
     private final RangeSelector abvSelector = new RangeSelector(ZERO, MAX_ABV, RangeSelector.Limits.RIGHT_TO_INF, "%");
     private final RangeSelector blgSelector = new RangeSelector(ZERO, MAX_BLG, RangeSelector.Limits.RIGHT_TO_INF, "\u00b0");
     private final Collection<RangeSelector> rangeSelectors = new ArrayList<>();
-    private final Map<OptionLabel, Filter> optionToFilter = new HashMap<>();
+    private final Map<OptionField, Filter> optionToFilter = new HashMap<>();
     private final Map<RangeSelector, FilterBuilder> rangeSelectorToFilterBuilder = new HashMap<>();
     
-    private final OptionLabel mainAle = new OptionLabel("Ale");
-    private final OptionLabel mainLager = new OptionLabel("Lager");
-    private final OptionLabel mainWild = new OptionLabel("Wild");
+    private final OptionField mainAle = new OptionField("Ale");
+    private final OptionField mainLager = new OptionField("Lager");
+    private final OptionField mainWild = new OptionField("Wild");
     
-    private final OptionLabel styleBaltic = new OptionLabel("Baltic Porter");
-    private final OptionLabel styleBelgian = new OptionLabel("Belgian styles");
-    private final OptionLabel styleBock = new OptionLabel("Bock");
-    private final OptionLabel styleIpa = new OptionLabel("IPA");
-    private final OptionLabel styleSour = new OptionLabel("Sour beers");
-    private final OptionLabel styleStout = new OptionLabel("Stout & Porter");
-    private final OptionLabel styleWheat = new OptionLabel("Wheat beers");
+    private final OptionField styleBaltic = new OptionField("Baltic Porter");
+    private final OptionField styleBelgian = new OptionField("Belgian styles");
+    private final OptionField styleBock = new OptionField("Bock");
+    private final OptionField styleIpa = new OptionField("IPA");
+    private final OptionField styleSour = new OptionField("Sour beers");
+    private final OptionField styleStout = new OptionField("Stout & Porter");
+    private final OptionField styleWheat = new OptionField("Wheat beers");
     
-    private final OptionLabel colorPale = new OptionLabel("Pale");
-    private final OptionLabel colorAmber = new OptionLabel("Amber");
-    private final OptionLabel colorDark = new OptionLabel("Dark");
+    private final OptionField colorPale = new OptionField("Pale");
+    private final OptionField colorAmber = new OptionField("Amber");
+    private final OptionField colorDark = new OptionField("Dark");
     
-    private final OptionLabel tasteBalanced = new OptionLabel("Well-balanced");
-    private final OptionLabel tasteBitter = new OptionLabel("Bitter");
-    private final OptionLabel tasteFruitty = new OptionLabel("Fruitty");
-    private final OptionLabel tasteHoppy = new OptionLabel("Hoppy");
-    private final OptionLabel tasteMalty = new OptionLabel("Malty");
-    private final OptionLabel tasteRoasty = new OptionLabel("Roasty");
-    private final OptionLabel tasteSpice = new OptionLabel("Spice");
+    private final OptionField tasteBalanced = new OptionField("Well-balanced");
+    private final OptionField tasteBitter = new OptionField("Bitter");
+    private final OptionField tasteFruitty = new OptionField("Fruitty");
+    private final OptionField tasteHoppy = new OptionField("Hoppy");
+    private final OptionField tasteMalty = new OptionField("Malty");
+    private final OptionField tasteRoasty = new OptionField("Roasty");
+    private final OptionField tasteSpice = new OptionField("Spice");
     
-    private final OptionLabel featureAmerican = new OptionLabel("American");
-    private final OptionLabel featureBrett = new OptionLabel("Brett");
-    private final OptionLabel featureImperial = new OptionLabel("Double/Imperial");
-    private final OptionLabel featureMilk = new OptionLabel("Milk");
-    private final OptionLabel featureOatmeal = new OptionLabel("Oatmeal");
-    private final OptionLabel featureRye = new OptionLabel("Rye");
-    private final OptionLabel featureSmoked = new OptionLabel("Smoked");
+    private final OptionField featureAmerican = new OptionField("American");
+    private final OptionField featureBrett = new OptionField("Brett");
+    private final OptionField featureImperial = new OptionField("Double/Imperial");
+    private final OptionField featureMilk = new OptionField("Milk");
+    private final OptionField featureOatmeal = new OptionField("Oatmeal");
+    private final OptionField featureRye = new OptionField("Rye");
+    private final OptionField featureSmoked = new OptionField("Smoked");
     
-    private final ArrayList<OptionLabel> options = new ArrayList<>();
+    private final ArrayList<OptionField> options = new ArrayList<>();
     
     private final JButton clearButton = new JButton("<html> Clear selection");
     private final JButton searchButton = new JButton("<html> Search");
@@ -89,6 +96,8 @@ public class BeerSearchPanel extends JPanel {
         this.beerShowcasePane = beerShowcasePane;
         
         initOptionList();
+        initRangeSelectorList();
+        prepareFilters();
         
         RelativeLayout rl = new RelativeLayout(RelativeLayout.Y_AXIS);
         rl.setFill(true);
@@ -104,16 +113,88 @@ public class BeerSearchPanel extends JPanel {
         for (Field field: fields) {
             try {
                 Class type = field.getType();
-                if (type.equals(OptionLabel.class))
-                    options.add((OptionLabel) field.get(this));
-            } catch (IllegalArgumentException ex) {
+                if (type.equals(OptionField.class))
+                    options.add((OptionField) field.get(this));
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
                 Logger.getLogger(BeerSearchPanel.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IllegalAccessException ex) {
+            }
+        }
+    }
+    
+    private void initRangeSelectorList() {
+        Class cl = this.getClass();
+        Field[] fields = cl.getDeclaredFields();
+        for (Field field: fields) {
+            try {
+                Class type = field.getType();
+                if (type.equals(RangeSelector.class))
+                    rangeSelectors.add((RangeSelector) field.get(this));
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
                 Logger.getLogger(BeerSearchPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
+    private void prepareFilters() {
+        optionToFilter.put(colorPale, new StyleFilter(StyleKeyword.Pale));
+        optionToFilter.put(colorAmber, new StyleFilter(StyleKeyword.Amber));
+        optionToFilter.put(colorDark, new StyleFilter(StyleKeyword.Dark));
+        
+        optionToFilter.put(mainAle, new StyleFilter(StyleKeyword.Ale));
+        optionToFilter.put(mainLager, new StyleFilter(StyleKeyword.Lager));
+        optionToFilter.put(mainWild, new StyleFilter(StyleKeyword.Wild));
+        
+        optionToFilter.put(styleIpa, new StyleFilter(StyleKeyword.IpaFamily));
+        optionToFilter.put(styleStout, new Or(new StyleFilter(StyleKeyword.StoutFamily),
+                new StyleFilter(StyleKeyword.Porter)) );
+        optionToFilter.put(styleBaltic, new StyleFilter(StyleKeyword.BalticPorter));
+        optionToFilter.put(styleBock, new StyleFilter(StyleKeyword.BockFamily));
+        optionToFilter.put(styleWheat, new StyleFilter(StyleKeyword.WheatBeerFamily));
+        optionToFilter.put(styleSour, new StyleFilter(StyleKeyword.Sour));
+        optionToFilter.put(styleBelgian, new StyleFilter(StyleKeyword.Belgian));
+        
+        optionToFilter.put(featureAmerican, new StyleFilter(StyleKeyword.American));
+        optionToFilter.put(featureImperial, new StyleFilter(StyleKeyword.Imperial));
+        optionToFilter.put(featureSmoked, new StyleFilter(StyleKeyword.Smoked));
+        optionToFilter.put(featureMilk, new StyleFilter(StyleKeyword.Milk));
+        optionToFilter.put(featureOatmeal, new StyleFilter(StyleKeyword.Oatmeal));
+        optionToFilter.put(featureRye, new StyleFilter(StyleKeyword.Rye));
+        optionToFilter.put(featureBrett, new StyleFilter(StyleKeyword.Brett));
+        
+        optionToFilter.put(tasteMalty, new StyleFilter(StyleKeyword.Malty));
+        optionToFilter.put(tasteBitter, new StyleFilter(StyleKeyword.BitterTaste));
+        optionToFilter.put(tasteBalanced, new StyleFilter(StyleKeyword.Balanced));
+        optionToFilter.put(tasteHoppy, new StyleFilter(StyleKeyword.Hoppy));
+        optionToFilter.put(tasteRoasty, new StyleFilter(StyleKeyword.Roasty));
+        optionToFilter.put(tasteFruitty, new StyleFilter(StyleKeyword.Fruitty));
+        optionToFilter.put(tasteSpice, new StyleFilter(StyleKeyword.Spice));
+        
+        rangeSelectorToFilterBuilder.put(priceSelector, (FilterBuilder) () -> {
+            Range range = priceSelector.getRange();
+            return (Filter) (Beer beer) -> {
+                return range.inBounds(beer.getPrice());
+            };
+        });
+        rangeSelectorToFilterBuilder.put(ibuSelector, (FilterBuilder) () -> {
+            Range range = ibuSelector.getRange();
+            return (Filter) (Beer beer) -> {
+                return range.inBounds(new FixedPointReal(beer.getIbu(), 0));
+            };
+        });
+        rangeSelectorToFilterBuilder.put(abvSelector, (FilterBuilder) () -> {
+            Range range = abvSelector.getRange();
+            return (Filter) (Beer beer) -> {
+                return range.inBounds(beer.getAbv());
+            };
+        });
+        rangeSelectorToFilterBuilder.put(blgSelector, (FilterBuilder) () -> {
+            Range range = blgSelector.getRange();
+            return (Filter) (Beer beer) -> {
+                return range.inBounds(beer.getPlato());
+            };
+        });
+    }
+    
     private Component makeTopPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(clearButton, BorderLayout.LINE_START);
@@ -123,10 +204,10 @@ public class BeerSearchPanel extends JPanel {
         panel.add(searchButton, BorderLayout.LINE_END);
         
         searchButton.addActionListener((ActionEvent e) -> {
-            clearClicked();
+            searchClicked();
         });
         clearButton.addActionListener((ActionEvent e) -> {
-            searchClicked();
+            clearClicked();
         });
         return panel;
     }
@@ -207,19 +288,116 @@ public class BeerSearchPanel extends JPanel {
     }
 
     private Component makeRangesPanel() {
-        return new JPanel();
+        JPanel panel = new JPanel();
+        RelativeLayout layout = new RelativeLayout(RelativeLayout.Y_AXIS);
+        layout.setFill(true);
+        panel.setLayout(layout);
+        
+        panel.add(makeSelectorPanel("Price", priceSelector), new Float(3));
+        panel.add(new JPanel(), new Float(1));
+        panel.add(makeSelectorPanel("IBU", ibuSelector), new Float(3));
+        panel.add(new JPanel(), new Float(1));
+        panel.add(makeSelectorPanel("Gravity", blgSelector), new Float(3));
+        panel.add(new JPanel(), new Float(1));
+        panel.add(makeSelectorPanel("Alc. vol.", abvSelector), new Float(3));
+        
+        return panel;
+    }
+    
+
+    private JPanel makeSelectorPanel(String label, RangeSelector rangeSelector) {
+        JPanel panel = new JPanel();
+        
+        RelativeLayout rl = new RelativeLayout(RelativeLayout.X_AXIS);
+        rl.setFill(true);
+        panel.setLayout(rl);
+        
+        panel.add(new AutoLabel(label, 0.33, JLabel.RIGHT), new Float(10));
+        panel.add(rangeSelector, new Float(90));
+        
+        return panel;
     }
     
     private void clearClicked() {
-        
+        clearButtons();
+        clearRanges();
+        revalidate();
+        repaint();
+    }
+    
+    private void clearRanges() {
+        for (RangeSelector rs: rangeSelectors)
+            rs.reset();
+    }
+    
+    private void clearButtons() {
+        for (OptionField op: options)
+            op.setSelected(false);
     }
     
     private void searchClicked() {
-        
+        beerShowcasePane.goToBrowsingMode();
     }
 
     public Filter buildFilter() {
-        return new NoFilter();
+        Filter filterOptions = buildFilterFromOptionFields();
+        Filter filterRanges = buildFilterFromRanges();
+        if (filterOptions == null) {
+            if (filterRanges == null)
+                return new NoFilter();
+            else
+                return filterRanges;
+        } else {
+            if (filterRanges == null)
+                return filterOptions;
+            else
+                return new And(filterRanges, filterOptions);
+        }
+    }
+    
+    private Filter buildFilterFromRanges() {
+        Filter lastFilter = null;
+        And and = new And();
+        int count = 0;
+        for (RangeSelector rs: rangeSelectors) {
+            if (!rs.isSetToMinimum() || !rs.isSetToMaximum()) {
+                lastFilter = makeFilterFromRange(rs);
+                and.add(lastFilter);
+                count++;
+            }
+        }
+        if (count == 0)
+            return null;
+        else if (count == 1)
+            return lastFilter;
+        else
+            return and;
+    }
+
+    private Filter makeFilterFromRange(RangeSelector rs) {
+        FilterBuilder fb = rangeSelectorToFilterBuilder.get(rs);
+        if (fb == null)
+            throw new RuntimeException("Each RangeSelector should have corresponding FilterBuilder");
+        return fb.make();
+    }
+
+    private Filter buildFilterFromOptionFields() {
+        Filter lastFilter = null;
+        And and = new And();
+        int count = 0;
+        for (OptionField of: options) {
+            if (of.isSelected()) {
+                lastFilter = optionToFilter.get(of);
+                and.add(lastFilter);
+                count++;
+            }
+        }
+        if (count == 0)
+            return null;
+        else if (count == 1)
+            return lastFilter;
+        else
+            return and;        
     }
     
     
