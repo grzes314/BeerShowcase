@@ -1,14 +1,12 @@
 -------------------------- FEATURES -----------------------------------
 
-* Improve looks.
-    
+* Enable lack of information about price, gravity, ibu, etc..
+
 * Show beers in a table.
 
 * Enable filtering beers in management pane.
 
 * Application internationalization.
-
-* Enable lack of information about price, gravity, ibu, etc..
 
 * Create decent cache for lazy resources.
 
@@ -16,9 +14,7 @@
 
 * Add comments and logs.
 
-* LazyImage
-    - Delete from memory images that have not been used in a while.
-    - setImage(null) + save() should result in image removal.
+* Enable deletion of LazyResources.
 
 * Add external beer knowledge source: RateBeer.
     
@@ -39,3 +35,6 @@
 * Setting new brewery logo doesn't impact beer views.
 
 * BeerShowcase shows unavailable beers.
+
+* ó is not displayed well.
+
