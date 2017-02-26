@@ -6,6 +6,8 @@
 
 * Enable filtering by brewery.
 
+* Enable adding brewery from EditBeerDialog (manually and automatically when using autofill)
+
 * Application internationalization.
 
 * Replace all forms with proper Java code.
