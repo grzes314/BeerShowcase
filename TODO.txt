@@ -4,8 +4,6 @@
 
 * Enable filtering beers in management pane.
 
-* Add "novelty" property.
-
 * Enable filtering by brewery.
 
 * Application internationalization.

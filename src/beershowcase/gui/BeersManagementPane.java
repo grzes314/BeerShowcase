@@ -150,7 +150,7 @@ public class BeersManagementPane extends javax.swing.JPanel {
     private void modeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modeButtonActionPerformed
         JDialog dialog = new JDialog(RunningApplication.MainFrame);
         dialog.setSize(100, 100);
-        dialog.setContentPane(new OptionField("Tu jest tekst"));
+        dialog.setContentPane(new OptionField("<html>Tu jest tekst"));
         dialog.setVisible(true);
     }//GEN-LAST:event_modeButtonActionPerformed
 

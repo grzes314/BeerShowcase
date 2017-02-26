@@ -28,8 +28,12 @@ public class OptionField extends JPanel {
     };
 
     public OptionField(String text) {
+        this(text, 0.5);
+    }
+
+    public OptionField(String text, double heightFactor) {
         this.checkBox = new CheckBox();
-        this.label = new AutoLabel(text);
+        this.label = new AutoLabel(text, heightFactor);
         
         setLayout(new BorderLayout());
         add(checkBox, BorderLayout.LINE_START);

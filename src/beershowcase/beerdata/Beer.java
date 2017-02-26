@@ -33,6 +33,11 @@ public class Beer implements JsonRepresentable {
     private boolean available = true;
     
     /**
+     * Is this a new beer?
+     */
+    private Box<Boolean> novelty = new Box<>();
+    
+    /**
      * Price.
      */
     private final Box<FixedPointReal> price = new Box<>();
@@ -111,6 +116,7 @@ public class Beer implements JsonRepresentable {
             .add("name", name)
             .add("declaredStyle", declaredStyle)
             .add("keywords", JsonUtils.stringListToJson(getKeywordsAsStrings()));
+        maybeAdd(job, "novelty", novelty);
         maybeAdd(job, "price", price);
         maybeAdd(job, "plato", plato);
         maybeAdd(job, "abv", abv);
@@ -118,7 +124,7 @@ public class Beer implements JsonRepresentable {
         return job.build();
     }
 
-    private void maybeAdd(JsonObjectBuilder job, String key, Box<FixedPointReal> box) {
+    private void maybeAdd(JsonObjectBuilder job, String key, Box<?> box) {
         if (!box.isEmpty())
             job.add(key, box.getValue().toString());
     }
@@ -129,6 +135,7 @@ public class Beer implements JsonRepresentable {
         breweryId = json.getInt("breweryId");
         available = json.getBoolean("available");
         
+        novelty.setValue(JsonUtils.safeGet(json, "novelty", Boolean.class));
         price.setValue(JsonUtils.safeGet(json, "price", FixedPointReal.class));
         name = JsonUtils.safeGetString(json, "name");
         declaredStyle = JsonUtils.safeGetString(json, "declaredStyle");
@@ -173,6 +180,17 @@ public class Beer implements JsonRepresentable {
 
     public void setAvailable(boolean string) {
         this.available = string;
+    }
+
+    public boolean isNovelty() {
+        if (novelty.isEmpty())
+            return false;
+        else
+            return novelty.getValue();
+    }
+
+    public void setNovelty(boolean val) {
+        novelty.setValue(val);
     }
     
     /**

@@ -55,6 +55,8 @@ public class BeerSearchPanel extends JPanel {
     private final Map<OptionField, Filter> optionToFilter = new HashMap<>();
     private final Map<RangeSelector, FilterBuilder> rangeSelectorToFilterBuilder = new HashMap<>();
     
+    private final OptionField optionNovelty = new OptionField("<html>Only novelties", 0.45);
+    
     private final OptionField mainAle = new OptionField("Ale");
     private final OptionField mainLager = new OptionField("Lager");
     private final OptionField mainWild = new OptionField("Wild");
@@ -137,6 +139,8 @@ public class BeerSearchPanel extends JPanel {
     }
 
     private void prepareFilters() {
+        optionToFilter.put(optionNovelty, (Filter) (Beer beer) -> beer.isNovelty());
+    
         optionToFilter.put(colorPale, new StyleFilter(StyleKeyword.Pale));
         optionToFilter.put(colorAmber, new StyleFilter(StyleKeyword.Amber));
         optionToFilter.put(colorDark, new StyleFilter(StyleKeyword.Dark));
@@ -225,10 +229,24 @@ public class BeerSearchPanel extends JPanel {
         rl.setFill(true);
         
         JPanel panel = new JPanel(rl);
-        panel.add(makeMainAndColor(), new Float(1));
-        panel.add(makeStyles(), new Float(1));
-        panel.add(makeFeatures(), new Float(1));
-        panel.add(makeTaste(), new Float(1));
+        panel.add(makeMainAndColor(), new Float(2));
+        panel.add(makeStyles(), new Float(3));
+        panel.add(makeFeatures(), new Float(3));
+        panel.add(makeTaste(), new Float(3));
+        panel.add(makeOther(), new Float(2));
+        return panel;
+    }
+    
+    private Component makeOther() {
+        RelativeLayout rl = new RelativeLayout(RelativeLayout.Y_AXIS);
+        rl.setFill(true);
+        
+        JPanel panel = new JPanel(rl);
+        panel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+        panel.add(new AutoLabel("Other", JLabel.CENTER, Font.BOLD), new Float(1));
+        panel.add(optionNovelty, new Float(1));
+        panel.add(new JPanel(), new Float(6));
+        
         return panel;
     }
     
