@@ -2,7 +2,6 @@
 package beershowcase.gui;
 
 import beershowcase.beerdata.Beer;
-import beershowcase.beerdata.BeerKnowledge.ChangeEvent;
 import beershowcase.beerdata.BeerProperties;
 import beershowcase.beerdata.Brewery;
 import beershowcase.beerdata.StyleKeyword;
