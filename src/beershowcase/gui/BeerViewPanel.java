@@ -6,12 +6,11 @@ import beershowcase.beerdata.Brewery;
 import beershowcase.beerdata.StyleKeyword;
 import beershowcase.gui.components.AutoLabel;
 import beershowcase.gui.components.RelativeLayout;
-import beershowcase.utils.FixedPointReal;
+import beershowcase.utils.Box;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -39,9 +38,12 @@ public class BeerViewPanel extends JPanel {
         rl.setFill(true);
         setLayout(rl);
         
-        Image img = beer.getLabelImage(RunningApplication.getFileSystem());
-        int h = img.getHeight(null);
-        int w = img.getWidth(null);
+        Box<BufferedImage> imgBox = beer.getLabelImage(RunningApplication.getFileSystem());
+        int h = 0, w = 0;
+        if (!imgBox.isEmpty()) {
+            h = imgBox.getValue().getHeight(null);
+            w = imgBox.getValue().getWidth(null);
+        }
         
         if (h >= w) {
             add(makeColumn1ForVertical(), new Float(40));
@@ -163,14 +165,7 @@ public class BeerViewPanel extends JPanel {
     }
 
     private Component makePriceLabel() {
-        String price;
-        if (beer.getPrice().equals(new FixedPointReal("0")))
-            price = "?";
-        else
-            price = beer.getPrice() + currency;
-        
-        AutoLabel label = new AutoLabel("Price: " + price);
-        
+        AutoLabel label = new AutoLabel("Price: " + beer.getPrice() + " " + currency);
         return label;
     }
     
@@ -192,7 +187,7 @@ public class BeerViewPanel extends JPanel {
 
     private Component makeDescPanel() {
         JTextArea area = new JTextArea();
-        area.setText(beer.getDescritpion(RunningApplication.getFileSystem()));
+        area.setText("" + beer.getDescritpion(RunningApplication.getFileSystem()));
         area.setLineWrap(true);
         area.setWrapStyleWord(true);
         area.setBackground(getBackground());
@@ -232,24 +227,24 @@ public class BeerViewPanel extends JPanel {
     }
 
     private void setBreweryLogo() {
-        BufferedImage image = brewery.getLogo(RunningApplication.getFileSystem());
+        Box<BufferedImage> image = brewery.getLogo(RunningApplication.getFileSystem());
         Component comp;
-        if (image == null) {
+        if (image.isEmpty()) {
             comp = new JLabel("No logo");
         } else {
-            comp = new ImagePanel(image);
+            comp = new ImagePanel(image.getValue());
         }
         breweryImageContainer.add(comp);
     }
 
     private void setBeerImage() {
-        BufferedImage image = beer.getLabelImage(RunningApplication.getFileSystem());
+        Box<BufferedImage> image = beer.getLabelImage(RunningApplication.getFileSystem());
         
         Component comp;
-        if (image == null) {
+        if (image.isEmpty()) {
             comp = new JLabel("No picture");
         } else {
-            comp = new ImagePanel(image);
+            comp = new ImagePanel(image.getValue());
         }
         beerImageContainer.add(comp);
     }

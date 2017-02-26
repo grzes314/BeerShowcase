@@ -3,8 +3,10 @@ package beershowcase.gui;
 
 import beershowcase.beerdata.BeerKnowledge;
 import beershowcase.beerdata.Brewery;
+import beershowcase.utils.Box;
 import java.awt.Component;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -203,12 +205,12 @@ class BreweriesTableModel extends AbstractTableModel
     @Override
     public Object getValueAt(int row, int col) {
         Brewery b = displayed.get(row);
-        Image logo = b.getLogo(RunningApplication.getFileSystem());
+        Box<BufferedImage> logoBox = b.getLogo(RunningApplication.getFileSystem());
         switch(col) {
             case 0:
                 return b.getName();
             case 1:
-                return logo;
+                return logoBox;
             default:
                 throw new RuntimeException("Internal error");
         }
@@ -249,8 +251,11 @@ final class ImageCellRenderer extends ImagePanel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value,
             boolean isSelected, boolean hasFocus, int row, int column) {
-        Image img = (Image) value;
-        setImage(img);
+        Box<BufferedImage> imgBox = (Box<BufferedImage>) value;
+        if (!imgBox.isEmpty())
+            setImage(imgBox.getValue());
+        else
+            setImage(null);
         return this;
     }
     

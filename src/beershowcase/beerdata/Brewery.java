@@ -2,6 +2,7 @@
 package beershowcase.beerdata;
 
 import beershowcase.lazyresources.LazyImage;
+import beershowcase.utils.Box;
 import java.awt.image.BufferedImage;
 import java.nio.file.FileSystem;
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ public class Brewery implements JsonRepresentable {
     private int id;
     private String name = "";
     private LazyImage logo;
-    BufferedImage noLogo = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
     
     private final ArrayList<ChangeListener> changeListeners = new ArrayList<>();
     
@@ -93,9 +93,8 @@ public class Brewery implements JsonRepresentable {
         fireEditionEvent(new EditionEvent(this));
     }
 
-    public BufferedImage getLogo(FileSystem fileSystem) {
-        BufferedImage img = logo.getPicture(fileSystem);
-        return img == null ? noLogo : img;
+    public Box<BufferedImage> getLogo(FileSystem fileSystem) {
+        return logo.getPicture(fileSystem);
     }
 
     public void setLogo(BufferedImage logo) {

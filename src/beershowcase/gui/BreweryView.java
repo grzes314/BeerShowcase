@@ -2,6 +2,7 @@
 package beershowcase.gui;
 
 import beershowcase.beerdata.Brewery;
+import beershowcase.utils.Box;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 
@@ -133,7 +134,8 @@ public class BreweryView extends javax.swing.JPanel {
     
     private void updateView() {
         name.setText(brewery.getName());
-        logo = brewery.getLogo(RunningApplication.getFileSystem());
+        Box<BufferedImage> logoBox = brewery.getLogo(RunningApplication.getFileSystem());
+        logo = logoBox.isEmpty() ? null : logoBox.getValue();
         if (logo == null) {
             logoLabel.setText("No logo");
             logoLabel.setIcon(null);

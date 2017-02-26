@@ -1,6 +1,7 @@
 
 package beershowcase.lazyresources;
 
+import beershowcase.utils.Box;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -30,23 +31,23 @@ public abstract class LazyResource {
         return pathOnFileSystem;
     }
     
-    public Object getResource(FileSystem fileSystem) {
+    public Box<Object> getResource(FileSystem fileSystem) {
         if (newValue != null)
-            return newValue;
+            return new Box<>(newValue);
         
         Object ob = getCache().getObject(id);
         if (ob != null)
-            return ob;
+            return new Box<>(ob);
         
         if (!resourceExists(fileSystem))
-            return null;
+            return new Box<>();
         try {
             ob = read(fileSystem);
             getCache().addObject(id, ob);
-            return ob;
+            return new Box<>(ob);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
-            return null;
+            return new Box<>();
         }
     }
     

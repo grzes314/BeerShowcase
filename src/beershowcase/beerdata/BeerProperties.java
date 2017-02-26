@@ -28,17 +28,17 @@ public class BeerProperties {
     /**
      * Original gravity in blg units.
      */
-    public FixedPointReal plato = new FixedPointReal(0,1);
+    public FixedPointReal plato;
     
     /**
      * Alcohol content by volume in percents.
      */
-    public FixedPointReal abv = new FixedPointReal(0,1);
+    public FixedPointReal abv;
     
     /**
      * Bitternes in IBU.
      */
-    public int ibu;
+    public FixedPointReal ibu;
     
     /**
      * Ingredients used to produce this beer.

@@ -10,6 +10,8 @@
 
 * Create decent cache for lazy resources.
 
+* Enable filtering by brewery.
+
 * Store ingredient data.
 
 * Add comments and logs.

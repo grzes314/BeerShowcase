@@ -108,16 +108,16 @@ public class PolskiKraft implements ExternalSource {
             double d = Double.parseDouble(doubleStr);
             return new FixedPointReal(d, 1);
         } catch (NumberFormatException ex) {
-            return new FixedPointReal(0, 1);
+            return null;
         }
     }
 
-    private int readIbu() {
+    private FixedPointReal readIbu() {
         try {
             String intStr = getElementContent("h1", "<h1 id=\"amount-ibu-s\">");
-            return Integer.parseInt(intStr);
+            return new FixedPointReal(Integer.parseInt(intStr), 0);
         } catch (NumberFormatException ex) {
-            return 0;
+            return null;
         }
     }
 
@@ -127,7 +127,7 @@ public class PolskiKraft implements ExternalSource {
             double d = Double.parseDouble(doubleStr);
             return new FixedPointReal(d, 1);
         } catch (NumberFormatException ex) {
-            return new FixedPointReal(0, 1);
+            return null;
         }
     }
 

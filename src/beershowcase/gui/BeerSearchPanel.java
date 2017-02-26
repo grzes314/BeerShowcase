@@ -12,6 +12,7 @@ import beershowcase.gui.components.AutoLabel;
 import beershowcase.gui.components.OptionField;
 import beershowcase.gui.components.RangeSelector;
 import beershowcase.gui.components.RelativeLayout;
+import beershowcase.utils.Box;
 import beershowcase.utils.FixedPointReal;
 import beershowcase.utils.Range;
 import java.awt.BorderLayout;
@@ -172,27 +173,34 @@ public class BeerSearchPanel extends JPanel {
         rangeSelectorToFilterBuilder.put(priceSelector, (FilterBuilder) () -> {
             Range range = priceSelector.getRange();
             return (Filter) (Beer beer) -> {
-                return range.inBounds(beer.getPrice());
+                return inBounds(range, beer.getPrice());
             };
         });
         rangeSelectorToFilterBuilder.put(ibuSelector, (FilterBuilder) () -> {
             Range range = ibuSelector.getRange();
             return (Filter) (Beer beer) -> {
-                return range.inBounds(new FixedPointReal(beer.getIbu(), 0));
+                return inBounds(range, beer.getIbu());
             };
         });
         rangeSelectorToFilterBuilder.put(abvSelector, (FilterBuilder) () -> {
             Range range = abvSelector.getRange();
             return (Filter) (Beer beer) -> {
-                return range.inBounds(beer.getAbv());
+                return inBounds(range, beer.getAbv());
             };
         });
         rangeSelectorToFilterBuilder.put(blgSelector, (FilterBuilder) () -> {
             Range range = blgSelector.getRange();
             return (Filter) (Beer beer) -> {
-                return range.inBounds(beer.getPlato());
+                return inBounds(range, beer.getPlato());
             };
         });
+    }
+    
+    private boolean inBounds(Range range, Box<FixedPointReal> box) {
+        if (box.isEmpty())
+            return false;
+        else
+            return range.inBounds(box.getValue());
     }
     
     private Component makeTopPanel() {

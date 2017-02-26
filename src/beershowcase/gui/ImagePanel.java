@@ -29,6 +29,10 @@ public class ImagePanel extends JPanel {
     
     @Override
     public void paint(Graphics gr) {
+        super.paint(gr);
+        if (image == null)
+            return;
+        
         double f = getResizeFactor();
         int W = this.getSize().width;
         int H = this.getSize().height;

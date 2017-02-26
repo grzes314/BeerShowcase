@@ -2,6 +2,7 @@
 package beershowcase.gui;
 
 import beershowcase.beerdata.Brewery;
+import beershowcase.utils.Box;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 
@@ -27,8 +28,10 @@ public class AddBreweryDialog extends javax.swing.JDialog {
     
     public AddBreweryDialog(java.awt.Frame parent, Brewery brewery) {
         super(parent, true /* modal */);
-        selectImagePanel = new SelectImagePanel(
-                brewery.getLogo(RunningApplication.getFileSystem()));
+        selectImagePanel = new SelectImagePanel();
+        Box<BufferedImage> logo = brewery.getLogo(RunningApplication.getFileSystem());
+        if (!logo.isEmpty())
+            selectImagePanel.setInitialImage(logo.getValue());
         initComponents();
         imageSelectionContainer.setLayout(new BorderLayout());
         imageSelectionContainer.add(selectImagePanel, BorderLayout.CENTER);

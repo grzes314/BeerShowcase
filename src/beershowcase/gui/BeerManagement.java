@@ -170,11 +170,11 @@ public class BeerManagement extends JFrame {
         new HeavyOperation("Saving data") {
             @Override
             protected void timeConsumingTask() {
-                result.value = doSave();
+                result.setValue(doSave());
             }
         }.execute();     
         
-        return result.value;
+        return result.getValue();
     }
     
     private boolean doSave() {
@@ -204,13 +204,13 @@ public class BeerManagement extends JFrame {
         new HeavyOperation("Saving data") {
             @Override
             protected void timeConsumingTask() {
-                result.value = doSaveAs(file);
+                result.setValue(doSaveAs(file));
             }
         }.execute();
         
         setTitle(TITLE + " - " + file.getName());
         
-        return result.value;
+        return result.getValue();
     }
     
     private boolean doSaveAs(File newFile) {

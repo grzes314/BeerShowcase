@@ -1,6 +1,7 @@
 
 package beershowcase.lazyresources;
 
+import beershowcase.utils.Box;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -26,12 +27,12 @@ public class LazyText extends LazyResource {
         setResource(text);
     }
           
-    public String getText(FileSystem fileSystem) {
-        Object stored = getResource(fileSystem);
-        if (stored == null)
-            return "";
+    public Box<String> getText(FileSystem fileSystem) {
+        Box box =  getResource(fileSystem);
+        if (box.isEmpty())
+            return new Box<>();
         else
-            return (String) stored;
+            return new Box<>((String) box.getValue());
     }
 
     @Override

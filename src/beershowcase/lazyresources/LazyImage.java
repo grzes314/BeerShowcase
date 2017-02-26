@@ -1,6 +1,7 @@
 
 package beershowcase.lazyresources;
 
+import beershowcase.utils.Box;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +30,12 @@ public class LazyImage extends LazyResource {
         setResource(picture);
     }
           
-    public BufferedImage getPicture(FileSystem fileSystem) {
-        return (BufferedImage) getResource(fileSystem);
+    public Box<BufferedImage> getPicture(FileSystem fileSystem) {
+        Box box =  getResource(fileSystem);
+        if (box.isEmpty())
+            return new Box<>();
+        else
+            return new Box<>((BufferedImage) box.getValue());
     }
 
     @Override

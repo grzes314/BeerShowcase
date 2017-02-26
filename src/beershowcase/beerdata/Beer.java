@@ -3,12 +3,14 @@ package beershowcase.beerdata;
 
 import beershowcase.lazyresources.LazyImage;
 import beershowcase.lazyresources.LazyText;
+import beershowcase.utils.Box;
 import beershowcase.utils.FixedPointReal;
 import java.awt.image.BufferedImage;
 import java.nio.file.FileSystem;
 import java.util.ArrayList;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 /**
  *
@@ -33,7 +35,7 @@ public class Beer implements JsonRepresentable {
     /**
      * Price.
      */
-    private FixedPointReal price = new FixedPointReal(0,2);
+    private final Box<FixedPointReal> price = new Box<>();
     
     /**
      * Name of the beer.
@@ -48,17 +50,17 @@ public class Beer implements JsonRepresentable {
     /**
      * Original gravity in blg units.
      */
-    private FixedPointReal plato = new FixedPointReal(0,1);
+    private final Box<FixedPointReal> plato = new Box<>();
     
     /**
      * Alcohol content by volume in percents.
      */
-    private FixedPointReal abv = new FixedPointReal(0,1);
+    private final Box<FixedPointReal> abv = new Box<>();
     
     /**
      * Bitternes in IBU.
      */
-    private int ibu;
+    private final Box<FixedPointReal> ibu = new Box<>();
     
     /**
      * Commercial description of the beer.
@@ -102,19 +104,23 @@ public class Beer implements JsonRepresentable {
     
     @Override
     public JsonObject toJson() {
-        JsonObject value = Json.createObjectBuilder()
+        JsonObjectBuilder job = Json.createObjectBuilder()
             .add("id", id)
             .add("breweryId", breweryId)
             .add("available", available)
-            .add("price", price.toString())
             .add("name", name)
             .add("declaredStyle", declaredStyle)
-            .add("plato", plato.toString())
-            .add("abv", abv.toString())
-            .add("ibu", ibu)
-            .add("keywords", JsonUtils.stringListToJson(getKeywordsAsStrings()))
-            .build();
-        return value;
+            .add("keywords", JsonUtils.stringListToJson(getKeywordsAsStrings()));
+        maybeAdd(job, "price", price);
+        maybeAdd(job, "plato", plato);
+        maybeAdd(job, "abv", abv);
+        maybeAdd(job, "ibu", ibu);
+        return job.build();
+    }
+
+    private void maybeAdd(JsonObjectBuilder job, String key, Box<FixedPointReal> box) {
+        if (!box.isEmpty())
+            job.add(key, box.getValue().toString());
     }
 
     @Override
@@ -122,12 +128,13 @@ public class Beer implements JsonRepresentable {
         id = json.getInt("id");
         breweryId = json.getInt("breweryId");
         available = json.getBoolean("available");
-        price = new FixedPointReal(json.getString("price"));
-        name = json.getString("name");
-        declaredStyle = json.getString("declaredStyle");
-        plato = new FixedPointReal(json.getString("plato"));
-        abv = new FixedPointReal(json.getString("abv"));
-        ibu = json.getInt("ibu");
+        
+        price.setValue(JsonUtils.safeGet(json, "price", FixedPointReal.class));
+        name = JsonUtils.safeGetString(json, "name");
+        declaredStyle = JsonUtils.safeGetString(json, "declaredStyle");
+        plato.setValue(JsonUtils.safeGet(json, "plato", FixedPointReal.class));
+        abv.setValue(JsonUtils.safeGet(json, "abv", FixedPointReal.class));
+        ibu.setValue(JsonUtils.safeGet(json, "ibu", FixedPointReal.class));
         addStyleKeywordsFromStrings(JsonUtils.stringListFromJson(json.getJsonArray("keywords")));
         
         descritpion = new LazyText(makeDescritpionPath());
@@ -172,7 +179,7 @@ public class Beer implements JsonRepresentable {
      * Returns beer's price in cents.
      * @return 
      */
-    public FixedPointReal getPrice() {
+    public Box<FixedPointReal> getPrice() {
         return price;
     }
     
@@ -181,15 +188,23 @@ public class Beer implements JsonRepresentable {
      * @param price 
      */
     public void setPrice(FixedPointReal price) {
-        this.price = price;
+        setValue(this.price, price, 2);
+    }
+    
+    private void setValue(Box<FixedPointReal> box, FixedPointReal newValue, int pointPos) {
+        if (newValue == null)
+            box.unpack();
+        else
+            box.setValue(newValue.toAnotherPointPos(pointPos));
+        fireEditionEvent(new EditionEvent(this));
     }
     
     public void setProperties(BeerProperties beerProps) {
         name = beerProps.name;
         declaredStyle = beerProps.declaredStyle;
-        plato = beerProps.plato;
-        abv = beerProps.abv;
-        ibu = beerProps.ibu;
+        setValue(plato, beerProps.plato, 1);
+        setValue(abv, beerProps.abv, 1);
+        setValue(ibu, beerProps.ibu, 0);
         descritpion.setText(beerProps.descritpion);
         image.setPicture(beerProps.labelImage);
     }
@@ -216,40 +231,31 @@ public class Beer implements JsonRepresentable {
         }
     }
 
-    public FixedPointReal getPlato() {
+    public Box<FixedPointReal> getPlato() {
         return plato;
     }
     
     public void setPlato(FixedPointReal newPlato) {
-        if (!plato.equals(newPlato)) {
-            plato = newPlato;
-            fireEditionEvent(new EditionEvent(this));
-        }
+        setValue(plato, newPlato, 1);
     }
 
-    public FixedPointReal getAbv() {
+    public Box<FixedPointReal> getAbv() {
         return abv;
     }
     
     public void setAbv(FixedPointReal newAbv) {
-        if (!abv.equals(newAbv)) {
-            abv = newAbv;
-            fireEditionEvent(new EditionEvent(this));
-        }
+        setValue(abv, newAbv, 1);
     }
 
-    public int getIbu() {
+    public Box<FixedPointReal> getIbu() {
         return ibu;
     }
     
-    public void setIbu(int newIbu) {
-        if (ibu != newIbu) {
-            ibu = newIbu;
-            fireEditionEvent(new EditionEvent(this));
-        }
+    public void setIbu(FixedPointReal newIbu) {
+        setValue(ibu, newIbu, 0);
     }
 
-    public String getDescritpion(FileSystem fileSystem) {
+    public Box<String> getDescritpion(FileSystem fileSystem) {
         return descritpion.getText(fileSystem);
     }
 
@@ -258,7 +264,7 @@ public class Beer implements JsonRepresentable {
         fireEditionEvent(new EditionEvent(this));
     }
 
-    public BufferedImage getLabelImage(FileSystem fileSystem) {
+    public Box<BufferedImage> getLabelImage(FileSystem fileSystem) {
         return image.getPicture(fileSystem);
     }
 

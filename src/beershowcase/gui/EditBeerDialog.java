@@ -10,10 +10,14 @@ import beershowcase.beerdata.autostyle.StyleFinder;
 import beershowcase.beerdata.autostyle.simple.SimpleStyleFinder;
 import beershowcase.external.ExternalSource;
 import beershowcase.external.ExternalSourceDispatcher;
+import beershowcase.utils.Box;
 import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
 import java.util.Collection;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 /**
@@ -65,6 +69,10 @@ public class EditBeerDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         tabbedPane = new javax.swing.JTabbedPane();
+        keywordsContainer = new javax.swing.JPanel();
+        imagesPanel = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        labelSelectorContainer = new javax.swing.JPanel();
         mainPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -82,6 +90,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
         availableBox = new javax.swing.JCheckBox();
         jLabel6 = new javax.swing.JLabel();
         priceSpinner = new javax.swing.JSpinner();
+        priceKnown = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 32767));
         jLabel9 = new javax.swing.JLabel();
@@ -90,14 +99,66 @@ public class EditBeerDialog extends javax.swing.JDialog {
         blgSpinner = new javax.swing.JSpinner();
         abvSpinner = new javax.swing.JSpinner();
         ibuSpinner = new javax.swing.JSpinner();
-        keywordsContainer = new javax.swing.JPanel();
-        imagesPanel = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        labelSelectorContainer = new javax.swing.JPanel();
+        blgKnown = new javax.swing.JCheckBox();
+        abvKnown = new javax.swing.JCheckBox();
+        ibuKnown = new javax.swing.JCheckBox();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        javax.swing.GroupLayout keywordsContainerLayout = new javax.swing.GroupLayout(keywordsContainer);
+        keywordsContainer.setLayout(keywordsContainerLayout);
+        keywordsContainerLayout.setHorizontalGroup(
+            keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 648, Short.MAX_VALUE)
+        );
+        keywordsContainerLayout.setVerticalGroup(
+            keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 509, Short.MAX_VALUE)
+        );
+
+        tabbedPane.addTab("Tags", keywordsContainer);
+
+        jLabel7.setFont(new java.awt.Font("Dialog", 1, 15)); // NOI18N
+        jLabel7.setText("Select label image");
+
+        labelSelectorContainer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        javax.swing.GroupLayout labelSelectorContainerLayout = new javax.swing.GroupLayout(labelSelectorContainer);
+        labelSelectorContainer.setLayout(labelSelectorContainerLayout);
+        labelSelectorContainerLayout.setHorizontalGroup(
+            labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 644, Short.MAX_VALUE)
+        );
+        labelSelectorContainerLayout.setVerticalGroup(
+            labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 505, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout imagesPanelLayout = new javax.swing.GroupLayout(imagesPanel);
+        imagesPanel.setLayout(imagesPanelLayout);
+        imagesPanelLayout.setHorizontalGroup(
+            imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(imagesPanelLayout.createSequentialGroup()
+                .addComponent(jLabel7)
+                .addGap(0, 499, Short.MAX_VALUE))
+            .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        imagesPanelLayout.setVerticalGroup(
+            imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(imagesPanelLayout.createSequentialGroup()
+                .addComponent(jLabel7)
+                .addGap(0, 491, Short.MAX_VALUE))
+            .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tabbedPane.addTab("Picture", imagesPanel);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jLabel1.setText("Beer basic information");
@@ -146,13 +207,22 @@ public class EditBeerDialog extends javax.swing.JDialog {
         jLabel6.setText("Price:");
 
         priceSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, 1000.0, 0.1));
+        priceSpinner.setEnabled(false);
+
+        priceKnown.setText("Set price");
+        priceKnown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                priceKnownActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
+                .addComponent(priceKnown)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(priceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -171,7 +241,11 @@ public class EditBeerDialog extends javax.swing.JDialog {
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(priceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 12, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(priceKnown)
+                .addContainerGap())
         );
 
         jButton1.setText("Auto fill");
@@ -194,56 +268,101 @@ public class EditBeerDialog extends javax.swing.JDialog {
         jLabel11.setText("IBU:");
 
         blgSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, 100.0, 0.1));
+        blgSpinner.setEnabled(false);
 
         abvSpinner.setModel(new SpinnerNumberModel(0.0, 0.0, 100.0, 0.1));
+        abvSpinner.setEnabled(false);
 
         ibuSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 200, 1));
+        ibuSpinner.setEnabled(false);
+
+        blgKnown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                blgKnownActionPerformed(evt);
+            }
+        });
+
+        abvKnown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abvKnownActionPerformed(evt);
+            }
+        });
+
+        ibuKnown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ibuKnownActionPerformed(evt);
+            }
+        });
+
+        jLabel12.setText("Parameters:");
+
+        jLabel13.setText("is known?");
+
+        jLabel14.setText("value");
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(filler1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(mainPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(24, 24, 24)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(breweryField, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(selectBreweryButton))
+                        .addContainerGap()
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(24, 24, 24)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(styleField)
+                                    .addComponent(nameField)))))
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                                .addGap(0, 2, Short.MAX_VALUE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(styleField)
-                            .addComponent(nameField)))))
-            .addGroup(mainPanelLayout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addComponent(breweryField, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(selectBreweryButton))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(34, 34, 34)
+                                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(blgKnown)
+                                            .addComponent(abvKnown)
+                                            .addComponent(ibuKnown))
+                                        .addGap(38, 38, 38))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel13)
+                                        .addGap(17, 17, 17)))
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(ibuSpinner)
+                                    .addComponent(blgSpinner, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(abvSpinner, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, mainPanelLayout.createSequentialGroup()
+                                        .addGap(23, 23, 23)
+                                        .addComponent(jLabel14)))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(abvSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(blgSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ibuSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(mainPanelLayout.createSequentialGroup()
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1))
+                .addComponent(filler1, javax.swing.GroupLayout.DEFAULT_SIZE, 4, Short.MAX_VALUE))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -265,79 +384,53 @@ public class EditBeerDialog extends javax.swing.JDialog {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(breweryField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectBreweryButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ibuSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(abvSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(blgSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addGap(57, 57, 57)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(51, 51, 51))
+                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addGap(85, 85, 85)
+                                .addComponent(jLabel12))
+                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel13)
+                                    .addComponent(jLabel14))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel9)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(mainPanelLayout.createSequentialGroup()
+                                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                                .addComponent(blgSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(abvSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(mainPanelLayout.createSequentialGroup()
+                                                .addComponent(blgKnown)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(abvKnown)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(ibuKnown)
+                                            .addComponent(ibuSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                        .addGap(24, 24, 24)
+                        .addComponent(jScrollPane1)
+                        .addGap(6, 6, 6))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                        .addGap(202, 202, 202)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(53, 53, 53)))
+                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18))
         );
 
         tabbedPane.addTab("Main", mainPanel);
-
-        javax.swing.GroupLayout keywordsContainerLayout = new javax.swing.GroupLayout(keywordsContainer);
-        keywordsContainer.setLayout(keywordsContainerLayout);
-        keywordsContainerLayout.setHorizontalGroup(
-            keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 648, Short.MAX_VALUE)
-        );
-        keywordsContainerLayout.setVerticalGroup(
-            keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 450, Short.MAX_VALUE)
-        );
-
-        tabbedPane.addTab("Tags", keywordsContainer);
-
-        jLabel7.setFont(new java.awt.Font("Dialog", 1, 15)); // NOI18N
-        jLabel7.setText("Select label image");
-
-        labelSelectorContainer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        javax.swing.GroupLayout labelSelectorContainerLayout = new javax.swing.GroupLayout(labelSelectorContainer);
-        labelSelectorContainer.setLayout(labelSelectorContainerLayout);
-        labelSelectorContainerLayout.setHorizontalGroup(
-            labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 644, Short.MAX_VALUE)
-        );
-        labelSelectorContainerLayout.setVerticalGroup(
-            labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 446, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout imagesPanelLayout = new javax.swing.GroupLayout(imagesPanel);
-        imagesPanel.setLayout(imagesPanelLayout);
-        imagesPanelLayout.setHorizontalGroup(
-            imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(imagesPanelLayout.createSequentialGroup()
-                .addComponent(jLabel7)
-                .addGap(0, 499, Short.MAX_VALUE))
-            .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        imagesPanelLayout.setVerticalGroup(
-            imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(imagesPanelLayout.createSequentialGroup()
-                .addComponent(jLabel7)
-                .addGap(0, 432, Short.MAX_VALUE))
-            .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        tabbedPane.addTab("Picture", imagesPanel);
 
         okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -368,7 +461,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 477, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 547, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okButton)
@@ -395,20 +488,42 @@ public class EditBeerDialog extends javax.swing.JDialog {
         autoFill();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void blgKnownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_blgKnownActionPerformed
+        blgSpinner.setEnabled(blgKnown.isSelected());
+    }//GEN-LAST:event_blgKnownActionPerformed
+
+    private void abvKnownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abvKnownActionPerformed
+        abvSpinner.setEnabled(abvKnown.isSelected());
+    }//GEN-LAST:event_abvKnownActionPerformed
+
+    private void ibuKnownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ibuKnownActionPerformed
+        ibuSpinner.setEnabled(ibuKnown.isSelected());
+    }//GEN-LAST:event_ibuKnownActionPerformed
+
+    private void priceKnownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priceKnownActionPerformed
+        priceSpinner.setEnabled(priceKnown.isSelected());
+    }//GEN-LAST:event_priceKnownActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox abvKnown;
     private javax.swing.JSpinner abvSpinner;
     private javax.swing.JCheckBox availableBox;
+    private javax.swing.JCheckBox blgKnown;
     private javax.swing.JSpinner blgSpinner;
     private javax.swing.JTextField breweryField;
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextArea description;
     private javax.swing.Box.Filler filler1;
+    private javax.swing.JCheckBox ibuKnown;
     private javax.swing.JSpinner ibuSpinner;
     private javax.swing.JPanel imagesPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -424,6 +539,7 @@ public class EditBeerDialog extends javax.swing.JDialog {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField nameField;
     private javax.swing.JButton okButton;
+    private javax.swing.JCheckBox priceKnown;
     private javax.swing.JSpinner priceSpinner;
     private javax.swing.JButton selectBreweryButton;
     private javax.swing.JTextField styleField;
@@ -438,12 +554,16 @@ public class EditBeerDialog extends javax.swing.JDialog {
     public void fill(Beer newBeer) {
         newBeer.setBreweryId(selectedBrewery.getId());
         newBeer.setAvailable(availableBox.isSelected());
-        newBeer.setPrice(new FixedPointReal((Double) priceSpinner.getValue(), 2));
         newBeer.setName(nameField.getText().trim());
         newBeer.setDeclaredStyle(styleField.getText());
-        newBeer.setPlato(new FixedPointReal((Double) blgSpinner.getValue(), 1));
-        newBeer.setAbv(new FixedPointReal((Double) abvSpinner.getValue(), 1));
-        newBeer.setIbu((Integer) ibuSpinner.getValue());
+        if (priceKnown.isSelected())
+            newBeer.setPrice(new FixedPointReal((Double) priceSpinner.getValue(), 2));
+        if (blgKnown.isSelected())
+            newBeer.setPlato(new FixedPointReal((Double) blgSpinner.getValue(), 1));
+        if (abvKnown.isSelected())
+            newBeer.setAbv(new FixedPointReal((Double) abvSpinner.getValue(), 1));
+        if (ibuKnown.isSelected())
+            newBeer.setIbu(new FixedPointReal((long) ((Integer) ibuSpinner.getValue()), 0));
         newBeer.addStyleKeywords(keywordsPanel.getSelectedKeywords());
         newBeer.setDescritpion(description.getText());
         newBeer.setLabelImage(labelImageSelector.getImage());
@@ -486,15 +606,17 @@ public class EditBeerDialog extends javax.swing.JDialog {
         selectedBrewery = RunningApplication.getBeerKnowledge().getBreweryOfBeer(beer);
         breweryField.setText(selectedBrewery != null ? selectedBrewery.getName() : "?");
         styleField.setText(beer.getDeclaredStyle());
-        blgSpinner.setValue(beer.getPlato().getDoubleValue());
-        abvSpinner.setValue(beer.getAbv().getDoubleValue());
-        ibuSpinner.setValue(beer.getIbu());
-        description.setText(beer.getDescritpion(RunningApplication.getFileSystem()));
-        labelImageSelector.setInitialImage(beer.getLabelImage(RunningApplication.getFileSystem())); 
-        
-        priceSpinner.setValue(beer.getPrice().getDoubleValue());
+        description.setText("" + beer.getDescritpion(RunningApplication.getFileSystem()));
+        Box<BufferedImage> beerImage = beer.getLabelImage(RunningApplication.getFileSystem());
+        if (!beerImage.isEmpty())
+            labelImageSelector.setInitialImage(beerImage.getValue());
         availableBox.setSelected(beer.isAvailable());
-        keywordsPanel.setSelectedKeywords(beer.getStyleKeywords());       
+        keywordsPanel.setSelectedKeywords(beer.getStyleKeywords());  
+        
+        setComponentFromBox(beer.getPlato(), blgKnown, blgSpinner);
+        setComponentFromBox(beer.getAbv(), abvKnown, abvSpinner);
+        setComponentFromBox(beer.getIbu(), ibuKnown, ibuSpinner);
+        setComponentFromBox(beer.getPrice(), priceKnown, priceSpinner);     
     }
     
     private void setDataFrom(BeerProperties props) {
@@ -504,11 +626,22 @@ public class EditBeerDialog extends javax.swing.JDialog {
         styleField.setText(props.declaredStyle);
         description.setText(props.descritpion);
         labelImageSelector.setInitialImage(props.labelImage);
-        blgSpinner.setValue(props.plato.getDoubleValue());
-        abvSpinner.setValue(props.abv.getDoubleValue());
-        ibuSpinner.setValue(props.ibu);
+        
+        setComponentFromValue(props.plato, blgKnown, blgSpinner);
+        setComponentFromValue(props.abv, abvKnown, abvSpinner);
+        setComponentFromValue(props.ibu, ibuKnown, ibuSpinner);
         
         autoselectKeywords(props.declaredStyle);
+    }
+    
+    private void setComponentFromBox(Box<FixedPointReal> box, JCheckBox isKnown, JSpinner spinner) {
+        setComponentFromValue(box.isEmpty() ? null : box.getValue(), isKnown, spinner);
+    }
+    private void setComponentFromValue(FixedPointReal value, JCheckBox isKnown, JSpinner spinner) {
+        isKnown.setSelected(value != null);
+        spinner.setEnabled(value != null);
+        if (value != null)
+            spinner.setValue(value.getDoubleValue());
     }
 
     private void autoselectKeywords(String declaredStyle) {

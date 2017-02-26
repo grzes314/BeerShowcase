@@ -1,8 +1,12 @@
 
 package beershowcase.beerdata;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -55,5 +59,28 @@ class JsonUtils {
             }
         }
         //throw new RuntimeException("Execution flow should not reach this statement.");
+    }
+    
+    public static String safeGetString(JsonObject json, String key) {
+        try {
+            String value = json.getString(key);
+            return value;        
+        } catch (NullPointerException ex) {
+            return null;
+        }
+    }
+    
+    public static <T> T safeGet(JsonObject json, String key, Class<T> cl) {
+        String value = safeGetString(json, key);
+        if (value == null)
+            return null;
+            
+        try {            
+            Constructor<T> cons = cl.getConstructor(String.class);
+            return cons.newInstance(new Object[]{value});
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(JsonUtils.class.getName()).log(Level.WARNING, null, ex);
+            return null;
+        }
     }
 }
