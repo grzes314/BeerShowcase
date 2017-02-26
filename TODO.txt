@@ -1,16 +1,18 @@
 -------------------------- FEATURES -----------------------------------
 
-* Enable lack of information about price, gravity, ibu, etc..
-
 * Show beers in a table.
 
 * Enable filtering beers in management pane.
 
-* Application internationalization.
-
-* Create decent cache for lazy resources.
+* Add "novelty" property.
 
 * Enable filtering by brewery.
+
+* Application internationalization.
+
+* Replace all forms with proper Java code.
+
+* Create decent cache for lazy resources.
 
 * Store ingredient data.
 

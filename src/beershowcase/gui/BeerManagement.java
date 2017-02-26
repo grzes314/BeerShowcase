@@ -184,7 +184,7 @@ public class BeerManagement extends JFrame {
             RunningApplication.flushFileSystem();
             save.setEnabled(false);
             return true;
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             LOGGER.log(Level.INFO, null, ex);
             JOptionPane.showMessageDialog(this, "Could not save data.",
                     "Error", JOptionPane.ERROR_MESSAGE);
@@ -221,7 +221,7 @@ public class BeerManagement extends JFrame {
             bk = RunningApplication.getBeerKnowledge();
             bk.saveAs(RunningApplication.getFileSystem(), newFileSystem);
             newFileSystem = BeerKnowledgeIO.reopen(newFile, newFileSystem);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             LOGGER.log(Level.INFO, null, ex);
             JOptionPane.showMessageDialog(this, "Error while writing to selected file",
                     "Error", JOptionPane.ERROR_MESSAGE);

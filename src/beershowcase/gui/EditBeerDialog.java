@@ -69,10 +69,6 @@ public class EditBeerDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         tabbedPane = new javax.swing.JTabbedPane();
-        keywordsContainer = new javax.swing.JPanel();
-        imagesPanel = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        labelSelectorContainer = new javax.swing.JPanel();
         mainPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -105,60 +101,14 @@ public class EditBeerDialog extends javax.swing.JDialog {
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
+        keywordsContainer = new javax.swing.JPanel();
+        imagesPanel = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        labelSelectorContainer = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        javax.swing.GroupLayout keywordsContainerLayout = new javax.swing.GroupLayout(keywordsContainer);
-        keywordsContainer.setLayout(keywordsContainerLayout);
-        keywordsContainerLayout.setHorizontalGroup(
-            keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 648, Short.MAX_VALUE)
-        );
-        keywordsContainerLayout.setVerticalGroup(
-            keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 509, Short.MAX_VALUE)
-        );
-
-        tabbedPane.addTab("Tags", keywordsContainer);
-
-        jLabel7.setFont(new java.awt.Font("Dialog", 1, 15)); // NOI18N
-        jLabel7.setText("Select label image");
-
-        labelSelectorContainer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        javax.swing.GroupLayout labelSelectorContainerLayout = new javax.swing.GroupLayout(labelSelectorContainer);
-        labelSelectorContainer.setLayout(labelSelectorContainerLayout);
-        labelSelectorContainerLayout.setHorizontalGroup(
-            labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 644, Short.MAX_VALUE)
-        );
-        labelSelectorContainerLayout.setVerticalGroup(
-            labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 505, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout imagesPanelLayout = new javax.swing.GroupLayout(imagesPanel);
-        imagesPanel.setLayout(imagesPanelLayout);
-        imagesPanelLayout.setHorizontalGroup(
-            imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(imagesPanelLayout.createSequentialGroup()
-                .addComponent(jLabel7)
-                .addGap(0, 499, Short.MAX_VALUE))
-            .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        imagesPanelLayout.setVerticalGroup(
-            imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(imagesPanelLayout.createSequentialGroup()
-                .addComponent(jLabel7)
-                .addGap(0, 491, Short.MAX_VALUE))
-            .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        tabbedPane.addTab("Picture", imagesPanel);
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         jLabel1.setText("Beer basic information");
@@ -431,6 +381,56 @@ public class EditBeerDialog extends javax.swing.JDialog {
         );
 
         tabbedPane.addTab("Main", mainPanel);
+
+        javax.swing.GroupLayout keywordsContainerLayout = new javax.swing.GroupLayout(keywordsContainer);
+        keywordsContainer.setLayout(keywordsContainerLayout);
+        keywordsContainerLayout.setHorizontalGroup(
+            keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 648, Short.MAX_VALUE)
+        );
+        keywordsContainerLayout.setVerticalGroup(
+            keywordsContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 509, Short.MAX_VALUE)
+        );
+
+        tabbedPane.addTab("Tags", keywordsContainer);
+
+        jLabel7.setFont(new java.awt.Font("Dialog", 1, 15)); // NOI18N
+        jLabel7.setText("Select label image");
+
+        labelSelectorContainer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        javax.swing.GroupLayout labelSelectorContainerLayout = new javax.swing.GroupLayout(labelSelectorContainer);
+        labelSelectorContainer.setLayout(labelSelectorContainerLayout);
+        labelSelectorContainerLayout.setHorizontalGroup(
+            labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 644, Short.MAX_VALUE)
+        );
+        labelSelectorContainerLayout.setVerticalGroup(
+            labelSelectorContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 505, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout imagesPanelLayout = new javax.swing.GroupLayout(imagesPanel);
+        imagesPanel.setLayout(imagesPanelLayout);
+        imagesPanelLayout.setHorizontalGroup(
+            imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(imagesPanelLayout.createSequentialGroup()
+                .addComponent(jLabel7)
+                .addGap(0, 499, Short.MAX_VALUE))
+            .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        imagesPanelLayout.setVerticalGroup(
+            imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(imagesPanelLayout.createSequentialGroup()
+                .addComponent(jLabel7)
+                .addGap(0, 491, Short.MAX_VALUE))
+            .addGroup(imagesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(labelSelectorContainer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tabbedPane.addTab("Picture", imagesPanel);
 
         okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {

@@ -83,9 +83,9 @@ public abstract class LazyResource {
 
     public void saveAs(FileSystem currFileSystem, FileSystem newFileSystem) {
         try {       
-            Object ob = getResource(currFileSystem);
-            if (ob != null) {
-                write(ob, newFileSystem);
+            Box<Object> box = getResource(currFileSystem);
+            if (!box.isEmpty()) {
+                write(box.getValue(), newFileSystem);
                 getCache().remove(id);
                 newValue = null;
             }
