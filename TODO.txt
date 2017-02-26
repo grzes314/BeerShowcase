@@ -38,5 +38,5 @@
 
 * BeerShowcase shows unavailable beers.
 
-* ó is not displayed well.
+* ó is fetched as &oacute; from PolskiKraft.
 
